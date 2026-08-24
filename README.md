@@ -11,8 +11,9 @@ Clase 02 - E-commerce integrado - API REST + MongoDB:
 | Recurso | Link |
 |---|---|
 | Presentación HTML | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/clases/clase-02/presentacion/ |
-| Actividad práctica | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md |
-| Material completo | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/material-completo.md |
+| Índice de clase | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/tree/main/clases/clase-02 |
+| Actividad práctica | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/actividad-practica.md |
+| Material adicional | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/material-adicional/material-completo.md |
 | Sitio público | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/ |
 
 ## Cómo está organizado
@@ -26,7 +27,9 @@ iaew-2026-ecommerce-api/
     README.md
     clase-02/
       README.md
-      material-completo.md
+      actividad-practica.md
+      material-adicional/
+        material-completo.md
       presentacion/
         index.html
         README.md
@@ -43,7 +46,7 @@ iaew-2026-ecommerce-api/
 
 Si sos estudiante:
 
-1. Entrá a la actividad de la clase.
+1. Entrá al índice de la clase.
 2. Revisá los prerrequisitos.
 3. Seguí el paso a paso.
 4. Guardá las evidencias solicitadas.
@@ -52,7 +55,7 @@ Si sos estudiante:
 Si sos docente:
 
 1. Usá la presentación HTML como apoyo de clase.
-2. Usá el material completo como apunte ampliado.
+2. Usá el material adicional como apunte ampliado.
 3. Usá la actividad práctica como consigna de entrega.
 4. Publicá en Moodle los links de la sección "Accesos rápidos".
 
