@@ -116,6 +116,26 @@ La idea no es aprender herramientas sueltas, sino usarlas como flujo de trabajo:
 editar -> ejecutar -> probar endpoint -> persistir -> validar datos
 ```
 
+Prerrequisitos recomendados para llegar a la actividad:
+
+| Recurso | Verificación |
+|---|---|
+| Node.js LTS | `node --version` |
+| npm | `npm --version` |
+| Docker Desktop | `docker --version` y `docker ps` |
+| VS Code | Abrir la carpeta del proyecto desde el editor. |
+| Herramienta HTTP | Postman, Insomnia, Thunder Client, REST Client o `curl`. |
+
+Extensiones sugeridas de VS Code:
+
+| Extensión | Identificador | Uso |
+|---|---|---|
+| MongoDB for VS Code | `mongodb.mongodb-vscode` | Ver bases, colecciones y documentos desde VS Code. |
+| REST Client | `humao.rest-client` | Probar endpoints desde archivos `.http`. |
+| Docker | `ms-azuretools.vscode-docker` | Revisar contenedores, imágenes y logs. |
+| ESLint | `dbaeumer.vscode-eslint` | Detectar problemas frecuentes en JavaScript. |
+| Prettier | `esbenp.prettier-vscode` | Formatear código de manera consistente. |
+
 ## 5. REST aplicado al caso
 
 REST no es simplemente usar JSON por HTTP. Una API REST organiza acciones alrededor de recursos y usa convenciones del protocolo HTTP para comunicar resultados.

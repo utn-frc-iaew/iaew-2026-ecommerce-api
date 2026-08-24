@@ -37,17 +37,40 @@ La idea importante de la clase:
 Una API no solo guarda datos. También protege reglas de negocio.
 ```
 
-## Requisitos
+## Prerrequisitos
 
-Antes de empezar, verificar:
+Antes de la clase, cada estudiante debería tener instalado y funcionando:
+
+| Recurso | Uso en la actividad |
+|---|---|
+| Node.js LTS | Ejecutar la API con JavaScript del lado servidor. |
+| npm | Inicializar el proyecto, instalar dependencias y ejecutar scripts. |
+| Docker Desktop | Levantar MongoDB localmente como contenedor. |
+| VS Code | Editar el proyecto y revisar archivos. |
+| Postman, Insomnia, Thunder Client, REST Client o curl | Probar los endpoints HTTP. |
+
+Verificar desde una terminal:
 
 ```bash
 node --version
 npm --version
 docker --version
+docker ps
 ```
 
-También vas a necesitar Postman, Insomnia o `curl` para probar endpoints.
+Si `docker --version` responde pero `docker ps` falla, abrir Docker Desktop y esperar a que el servicio termine de iniciar.
+
+Extensiones de VS Code:
+
+| Extensión | Identificador | Uso |
+|---|---|---|
+| MongoDB for VS Code | `mongodb.mongodb-vscode` | Ver bases, colecciones y documentos desde VS Code. |
+| REST Client | `humao.rest-client` | Probar endpoints desde archivos `.http` dentro del proyecto. |
+| Docker | `ms-azuretools.vscode-docker` | Ver contenedores, imágenes y logs desde VS Code. |
+| ESLint | `dbaeumer.vscode-eslint` | Detectar problemas frecuentes en JavaScript. |
+| Prettier | `esbenp.prettier-vscode` | Formatear código de manera consistente. |
+
+Como mínimo, para esta clase conviene tener instaladas `MongoDB for VS Code` y una herramienta para probar HTTP: Postman, Insomnia, Thunder Client, REST Client o `curl`.
 
 Herramientas que vamos a usar durante la clase:
 
