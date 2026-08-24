@@ -93,7 +93,7 @@ La cátedra podrá usar estos mismos comandos para revisar la entrega.
 
 Links de la Clase 02:
 
-- Material completo: `https://github.com/utn-frc-iaew/IAEW_2026/blob/main/02_Clases_2026/02%20-%20E-commerce%20integrado%20-%20API%20REST%20%2B%20MongoDB/03_material_completo_semana03_ecommerce.md`
+- Material completo publicado: `https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/docs/clase-02-material-completo.md`
 - Presentación HTML pública: `https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/`
 - Presentación HTML en el repo: `presentaciones/clase-02/index.html`
 - Actividad práctica: `https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md`
