@@ -5,6 +5,14 @@ Clase efectiva: 2
 Duración: 120 minutos  
 Tema: E-commerce integrado - API REST + MongoDB  
 
+## Materiales de esta clase
+
+| Recurso | Link |
+|---|---|
+| Actividad práctica | Este archivo |
+| Presentación HTML | [presentacion/](presentacion/) |
+| Material completo | [material-completo.md](material-completo.md) |
+
 ## Objetivo de la actividad
 
 Durante esta clase vas a crear desde cero una API REST con Express para una mini plataforma de e-commerce.

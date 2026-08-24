@@ -1,18 +1,20 @@
-# Presentaciones
+# Presentaciones movidas
 
-Esta carpeta contiene presentaciones HTML navegables.
+Las presentaciones específicas de cada clase ahora viven dentro de `clases/`.
 
-## Disponibles
+Ubicación actual de la Clase 02:
 
-| Clase | Tema | Presentación |
-|---|---|---|
-| Clase 02 | E-commerce integrado - API REST + MongoDB | [Abrir presentación](clase-02/) |
+```text
+clases/clase-02/presentacion/
+```
 
-## Publicación
+URL pública actual:
 
-GitHub Pages está configurado para publicar desde la rama `main` y la carpeta raíz.
+```text
+https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/clases/clase-02/presentacion/
+```
 
-URL pública de la Clase 02:
+La ruta anterior queda como redirección para no romper links ya compartidos:
 
 ```text
 https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/

@@ -8,6 +8,15 @@ Esta carpeta contiene las consignas prácticas publicadas para estudiantes.
 |---|---|---|
 | Clase 02 | E-commerce integrado - API REST + MongoDB | [Abrir guía](clase-02/) |
 
+## Estructura por clase
+
+Cada clase agrupa en una misma carpeta:
+
+- actividad práctica;
+- material completo;
+- presentación;
+- assets necesarios para esa presentación.
+
 ## Criterio de uso
 
 Cada clase indica su punto de partida. En la Clase 02 el proyecto se crea desde cero durante la clase.

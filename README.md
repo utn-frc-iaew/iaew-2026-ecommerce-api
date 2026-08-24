@@ -10,9 +10,9 @@ Clase 02 - E-commerce integrado - API REST + MongoDB:
 
 | Recurso | Link |
 |---|---|
-| Presentación HTML | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/ |
+| Presentación HTML | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/clases/clase-02/presentacion/ |
 | Actividad práctica | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md |
-| Material completo | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/docs/clase-02-material-completo.md |
+| Material completo | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/material-completo.md |
 | Sitio público | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/ |
 
 ## Cómo está organizado
@@ -26,20 +26,17 @@ iaew-2026-ecommerce-api/
     README.md
     clase-02/
       README.md
+      material-completo.md
+      presentacion/
+        index.html
+        README.md
+        assets/
 
   docs/
     README.md
     caso-ecommerce.md
-    clase-02-material-completo.md
     dinamica-de-trabajo.md
     entregas.md
-
-  presentaciones/
-    README.md
-    assets/
-    clase-02/
-      index.html
-      README.md
 ```
 
 ## Qué mira cada persona
