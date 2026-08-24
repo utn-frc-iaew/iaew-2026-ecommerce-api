@@ -2,13 +2,62 @@
 
 Repositorio guía para las actividades prácticas de **Integración de Aplicaciones en Entorno Web - IAEW 2026**.
 
-Durante la cursada vamos a trabajar sobre una mini plataforma de e-commerce. Cada clase agrega una capacidad nueva al sistema: API REST, persistencia, seguridad, integraciones, eventos, observabilidad, documentación, testing y despliegue.
+El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una capacidad nueva al sistema: API REST, persistencia, seguridad, integraciones, eventos, observabilidad, documentación, testing y despliegue.
 
-Repositorio de materiales de la cátedra:
+## Accesos rápidos
+
+Clase 02 - E-commerce integrado - API REST + MongoDB:
+
+| Recurso | Link |
+|---|---|
+| Presentación HTML | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/ |
+| Actividad práctica | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md |
+| Material completo | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/docs/clase-02-material-completo.md |
+| Sitio público | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/ |
+
+## Cómo está organizado
 
 ```text
-https://github.com/utn-frc-iaew/IAEW_2026
+iaew-2026-ecommerce-api/
+  README.md
+  index.html
+
+  clases/
+    README.md
+    clase-02/
+      README.md
+
+  docs/
+    README.md
+    caso-ecommerce.md
+    clase-02-material-completo.md
+    dinamica-de-trabajo.md
+    entregas.md
+
+  presentaciones/
+    README.md
+    assets/
+    clase-02/
+      index.html
+      README.md
 ```
+
+## Qué mira cada persona
+
+Si sos estudiante:
+
+1. Entrá a la actividad de la clase.
+2. Revisá los prerrequisitos.
+3. Seguí el paso a paso.
+4. Guardá las evidencias solicitadas.
+5. Comprimí el proyecto sin `node_modules/` y subilo a UV/Moodle.
+
+Si sos docente:
+
+1. Usá la presentación HTML como apoyo de clase.
+2. Usá el material completo como apunte ampliado.
+3. Usá la actividad práctica como consigna de entrega.
+4. Publicá en Moodle los links de la sección "Accesos rápidos".
 
 ## Caso de uso
 
@@ -29,25 +78,6 @@ En la Clase 02 vamos a crear el proyecto desde cero durante la clase. Este repos
 En clases posteriores la cátedra podrá publicar puntos de partida funcionales para que nadie quede bloqueado si se atrasó o si su proyecto dejó de funcionar.
 
 Cada actividad debe resolverse usando el punto de partida indicado para esa clase. No corresponde utilizar código base publicado para clases posteriores como entrega de una actividad anterior. Las fechas de publicación y entrega serán consideradas durante la corrección.
-
-## Cómo comenzar una actividad
-
-1. Leer la consigna indicada para la clase.
-2. Crear o descargar el proyecto según indique la cátedra.
-3. Instalar dependencias:
-
-   ```bash
-   npm install
-   ```
-
-4. Crear el archivo `.env` a partir de `.env.example`, si la actividad lo requiere.
-5. Ejecutar el proyecto:
-
-   ```bash
-   npm run dev
-   ```
-
-6. Resolver la actividad siguiendo la consigna de la clase.
 
 ## Entrega por UV / Moodle
 
@@ -86,20 +116,3 @@ npm run dev
 ```
 
 La cátedra podrá usar estos mismos comandos para revisar la entrega.
-
-## Clase disponible
-
-- `clases/clase-02/`: E-commerce integrado - API REST + MongoDB.
-
-Links de la Clase 02:
-
-- Material completo publicado: `https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/docs/clase-02-material-completo.md`
-- Presentación HTML pública: `https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/`
-- Presentación HTML en el repo: `presentaciones/clase-02/index.html`
-- Actividad práctica: `https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md`
-
-## Documentación
-
-- `docs/caso-ecommerce.md`
-- `docs/dinamica-de-trabajo.md`
-- `docs/entregas.md`
