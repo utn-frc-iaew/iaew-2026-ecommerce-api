@@ -122,7 +122,7 @@ Instalar Nodemon como dependencia de desarrollo:
 npm install --save-dev nodemon
 ```
 
-Editar `package.json` y dejar estos scripts:
+Editar `package.json` y dejar estos scripts dentro del JSON existente:
 
 ```json
 {
@@ -269,11 +269,7 @@ Crear producto:
 ```http
 POST http://localhost:3000/productos
 Content-Type: application/json
-```
 
-Body:
-
-```json
 {
   "nombre": "Mouse inalámbrico",
   "precio": 18999,
@@ -360,11 +356,7 @@ Crear pedido:
 ```http
 POST http://localhost:3000/pedidos
 Content-Type: application/json
-```
 
-Body:
-
-```json
 {
   "cliente": {
     "nombre": "Ana Pérez",
@@ -432,6 +424,12 @@ Levantar MongoDB:
 
 ```bash
 docker run --name iaew-mongo -p 27017:27017 -d mongo:7
+```
+
+Si aparece un error indicando que el nombre `iaew-mongo` ya está en uso, no crear otro contenedor. Usar:
+
+```bash
+docker start iaew-mongo
 ```
 
 Verificar:
@@ -610,12 +608,20 @@ const Producto = require('../models/Producto');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const productos = await Producto.find().sort({ createdAt: -1 });
-  res.json(productos);
+  try {
+    const productos = await Producto.find().sort({ createdAt: -1 });
+    res.json(productos);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al consultar productos' });
+  }
 });
 
 router.post('/', async (req, res) => {
   try {
+    if (!req.body.nombre || !req.body.categoria) {
+      return res.status(400).json({ error: 'Faltan datos obligatorios' });
+    }
+
     const producto = await Producto.create({
       nombre: req.body.nombre,
       precio: req.body.precio,
@@ -719,6 +725,7 @@ Modificar `routes/pedidos.js`:
 
 ```js
 const express = require('express');
+const mongoose = require('mongoose');
 const Pedido = require('../models/Pedido');
 const Producto = require('../models/Producto');
 
@@ -726,13 +733,27 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
+    if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
+      return res.status(400).json({
+        error: 'El pedido debe tener al menos un item'
+      });
+    }
+
     const items = [];
 
     for (const item of req.body.items) {
+      if (!mongoose.Types.ObjectId.isValid(item.productoId)) {
+        return res.status(400).json({ error: 'ID de producto inválido' });
+      }
+
       const producto = await Producto.findById(item.productoId);
 
       if (!producto || !producto.activo) {
         return res.status(400).json({ error: 'Producto inválido' });
+      }
+
+      if (!item.cantidad || item.cantidad < 1) {
+        return res.status(400).json({ error: 'Cantidad inválida' });
       }
 
       items.push({
@@ -761,41 +782,51 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/:id/confirmar', async (req, res) => {
-  const pedido = await Pedido.findById(req.params.id);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'ID de pedido inválido' });
+    }
 
-  if (!pedido) {
-    return res.status(404).json({ error: 'Pedido no encontrado' });
-  }
+    const pedido = await Pedido.findById(req.params.id);
 
-  if (pedido.estado !== 'pendiente') {
-    return res.status(409).json({ error: 'El pedido ya fue confirmado' });
-  }
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
 
-  for (const item of pedido.items) {
-    const producto = await Producto.findById(item.productoId);
+    if (pedido.estado !== 'pendiente') {
+      return res.status(409).json({ error: 'El pedido ya fue confirmado' });
+    }
 
-    if (!producto || !producto.activo || producto.stock < item.cantidad) {
-      return res.status(409).json({
-        error: `No hay stock suficiente para ${item.nombre}`
+    for (const item of pedido.items) {
+      const producto = await Producto.findById(item.productoId);
+
+      if (!producto || !producto.activo || producto.stock < item.cantidad) {
+        return res.status(409).json({
+          error: `No hay stock suficiente para ${item.nombre}`
+        });
+      }
+    }
+
+    for (const item of pedido.items) {
+      await Producto.findByIdAndUpdate(item.productoId, {
+        $inc: { stock: -item.cantidad }
       });
     }
+
+    pedido.estado = 'confirmado';
+    pedido.confirmadoEn = new Date();
+    await pedido.save();
+
+    res.json(pedido);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al confirmar pedido' });
   }
-
-  for (const item of pedido.items) {
-    await Producto.findByIdAndUpdate(item.productoId, {
-      $inc: { stock: -item.cantidad }
-    });
-  }
-
-  pedido.estado = 'confirmado';
-  pedido.confirmadoEn = new Date();
-  await pedido.save();
-
-  res.json(pedido);
 });
 
 module.exports = router;
 ```
+
+Nota: esta implementación alcanza para la práctica guiada. En un sistema con muchas confirmaciones simultáneas habría que resolver el descuento de stock con operaciones transaccionales o actualizaciones atómicas más estrictas para evitar condiciones de carrera.
 
 ## Paso 12 - Probar el flujo completo
 
@@ -804,11 +835,7 @@ Crear producto:
 ```http
 POST http://localhost:3000/productos
 Content-Type: application/json
-```
 
-Body:
-
-```json
 {
   "nombre": "Auriculares Bluetooth",
   "precio": 45999,
@@ -830,11 +857,7 @@ Crear pedido:
 ```http
 POST http://localhost:3000/pedidos
 Content-Type: application/json
-```
 
-Body:
-
-```json
 {
   "cliente": {
     "nombre": "Ana Pérez",
