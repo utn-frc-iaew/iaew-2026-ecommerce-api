@@ -95,6 +95,7 @@ Links de la Clase 02:
 
 - Material completo: `https://github.com/utn-frc-iaew/IAEW_2026/blob/main/02_Clases_2026/02%20-%20E-commerce%20integrado%20-%20API%20REST%20%2B%20MongoDB/03_material_completo_semana03_ecommerce.md`
 - Presentación Gamma: `https://gamma.app/docs/aldgsqibfj4ge67`
+- Presentación HTML: `presentaciones/clase-02/index.html`
 - Actividad práctica: `https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/README.md`
 
 ## Documentación

@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clase 02 - E-commerce integrado con API REST + MongoDB</title>
+    <style>
+      :root {
+        --bg: #081826;
+        --bg-2: #0f2a3d;
+        --paper: #f7fafc;
+        --ink: #10202f;
+        --muted: #5d6b78;
+        --cyan: #00a6c8;
+        --green: #35b779;
+        --blue: #2563eb;
+        --line: #d7e1ea;
+        --code: #111827;
+        --code-ink: #e5f8ff;
+        --warn: #f59e0b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top right, rgba(0, 166, 200, 0.2), transparent 28rem),
+          linear-gradient(135deg, #071522 0%, #102a3e 48%, #071522 100%);
+        color: var(--paper);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        overflow: hidden;
+      }
+
+      .deck {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        padding: 2.2rem;
+      }
+
+      .slide {
+        display: none;
+        position: relative;
+        width: min(92vw, 1280px);
+        aspect-ratio: 16 / 9;
+        background: var(--paper);
+        color: var(--ink);
+        border-radius: 18px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+        padding: 4.4rem 5rem 4rem;
+      }
+
+      .slide.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 14px;
+        background: linear-gradient(180deg, var(--cyan), var(--green));
+      }
+
+      .slide.dark {
+        background:
+          radial-gradient(circle at 88% 18%, rgba(0, 166, 200, 0.3), transparent 18rem),
+          linear-gradient(135deg, #071522 0%, #0e3148 58%, #071522 100%);
+        color: #f8fbfd;
+      }
+
+      .slide.dark::before {
+        width: 0;
+      }
+
+      .kicker {
+        color: var(--cyan);
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin: 0 0 0.9rem;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: clamp(2.6rem, 5vw, 5rem);
+        line-height: 1.02;
+        margin-bottom: 1.2rem;
+      }
+
+      h2 {
+        font-size: clamp(2.2rem, 4.2vw, 4rem);
+        line-height: 1.06;
+        margin-bottom: 1.6rem;
+      }
+
+      h3 {
+        font-size: 1.55rem;
+        margin-bottom: 0.7rem;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: clamp(1rem, 1.35vw, 1.32rem);
+        line-height: 1.45;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+
+      li + li {
+        margin-top: 0.42rem;
+      }
+
+      .subtitle {
+        color: #d9eef8;
+        font-size: clamp(1.25rem, 2vw, 1.8rem);
+        max-width: 920px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .dark .muted {
+        color: #b8c9d7;
+      }
+
+      .logo {
+        position: absolute;
+        right: 3rem;
+        bottom: 2.5rem;
+        height: 54px;
+        max-width: 260px;
+        object-fit: contain;
+      }
+
+      .logo-fallback {
+        display: none;
+        position: absolute;
+        right: 3rem;
+        bottom: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        padding: 0.7rem 0.9rem;
+        border-radius: 8px;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .footer {
+        position: absolute;
+        left: 5rem;
+        right: 5rem;
+        bottom: 1.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .dark .footer {
+        color: #b8c9d7;
+      }
+
+      .progress {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.16);
+        z-index: 20;
+      }
+
+      .progress > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--cyan), var(--green));
+        transition: width 160ms ease;
+      }
+
+      .controls {
+        position: fixed;
+        right: 1.2rem;
+        bottom: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        z-index: 30;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(8, 24, 38, 0.72);
+        color: #fff;
+        border-radius: 10px;
+        padding: 0.65rem 0.85rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: rgba(0, 166, 200, 0.85);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.2rem;
+        align-items: stretch;
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 1.15rem;
+        background: #fff;
+      }
+
+      .dark .card {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        background: rgba(0, 166, 200, 0.12);
+        color: #075985;
+        font-weight: 800;
+        margin-bottom: 0.8rem;
+      }
+
+      .dark .tag {
+        background: rgba(255, 255, 255, 0.12);
+        color: #dff7ff;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        background: var(--code);
+        color: var(--code-ink);
+        border-radius: 12px;
+        padding: 1.1rem 1.25rem;
+        font-size: clamp(0.94rem, 1.18vw, 1.12rem);
+        line-height: 1.45;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+
+      code {
+        font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+      }
+
+      .flow {
+        display: grid;
+        gap: 0.7rem;
+        max-width: 900px;
+      }
+
+      .flow-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .box {
+        border: 2px solid rgba(0, 166, 200, 0.5);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        font-weight: 800;
+        background: rgba(0, 166, 200, 0.08);
+      }
+
+      .arrow {
+        color: var(--cyan);
+        font-size: 1.7rem;
+        font-weight: 900;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th {
+        background: #0f2a3d;
+        color: #fff;
+        text-align: left;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 0.8rem;
+        vertical-align: top;
+      }
+
+      .callout {
+        border-left: 7px solid var(--green);
+        background: rgba(53, 183, 121, 0.11);
+        padding: 1rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 750;
+      }
+
+      .warning {
+        border-left-color: var(--warn);
+        background: rgba(245, 158, 11, 0.13);
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 1.4rem;
+        align-items: center;
+      }
+
+      .big-number {
+        color: var(--cyan);
+        font-size: 5.5rem;
+        line-height: 1;
+        font-weight: 900;
+      }
+
+      @media (max-width: 850px) {
+        .deck {
+          padding: 0.8rem;
+        }
+
+        .slide {
+          width: 100%;
+          min-height: calc(100vh - 1.6rem);
+          aspect-ratio: auto;
+          padding: 2.8rem 2rem 4rem;
+          overflow-y: auto;
+        }
+
+        .grid,
+        .grid.three,
+        .split,
+        .flow-row {
+          grid-template-columns: 1fr;
+        }
+
+        .arrow {
+          transform: rotate(90deg);
+          text-align: center;
+        }
+
+        .footer {
+          left: 2rem;
+          right: 2rem;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          overflow: visible;
+        }
+
+        .deck {
+          display: block;
+          padding: 0;
+        }
+
+        .slide {
+          display: flex !important;
+          width: 100vw;
+          height: 100vh;
+          border-radius: 0;
+          box-shadow: none;
+          page-break-after: always;
+        }
+
+        .controls,
+        .progress {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck" aria-live="polite">
+      <section class="slide dark active">
+        <p class="kicker">IAEW 2026 · UTN FRC · Clase 02</p>
+        <h1>Integración de Aplicaciones en Entorno Web</h1>
+        <p class="subtitle">E-commerce integrado con API REST + MongoDB</p>
+        <pre><code>Cliente -> Express API -> MongoDB
+        -> Futuro: pago, envío, notificación</code></pre>
+        <img class="logo" src="https://identidad.frc.utn.edu.ar/ui/logos/logos-utn-frc/logo-utn-frc-v-Extendida-Facultad-Blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <span class="logo-fallback">UTN FRC</span>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Objetivo</p>
+        <h2>Qué vamos a construir</h2>
+        <div class="grid">
+          <div class="card"><span class="tag">API</span><h3>Express desde cero</h3><p>Proyecto Node.js, rutas y endpoints HTTP.</p></div>
+          <div class="card"><span class="tag">Mocks</span><h3>Contrato primero</h3><p>Productos y pedidos en memoria antes de sumar persistencia.</p></div>
+          <div class="card"><span class="tag">MongoDB</span><h3>Datos reales</h3><p>Base local con Docker y modelos con Mongoose.</p></div>
+          <div class="card"><span class="tag">Negocio</span><h3>Confirmación segura</h3><p>`409 Conflict` ante confirmación duplicada.</p></div>
+        </div>
+        <div class="footer"><span>Clase 02</span><span>API REST + MongoDB</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Herramientas</p>
+        <h2>La cadena de trabajo</h2>
+        <table>
+          <thead><tr><th>Herramienta</th><th>Rol en la clase</th></tr></thead>
+          <tbody>
+            <tr><td>VS Code</td><td>Editar proyecto y revisar MongoDB.</td></tr>
+            <tr><td>Node.js + npm</td><td>Ejecutar backend, instalar dependencias y correr scripts.</td></tr>
+            <tr><td>Express + Nodemon</td><td>Crear endpoints y reiniciar la API durante desarrollo.</td></tr>
+            <tr><td>Docker + MongoDB</td><td>Levantar una base local reproducible.</td></tr>
+            <tr><td>Mongoose</td><td>Definir modelos y consultar documentos.</td></tr>
+            <tr><td>Postman / curl</td><td>Probar el contrato HTTP.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Flujo</p>
+        <h2>Editar, ejecutar, probar, persistir</h2>
+        <div class="flow">
+          <div class="flow-row">
+            <div class="box">Código en VS Code</div><div class="arrow">→</div>
+            <div class="box">npm run dev</div><div class="arrow">→</div>
+            <div class="box">Probar endpoint</div>
+          </div>
+          <div class="flow-row">
+            <div class="box">Revisar respuesta</div><div class="arrow">→</div>
+            <div class="box">Persistir en MongoDB</div><div class="arrow">→</div>
+            <div class="box">Validar datos en VS Code</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Caso</p>
+        <h2>Mini e-commerce</h2>
+        <div class="split">
+          <ul>
+            <li>Cliente consulta productos.</li>
+            <li>Cliente crea un pedido.</li>
+            <li>La API calcula el total.</li>
+            <li>El pedido queda pendiente.</li>
+            <li>La API confirma la compra.</li>
+            <li>La confirmación duplicada devuelve `409 Conflict`.</li>
+          </ul>
+          <div class="callout">Pregunta guía: ¿qué parte es CRUD y qué parte es una operación de negocio?</div>
+        </div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Estrategia</p>
+        <h2>De mock a base real</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Primero</h3>
+            <pre><code>Express + arrays en memoria</code></pre>
+            <p>Validamos rutas, métodos, cuerpos y respuestas.</p>
+          </div>
+          <div class="card">
+            <h3>Después</h3>
+            <pre><code>Express + MongoDB + Mongoose</code></pre>
+            <p>Reemplazamos memoria por persistencia real.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Paso 1</p>
+        <h2>Crear proyecto Node</h2>
+        <pre><code>mkdir iaew-2026-ecommerce-api
+cd iaew-2026-ecommerce-api
+npm init -y
+npm install express
+npm install --save-dev nodemon</code></pre>
+        <div class="callout">Scripts esperados: `dev` con `nodemon app.js` y `start` con `node app.js`.</div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Paso 2</p>
+        <h2>Express mínimo</h2>
+        <div class="split">
+          <ul>
+            <li>`express()`</li>
+            <li>`express.json()`</li>
+            <li>`GET /health`</li>
+            <li>`app.listen(3000)`</li>
+          </ul>
+          <pre><code>GET /health
+
+{
+  "status": "ok"
+}</code></pre>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Paso 3</p>
+        <h2>Productos mock</h2>
+        <div class="grid">
+          <div class="card"><h3>`GET /productos`</h3><p>Devuelve productos desde un array en memoria.</p></div>
+          <div class="card"><h3>`POST /productos`</h3><p>Agrega un producto al array y responde `201 Created`.</p></div>
+        </div>
+        <div class="footer"><span>Checkpoint</span><span>Crear producto y listarlo</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Paso 4</p>
+        <h2>Pedidos mock</h2>
+        <div class="grid">
+          <div class="card"><h3>`POST /pedidos`</h3><p>Crea un pedido `pendiente` en memoria.</p></div>
+          <div class="card"><h3>`POST /pedidos/:id/confirmar`</h3><p>Cambia estado a `confirmado` y rechaza una segunda confirmación.</p></div>
+        </div>
+        <div class="callout warning">Checkpoint: confirmar dos veces y obtener `409 Conflict`.</div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Docker</p>
+        <h2>Intro mínima</h2>
+        <div class="grid three">
+          <div class="card"><h3>Imagen</h3><p>Plantilla del servicio que queremos ejecutar.</p></div>
+          <div class="card"><h3>Contenedor</h3><p>Instancia en ejecución de esa imagen.</p></div>
+          <div class="card"><h3>Puerto</h3><p>Puente entre tu máquina y el servicio.</p></div>
+        </div>
+        <pre><code>Mac/Windows/Linux
+  localhost:27017
+        |
+        v
+  Docker container: mongo:7</code></pre>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">MongoDB</p>
+        <h2>Levantar base local con Docker</h2>
+        <pre><code>docker --version
+docker pull mongo:7
+docker run --name iaew-mongo -p 27017:27017 -d mongo:7
+docker ps</code></pre>
+        <p class="callout">Cadena de conexión: `mongodb://localhost:27017/iaew_ecommerce`</p>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Configuración</p>
+        <h2>Mongoose + dotenv</h2>
+        <pre><code>npm install mongoose dotenv</code></pre>
+        <div class="grid">
+          <div class="card"><h3>.env.example</h3><pre><code>PORT=3000
+MONGODB_URI=mongodb://localhost:27017/iaew_ecommerce</code></pre></div>
+          <div class="card"><h3>.gitignore</h3><pre><code>node_modules/
+.env</code></pre></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Conexión</p>
+        <h2>app.js -> db.js -> MongoDB</h2>
+        <div class="flow-row">
+          <div class="box">app.js</div><div class="arrow">→</div>
+          <div class="box">connectDb()</div><div class="arrow">→</div>
+          <div class="box">MongoDB</div>
+        </div>
+        <pre><code>Conexión a MongoDB establecida</code></pre>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Modelo</p>
+        <h2>Producto</h2>
+        <table>
+          <thead><tr><th>Campo</th><th>Uso</th></tr></thead>
+          <tbody>
+            <tr><td>`nombre`</td><td>Nombre visible del producto.</td></tr>
+            <tr><td>`precio`</td><td>Precio usado para calcular pedidos.</td></tr>
+            <tr><td>`categoria`</td><td>Clasificación simple.</td></tr>
+            <tr><td>`stock`</td><td>Disponibilidad para confirmar compra.</td></tr>
+            <tr><td>`activo`</td><td>Permite ocultar productos sin borrarlos.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Modelo</p>
+        <h2>Pedido</h2>
+        <div class="grid">
+          <div class="card"><h3>Datos principales</h3><p>`cliente`, `estado`, `items`, `total`, `confirmadoEn`.</p></div>
+          <div class="card"><h3>Historial</h3><p>El item guarda `nombre` y `precioUnitario` para no depender del precio futuro del producto.</p></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Persistencia</p>
+        <h2>Reemplazar productos mock</h2>
+        <div class="grid">
+          <div class="card"><h3>Antes</h3><pre><code>array productos[]</code></pre></div>
+          <div class="card"><h3>Después</h3><pre><code>Producto.find()
+Producto.create()</code></pre></div>
+        </div>
+        <div class="callout">Checkpoint: reiniciar la API y verificar que los productos siguen existiendo.</div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Persistencia</p>
+        <h2>Reemplazar pedidos mock</h2>
+        <ul>
+          <li>Buscar productos por `_id`.</li>
+          <li>No confiar en precios enviados por el cliente.</li>
+          <li>Calcular el total del lado servidor.</li>
+          <li>Crear pedido `pendiente`.</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Negocio</p>
+        <h2>Confirmar pedido</h2>
+        <ul>
+          <li>Buscar pedido.</li>
+          <li>Validar estado `pendiente`.</li>
+          <li>Validar stock.</li>
+          <li>Descontar stock.</li>
+          <li>Guardar `estado: confirmado`.</li>
+          <li>Si ya estaba confirmado: `409 Conflict`.</li>
+        </ul>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Concepto clave</p>
+        <h2>Idempotencia aplicada</h2>
+        <div class="callout">Repetir una operación no debería duplicar efectos no deseados.</div>
+        <table>
+          <thead><tr><th>Situación</th><th>Riesgo</th><th>Respuesta de la API</th></tr></thead>
+          <tbody>
+            <tr><td>Doble click</td><td>Duplicar confirmación</td><td>Validar estado</td></tr>
+            <tr><td>Reintento por timeout</td><td>Descontar stock dos veces</td><td>No repetir efecto</td></tr>
+            <tr><td>Pedido ya confirmado</td><td>Estado incompatible</td><td>`409 Conflict`</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Validación</p>
+        <h2>MongoDB for VS Code</h2>
+        <ol>
+          <li>Instalar extensión `MongoDB for VS Code`.</li>
+          <li>Agregar conexión `mongodb://localhost:27017`.</li>
+          <li>Abrir base `iaew_ecommerce`.</li>
+          <li>Revisar `productos` y `pedidos`.</li>
+        </ol>
+        <div class="callout">Evidencia: captura mostrando documentos persistidos.</div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Entrega</p>
+        <h2>Evidencia esperada</h2>
+        <div class="grid">
+          <ul>
+            <li>`docker ps` con `iaew-mongo`.</li>
+            <li>`GET /health`.</li>
+            <li>`GET /productos`.</li>
+            <li>`POST /productos`.</li>
+          </ul>
+          <ul>
+            <li>`POST /pedidos`.</li>
+            <li>`POST /pedidos/:id/confirmar`.</li>
+            <li>Error `409 Conflict`.</li>
+            <li>`respuestas.md`.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">UV / Moodle</p>
+        <h2>Entrega</h2>
+        <div class="grid">
+          <div class="card"><h3>Incluir</h3><p>Código, `package.json`, `package-lock.json`, `.env.example`, `.gitignore`, `respuestas.md` y evidencias.</p></div>
+          <div class="card"><h3>No incluir</h3><p>`node_modules/`, `.env`, credenciales, tokens o archivos temporales.</p></div>
+        </div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Cierre</p>
+        <h2>Ideas que tienen que quedar</h2>
+        <ul>
+          <li>Express define el contrato HTTP.</li>
+          <li>MongoDB persiste documentos.</li>
+          <li>Mongoose conecta código y base.</li>
+          <li>Docker hace reproducible la dependencia local.</li>
+          <li>Una API no solo hace CRUD: protege acciones de negocio.</li>
+        </ul>
+        <div class="callout">¿Qué pasaría si confirmar el pedido lo ejecuta un agente de IA?</div>
+        <img class="logo" src="https://identidad.frc.utn.edu.ar/ui/logos/logos-utn-frc/logo-utn-frc-v-Extendida-Facultad-Blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <span class="logo-fallback">UTN FRC</span>
+      </section>
+    </main>
+
+    <div class="controls" aria-label="Controles de presentación">
+      <button type="button" id="prev" title="Anterior">Anterior</button>
+      <button type="button" id="next" title="Siguiente">Siguiente</button>
+      <button type="button" id="full" title="Pantalla completa">Pantalla completa</button>
+    </div>
+    <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const progressBar = document.getElementById('progressBar');
+      const prev = document.getElementById('prev');
+      const next = document.getElementById('next');
+      const full = document.getElementById('full');
+
+      let index = Number.parseInt(new URLSearchParams(window.location.search).get('slide') || '1', 10) - 1;
+      if (!Number.isFinite(index)) index = 0;
+      index = Math.max(0, Math.min(index, slides.length - 1));
+
+      function render() {
+        slides.forEach((slide, current) => {
+          slide.classList.toggle('active', current === index);
+          const existing = slide.querySelector('.footer .count');
+          if (existing) existing.textContent = `${index + 1} / ${slides.length}`;
+        });
+        progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
+        const url = new URL(window.location);
+        url.searchParams.set('slide', String(index + 1));
+        window.history.replaceState(null, '', url);
+      }
+
+      function go(delta) {
+        index = Math.max(0, Math.min(index + delta, slides.length - 1));
+        render();
+      }
+
+      prev.addEventListener('click', () => go(-1));
+      next.addEventListener('click', () => go(1));
+      full.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.();
+        } else {
+          document.exitFullscreen?.();
+        }
+      });
+
+      window.addEventListener('keydown', (event) => {
+        if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+          event.preventDefault();
+          go(1);
+        }
+        if (['ArrowLeft', 'PageUp', 'Backspace'].includes(event.key)) {
+          event.preventDefault();
+          go(-1);
+        }
+        if (event.key === 'Home') {
+          index = 0;
+          render();
+        }
+        if (event.key === 'End') {
+          index = slides.length - 1;
+          render();
+        }
+      });
+
+      slides.forEach((slide, current) => {
+        const footer = document.createElement('div');
+        footer.className = 'footer';
+        footer.innerHTML = `<span>IAEW 2026 · Clase 02</span><span class="count">${current + 1} / ${slides.length}</span>`;
+        if (!slide.classList.contains('dark')) slide.appendChild(footer);
+      });
+
+      render();
+    </script>
+  </body>
+</html>
