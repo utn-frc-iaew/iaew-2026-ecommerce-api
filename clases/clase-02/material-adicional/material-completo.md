@@ -1,4 +1,4 @@
-# Material completo - Clase 02
+# Material adicional - Clase 02
 
 Materia: Integración de Aplicaciones en Entorno Web
 Clase efectiva: 2
@@ -51,7 +51,7 @@ Dinámica de trabajo:
 - Eliminar `node_modules/` antes de comprimir.
 - Subir el `.zip` a UV/Moodle.
 
-No corresponde usar starters publicados para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.
+No corresponde usar ramas de inicio publicadas para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.
 
 ## 4. MongoDB local con Docker
 
@@ -93,7 +93,7 @@ mongodb://localhost:27017/iaew_ecommerce
 
 En esta clase usamos `docker run`; Docker Compose se introducirá más adelante cuando una práctica necesite levantar varios servicios.
 
-## 4.1. Herramientas del workshop
+## 4.1. Herramientas de la clase
 
 La clase usa una cadena de herramientas concreta:
 

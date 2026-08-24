@@ -28,7 +28,7 @@ clases/
 
 ## Punto de partida
 
-En esta clase el proyecto se crea desde cero. No hay starter inicial.
+En esta clase el proyecto se crea desde cero. No hay rama de inicio.
 
 Desde la Clase 03, cuando haya una rama de inicio publicada, se indicará explícitamente qué rama usar para comenzar. Ejemplo:
 
@@ -38,7 +38,7 @@ git checkout clase-03-inicio
 git checkout -b trabajo-clase-03
 ```
 
-No corresponde usar ramas de clases posteriores para resolver una entrega anterior.
+No corresponde usar ramas de inicio de clases posteriores para resolver una entrega anterior.
 
 ## Entrega
 

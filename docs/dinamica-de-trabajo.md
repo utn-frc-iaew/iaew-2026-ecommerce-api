@@ -31,8 +31,8 @@ Podés continuar sobre tu propio proyecto, siempre que sea compatible con la con
 
 ## Si te atrasaste
 
-En la Clase 02, seguí el paso a paso desde cero. En clases posteriores, si la cátedra publica un starter, podés usar el starter indicado para esa clase y volver a engancharte al workshop.
+En la Clase 02, seguí el paso a paso desde cero. En clases posteriores, si la cátedra publica una rama de inicio, podés usar la rama indicada para esa clase y volver a engancharte al trabajo de clase.
 
 ## Importante
 
-No corresponde usar ramas o starters publicados para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.
+No corresponde usar ramas de inicio publicadas para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.

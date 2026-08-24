@@ -94,11 +94,11 @@ git checkout clase-03-inicio
 git checkout -b trabajo-clase-03
 ```
 
-Cada actividad debe resolverse usando el punto de partida indicado para esa clase. No corresponde utilizar ramas o starters publicados para clases posteriores como entrega de una actividad anterior. Las fechas de publicación y entrega serán consideradas durante la corrección.
+Cada actividad debe resolverse usando el punto de partida indicado para esa clase. No corresponde utilizar ramas de inicio publicadas para clases posteriores como entrega de una actividad anterior. Las fechas de publicación y entrega serán consideradas durante la corrección.
 
-## Entrega por UV / Moodle
+## Entrega por UV/Moodle
 
-Al finalizar la actividad, cada estudiante deberá comprimir su proyecto y subirlo a la UV / Moodle.
+Al finalizar la actividad, cada estudiante deberá comprimir su proyecto y subirlo a la UV/Moodle.
 
 Antes de comprimir, eliminar la carpeta:
 

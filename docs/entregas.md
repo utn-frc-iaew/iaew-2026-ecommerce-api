@@ -1,6 +1,6 @@
-# Entregas por UV / Moodle
+# Entregas por UV/Moodle
 
-Las actividades prácticas se entregan por UV / Moodle en formato comprimido.
+Las actividades prácticas se entregan por UV/Moodle en formato comprimido.
 
 ## Antes de comprimir
 

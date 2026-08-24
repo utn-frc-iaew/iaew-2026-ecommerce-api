@@ -17,7 +17,7 @@ Tema: E-commerce integrado - API REST + MongoDB
 
 Durante esta clase vas a crear desde cero una API REST con Express para una mini plataforma de e-commerce.
 
-Primero vas a construir endpoints que respondan datos mock, sin base de datos. Después vas a levantar MongoDB con Docker, configurar una cadena de conexión y usar Mongoose para persistir productos y pedidos.
+Primero vas a construir endpoints que respondan con datos mock, sin base de datos. Después vas a levantar MongoDB con Docker, configurar una cadena de conexión y usar Mongoose para persistir productos y pedidos.
 
 Al finalizar deberías poder entregar un proyecto que:
 
@@ -960,7 +960,7 @@ Respuesta:
 Respuesta:
 ```
 
-## Entrega por UV / Moodle
+## Entrega por UV/Moodle
 
 Al finalizar la actividad, comprimir el proyecto y subirlo a UV/Moodle.
 
