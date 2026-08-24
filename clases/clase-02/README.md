@@ -13,9 +13,32 @@ Tema: E-commerce integrado - API REST + MongoDB
 | Presentación | [presentacion/](presentacion/) | Diapositivas HTML navegables para usar en clase. |
 | Material adicional | [material-adicional/material-completo.md](material-adicional/material-completo.md) | Apunte ampliado con conceptos, ejemplos y glosario. |
 
+## Estructura de una clase
+
+Cada clase va a concentrar sus recursos en una única carpeta:
+
+```text
+clases/
+  clase-XX/
+    README.md
+    actividad-practica.md
+    material-adicional/
+    presentacion/
+```
+
 ## Punto de partida
 
 En esta clase el proyecto se crea desde cero. No hay starter inicial.
+
+Desde la Clase 03, cuando haya una rama de inicio publicada, se indicará explícitamente qué rama usar para comenzar. Ejemplo:
+
+```bash
+git fetch origin
+git checkout clase-03-inicio
+git checkout -b trabajo-clase-03
+```
+
+No corresponde usar ramas de clases posteriores para resolver una entrega anterior.
 
 ## Entrega
 

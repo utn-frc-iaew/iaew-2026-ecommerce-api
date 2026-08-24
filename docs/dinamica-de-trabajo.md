@@ -4,7 +4,15 @@ En cada clase vamos a trabajar con una consigna práctica y un punto de partida 
 
 En la Clase 02 el punto de partida es una carpeta vacía: el proyecto se crea desde cero durante la clase.
 
-En clases posteriores la cátedra podrá publicar starters funcionales para que quienes se atrasen puedan volver a engancharse al workshop.
+En clases posteriores la cátedra podrá publicar ramas de inicio funcionales para que quienes se atrasen puedan volver a engancharse al trabajo de clase.
+
+Ejemplo:
+
+```bash
+git fetch origin
+git checkout clase-03-inicio
+git checkout -b trabajo-clase-03
+```
 
 ## Durante la clase
 
@@ -27,4 +35,4 @@ En la Clase 02, seguí el paso a paso desde cero. En clases posteriores, si la c
 
 ## Importante
 
-No corresponde usar starters publicados para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.
+No corresponde usar ramas o starters publicados para clases posteriores como entrega de actividades anteriores. Las fechas de publicación y entrega serán consideradas durante la corrección.

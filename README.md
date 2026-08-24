@@ -24,7 +24,6 @@ iaew-2026-ecommerce-api/
   index.html
 
   clases/
-    README.md
     clase-02/
       README.md
       actividad-practica.md
@@ -32,11 +31,9 @@ iaew-2026-ecommerce-api/
         material-completo.md
       presentacion/
         index.html
-        README.md
         assets/
 
   docs/
-    README.md
     caso-ecommerce.md
     dinamica-de-trabajo.md
     entregas.md
@@ -75,9 +72,17 @@ No buscamos construir un marketplace completo. El objetivo es usar un caso reali
 
 En la Clase 02 vamos a crear el proyecto desde cero durante la clase. Este repositorio funciona como guía de trabajo y consigna.
 
-En clases posteriores la cátedra podrá publicar puntos de partida funcionales para que nadie quede bloqueado si se atrasó o si su proyecto dejó de funcionar.
+En clases posteriores la cátedra podrá publicar puntos de partida funcionales en ramas de inicio, por ejemplo `clase-03-inicio`, para que nadie quede bloqueado si se atrasó o si su proyecto dejó de funcionar.
 
-Cada actividad debe resolverse usando el punto de partida indicado para esa clase. No corresponde utilizar código base publicado para clases posteriores como entrega de una actividad anterior. Las fechas de publicación y entrega serán consideradas durante la corrección.
+Dinámica esperada desde la Clase 03:
+
+```bash
+git fetch origin
+git checkout clase-03-inicio
+git checkout -b trabajo-clase-03
+```
+
+Cada actividad debe resolverse usando el punto de partida indicado para esa clase. No corresponde utilizar ramas o starters publicados para clases posteriores como entrega de una actividad anterior. Las fechas de publicación y entrega serán consideradas durante la corrección.
 
 ## Entrega por UV / Moodle
 

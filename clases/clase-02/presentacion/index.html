@@ -363,6 +363,10 @@
         font-weight: 900;
       }
 
+      .compact-code {
+        font-size: clamp(0.78rem, 1.12vmin, 0.96rem);
+      }
+
       @media (max-width: 850px) {
         .deck {
           padding: 1rem;
@@ -439,6 +443,25 @@
           <div class="card"><span class="tag">Negocio</span><h3>Confirmación segura</h3><p>`409 Conflict` ante confirmación duplicada.</p></div>
         </div>
         <div class="footer"><span>API REST + MongoDB</span><span class="count"></span></div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Dinámica de cursada</p>
+        <h2>Cómo trabajamos cada clase</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Clase 02</h3>
+            <p>Arrancamos desde cero: carpeta vacía, API Express, mocks, MongoDB y entrega al final de la clase.</p>
+          </div>
+          <div class="card">
+            <h3>Desde la Clase 03</h3>
+            <p>La cátedra indicará una rama de inicio, por ejemplo `clase-03-inicio`, para que todos partan de una base funcional.</p>
+          </div>
+        </div>
+        <pre class="compact-code"><code>git fetch origin
+git checkout clase-03-inicio
+git checkout -b trabajo-clase-03</code></pre>
+        <div class="callout warning">Cada entrega se resuelve desde la rama indicada para esa clase. No se usan ramas de clases posteriores para completar actividades anteriores.</div>
       </section>
 
       <section class="slide">
