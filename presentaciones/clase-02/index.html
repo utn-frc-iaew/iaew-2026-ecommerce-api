@@ -426,7 +426,7 @@
         <p class="subtitle">E-commerce integrado con API REST + MongoDB</p>
         <pre><code>Cliente -> Express API -> MongoDB
         -> Futuro: pago, envío, notificación</code></pre>
-        <img class="logo" src="https://identidad.frc.utn.edu.ar/ui/logos/logos-utn-frc/logo-utn-frc-v-Extendida-Facultad-Blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <img class="logo" src="../assets/logo-utn-frc-blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
         <span class="logo-fallback">UTN FRC</span>
       </section>
 
@@ -439,7 +439,7 @@
           <div class="card"><span class="tag">MongoDB</span><h3>Datos reales</h3><p>Base local con Docker y modelos con Mongoose.</p></div>
           <div class="card"><span class="tag">Negocio</span><h3>Confirmación segura</h3><p>`409 Conflict` ante confirmación duplicada.</p></div>
         </div>
-        <div class="footer"><span>Clase 02</span><span>API REST + MongoDB</span></div>
+        <div class="footer"><span>API REST + MongoDB</span><span class="count"></span></div>
       </section>
 
       <section class="slide">
@@ -544,7 +544,7 @@ npm install --save-dev nodemon</code></pre>
           <div class="card"><h3>`GET /productos`</h3><p>Devuelve productos desde un array en memoria.</p></div>
           <div class="card"><h3>`POST /productos`</h3><p>Agrega un producto al array y responde `201 Created`.</p></div>
         </div>
-        <div class="footer"><span>Checkpoint</span><span>Crear producto y listarlo</span></div>
+        <div class="footer"><span>Checkpoint: crear producto y listarlo</span><span class="count"></span></div>
       </section>
 
       <section class="slide">
@@ -729,7 +729,7 @@ Producto.create()</code></pre></div>
           <li>Una API no solo hace CRUD: protege acciones de negocio.</li>
         </ul>
         <div class="callout">¿Qué pasaría si confirmar el pedido lo ejecuta un agente de IA?</div>
-        <img class="logo" src="https://identidad.frc.utn.edu.ar/ui/logos/logos-utn-frc/logo-utn-frc-v-Extendida-Facultad-Blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <img class="logo" src="../assets/logo-utn-frc-blanco.png" alt="UTN Facultad Regional Córdoba" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
         <span class="logo-fallback">UTN FRC</span>
       </section>
     </main>
@@ -799,10 +799,16 @@ Producto.create()</code></pre></div>
       });
 
       slides.forEach((slide, current) => {
-        const footer = document.createElement('div');
-        footer.className = 'footer';
-        footer.innerHTML = `<span>IAEW 2026 · Clase 02</span><span class="count">${current + 1} / ${slides.length}</span>`;
-        if (!slide.classList.contains('dark')) slide.appendChild(footer);
+        let footer = slide.querySelector('.footer');
+        if (!footer && !slide.classList.contains('dark')) {
+          footer = document.createElement('div');
+          footer.className = 'footer';
+          footer.innerHTML = '<span>IAEW 2026 · Clase 02</span><span class="count"></span>';
+          slide.appendChild(footer);
+        }
+
+        const count = footer?.querySelector('.count');
+        if (count) count.textContent = `${current + 1} / ${slides.length}`;
       });
 
       render();

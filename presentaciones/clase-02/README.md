@@ -25,7 +25,13 @@ Opciones habituales:
 - Publicar desde la rama `main` y carpeta raíz.
 - Publicar desde la rama `main` y carpeta `/docs` si se mueve allí el contenido público.
 
-Con la estructura actual, si GitHub Pages publica la rama `main` desde raíz, la URL esperada será:
+Con la estructura actual, si GitHub Pages publica la rama `main` desde raíz, la URL general esperada será:
+
+```text
+https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/
+```
+
+La URL directa de la presentación será:
 
 ```text
 https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/presentaciones/clase-02/
