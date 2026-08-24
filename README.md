@@ -6,15 +6,27 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 
 ## Accesos rápidos
 
-Clase 02 - E-commerce integrado - API REST + MongoDB:
-
 | Recurso | Link |
 |---|---|
-| Presentación HTML | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/clases/clase-02/presentacion/ |
-| Índice de clase | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/tree/main/clases/clase-02 |
-| Actividad práctica | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/actividad-practica.md |
-| Material adicional | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/blob/main/clases/clase-02/material-adicional/material-completo.md |
 | Sitio público | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/ |
+| Repositorio | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api |
+
+## Índice de clases
+
+| Clase | Tema | Estado |
+|---|---|---|
+| Clase 00 | Mapa de cursada y TPI | Pendiente |
+| Clase 01 | Integraciones web, cloud y ecosistemas | Pendiente |
+| Clase 02 | E-commerce integrado - API REST + MongoDB | [Disponible](clases/clase-02/) |
+| Clase 03 | Seguridad aplicada a acciones de negocio | Pendiente |
+| Clase 04 | Cuando REST request-response no alcanza | Pendiente |
+| Clase 05 | Resiliencia de integraciones | Pendiente |
+| Clase 06 | Observabilidad de integraciones | Pendiente |
+| Clase 07 | Autodocumentación e IA para documentar | Pendiente |
+| Clase 08 | IA aplicada a integraciones y MCP | Pendiente |
+| Clase 09 | Testing de integración y contratos | Pendiente |
+| Clase 10 | Cloud e IaC con AWS Academy | Pendiente |
+| Clase 11 | Clínica TPI y demo final | Pendiente |
 
 ## Cómo está organizado
 
