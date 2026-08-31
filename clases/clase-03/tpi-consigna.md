@@ -29,81 +29,54 @@ Cada equipo puede elegir uno de estos dominios o proponer otro equivalente:
 
 Cada equipo debe registrar el dominio elegido con la cátedra para evitar que todos trabajen sobre el mismo caso.
 
-## Alcance mínimo
+## Alcance mínimo obligatorio
 
 El proyecto final debe incluir:
 
-- API REST con Node.js y Express o tecnología equivalente aprobada por la cátedra.
-- Persistencia en MongoDB u otra base aprobada.
-- Al menos 3 entidades de negocio.
-- Al menos 8 endpoints relevantes.
-- Seguridad con OAuth 2.0/JWT usando Auth0 o proveedor equivalente.
-- Scopes aplicados a operaciones protegidas.
-- Ejemplo mínimo de `api_key` para una integración interna simple.
-- Separación entre acciones públicas, privadas y administrativas.
-- Al menos una integración asincrónica o simulación documentada de integración.
-- Documentación de API mediante OpenAPI, colección HTTP o equivalente.
-- Evidencias de pruebas de integración.
-- Variables de entorno y `.env.example`.
-- README técnico para ejecutar el proyecto.
+- API REST sobre HTTP con contrato OpenAPI 3.1: paths, schemas, responses y ejemplos.
+- Seguridad con OAuth 2.0 + JWT: emisión/verificación, expiración y scopes o roles básicos.
+- Asincronía productor -> broker -> consumidor con RabbitMQ, Kafka, SQS, EventBridge o equivalente aprobado, y caso visible en la demo.
+- Una integración adicional: Webhook con callback firmado o secreto, gRPC con proto/stub o WebSocket con stream/suscripción.
+- Datos SQL o NoSQL con migraciones/seed, validación de entrada y manejo de errores.
+- Docker por servicio y Docker Compose funcional para levantar todo local.
+- Observabilidad con logs JSON y dashboard con latencia p95, throughput y error rate.
+- Pruebas con Postman collection y una prueba de carga con JMeter o Postman, con reporte.
+- README completo y reproducible.
+- Defensa presencial con demo.
 
-## Entrega 1 - Diseño y esqueleto
+## Entrega 1 - Diseño y esqueleto integrador
 
-Fecha: lunes 28 de septiembre de 2026.
+**Fecha:** lunes 28/09/2026.
 
-Contenido esperado:
+### Qué entregar
 
-- Nombre del equipo e integrantes.
-- Dominio elegido y problema que resuelve.
-- Diagrama simple de contexto o componentes.
-- Lista de entidades principales.
-- Tabla de endpoints prevista.
-- Matriz inicial de permisos por rol o scope.
-- Scopes OAuth 2.0 previstos para el dominio.
-- Estrategia de uso de Auth0 o proveedor equivalente.
-- Esqueleto ejecutable con `GET /health`.
-- `.env.example`.
-- README con instrucciones de ejecución.
-- Al menos 2 decisiones técnicas justificadas en formato ADR breve.
-
-Resultado mínimo:
-
-```text
-npm install
-npm run dev
-GET /health -> 200 OK
-```
+1. **Diagramas C4:** Context, Container y Component.
+2. **ADRs:** decisiones clave sobre REST/gRPC, tipo de base de datos, seguridad y estilo de API.
+3. **Contrato de API:** OpenAPI 3.1 en YAML/JSON con al menos un ejemplo de request/response.
+4. **Modelo de datos:** SQL o NoSQL, más estrategia de migraciones o seed.
+5. **Esqueleto de ejecución:** `docker-compose.yml` inicial con servicios `hello` o placeholder para API, DB y broker, más README con pasos mínimos de ejecución local.
+6. **Evidencia de entrega:** tag de release `v1.0.0`, última commit hash en el README, archivo `.zip` descargado del repositorio y subido a la UV/Moodle.
 
 ## Entrega 2 - Implementación final y defensa
 
-Fecha: lunes 16 de noviembre de 2026.
+**Fecha:** lunes 16/11/2026.
 
-Contenido esperado:
+### Qué entregar
 
-- API funcionando.
-- Persistencia funcionando.
-- Seguridad aplicada a acciones de negocio con OAuth 2.0/JWT.
-- Validación JWT contra Auth0 o proveedor equivalente.
-- Autorización por scopes en endpoints protegidos.
-- Flujo OAuth 2.0 `client_credentials` probado desde Postman, Newman, cURL o cliente equivalente.
-- Ejemplo mínimo de `api_key` funcionando y documentado.
-- Integración asincrónica, Webhook, WebSocket, cola, worker o simulación sólida.
-- Documentación de endpoints.
-- Evidencias de pruebas.
-- Evidencias de observabilidad mínima: logs estructurados, correlation ID o métricas básicas.
-- README final.
-- Tag o release de entrega y hash de commit documentado en el README.
-- Defensa oral breve con demo.
+1. **Código y API REST operativa:** todos los componentes del sistema, CRUD de 2 entidades y 1 transacción multi-paso funcionando.
+2. **Seguridad:** OAuth 2.0 + JWT con expiración/validación y scopes o roles básicos aplicados a endpoints protegidos.
+3. **Asincronía:** flujo productor -> broker -> consumidor con RabbitMQ, Kafka, SQS, EventBridge o equivalente aprobado, con un efecto visible como notificación, conciliación o proceso diferido.
+4. **Integración adicional:** elegir 1 entre Webhook con firma/secreto compartido, gRPC con proto/stub sobre HTTP/2 o WebSocket con stream/suscripción.
+5. **Ejecución local y datos:** Docker por servicio, Docker Compose funcional para levantar API, DB, broker y visualizadores si corresponde; DB SQL o NoSQL con migraciones/seed reproducibles.
+6. **Observabilidad y pruebas:** logs estructurados JSON, dashboard con latencia p95, throughput y error rate; Postman collection con variables/ambientes y una prueba de carga con JMeter o Postman, con reporte.
+7. **README, release y entrega:** README obligatorio en la raíz del repo, tag de release `v1.0.0`, última commit hash en el README, archivo `.zip` descargado del repositorio y subido a la UV/Moodle. La demo/defensa presencial dura 15 minutos por equipo: 10 minutos de demo y 5 minutos de preguntas.
 
 ## Criterios de evaluación
 
-| Criterio | Qué se observará |
-|---|---|
-| Diseño de API | Claridad de recursos, verbos HTTP, códigos de estado y contratos. |
-| Integración | Capacidad de conectar componentes o simular integraciones con sentido técnico. |
-| Seguridad | Protección de acciones sensibles, Auth0/OAuth 2.0, JWT, scopes, secretos y manejo de errores. |
-| Persistencia | Modelo de datos razonable y operaciones consistentes. |
-| Documentación | README, endpoints, variables y decisiones entendibles por otro equipo. |
-| Testing/evidencia | Pruebas reproducibles y casos exitosos/fallidos. |
-| Observabilidad | Capacidad de entender qué pasó cuando algo falla. |
-| Defensa | Explicación clara, demo funcional y justificación de decisiones. |
+| Criterio | Puntaje | Qué se observará |
+|---|---:|---|
+| Funcionalidad end-to-end | 2.5 | CRUD de dos entidades, flujo multi-paso, flujo asincrónico e integración funcionando. |
+| Diseño y arquitectura | 2.5 | C4 Context/Container/Component, despliegue consistente con el código y ADRs claras para broker, DB, seguridad y estilo de API. |
+| API y seguridad | 1.5 | Contrato, recursos, códigos HTTP, Auth0/OAuth 2.0, JWT, scopes y protección de acciones sensibles. |
+| Observabilidad y pruebas | 1.5 | Dashboard con latencia p95, throughput y error rate; logs correlacionables; Postman collection ejecutable y prueba de carga con resultados adjuntos. |
+| README y reproducibilidad | 2.0 | README exhaustivo, Docker Compose de punta a punta, tag de release y commit hash incluidos. |

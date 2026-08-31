@@ -401,37 +401,37 @@
           <article class="card compact">
             <span class="tag">API</span>
             <ul>
-              <li>API REST sobre HTTP.</li>
-              <li>Recursos, métodos y códigos de estado correctos.</li>
-              <li>Contrato documentado: OpenAPI 3.1, colección HTTP o equivalente.</li>
-              <li>Al menos 8 endpoints relevantes.</li>
+              <li>API REST sobre HTTP con contrato OpenAPI 3.1.</li>
+              <li>Paths, schemas, responses y ejemplos.</li>
+              <li>CRUD de dos entidades.</li>
+              <li>Una transacción multi-paso.</li>
             </ul>
           </article>
           <article class="card compact">
-            <span class="tag">Dominio</span>
+            <span class="tag">Seguridad y datos</span>
             <ul>
-              <li>Persistencia en MongoDB, SQL u otra base aprobada.</li>
-              <li>Al menos 3 entidades de negocio.</li>
-              <li>CRUD de al menos 2 entidades.</li>
-              <li>Una transacción o flujo multi-paso de negocio.</li>
+              <li>OAuth 2.0 + JWT.</li>
+              <li>Expiración, validación y scopes o roles básicos.</li>
+              <li>Datos SQL o NoSQL.</li>
+              <li>Migraciones/seed, validación de entrada y manejo de errores.</li>
             </ul>
           </article>
           <article class="card compact">
             <span class="tag">Integración</span>
             <ul>
-              <li>Flujo asincrónico o diferido con efecto visible.</li>
-              <li>Integración adicional: Webhook, gRPC, WebSocket o equivalente aprobado.</li>
-              <li>Variables de entorno y <code>.env.example</code>.</li>
-              <li>Ejecución local reproducible.</li>
+              <li>Productor -> broker -> consumidor.</li>
+              <li>RabbitMQ, Kafka, SQS, EventBridge o equivalente aprobado.</li>
+              <li>Una integración: Webhook, gRPC o WebSocket.</li>
+              <li>Caso visible en la demo.</li>
             </ul>
           </article>
           <article class="card compact">
-            <span class="tag">Evidencia</span>
+            <span class="tag">Operación</span>
             <ul>
-              <li>Seguridad con OAuth 2.0/JWT y scopes.</li>
-              <li>Ejemplo mínimo de <code>api_key</code>.</li>
-              <li>Evidencias de pruebas y observabilidad.</li>
-              <li>README completo y defensa presencial con demo.</li>
+              <li>Docker por servicio y Docker Compose funcional.</li>
+              <li>Logs JSON y dashboard con p95, throughput y error rate.</li>
+              <li>Postman collection y prueba de carga con reporte.</li>
+              <li>README reproducible y demo presencial.</li>
             </ul>
           </article>
         </div>
@@ -449,50 +449,25 @@
             <span class="tag">Lunes 28/09/2026</span>
             <h3>Entrega 1 - Diseño y esqueleto</h3>
             <ul>
-              <li>Nombre del equipo e integrantes.</li>
-              <li>Dominio elegido y problema que resuelve.</li>
-              <li>Alcance funcional inicial.</li>
-              <li>Al menos 3 entidades principales.</li>
-              <li>Una operación de negocio que no sea solamente CRUD.</li>
-              <li>Tabla inicial de endpoints previstos.</li>
-              <li>Matriz inicial de permisos por rol o scope.</li>
-              <li>Scopes OAuth 2.0 previstos para el dominio.</li>
-              <li>Estrategia de uso de Auth0 o proveedor equivalente.</li>
-              <li>Caso mínimo donde se usará <code>api_key</code>.</li>
-              <li>Diagramas C4 iniciales: Context y Container.</li>
-              <li>Modelo de datos inicial: SQL o NoSQL.</li>
-              <li>ADRs breves sobre API, base de datos, seguridad e integración.</li>
-              <li>Contrato inicial de API: OpenAPI 3.1, colección HTTP o tabla de endpoints con ejemplos.</li>
-              <li>Esqueleto ejecutable con <code>GET /health</code>.</li>
-              <li><code>.env.example</code> sin secretos reales.</li>
-              <li>README inicial con pasos de ejecución local.</li>
-              <li>Estrategia de ejecución reproducible y <code>docker-compose.yml</code> si ya necesitan varios servicios.</li>
+              <li><strong>Diagramas C4:</strong> Context, Container y Component.</li>
+              <li><strong>ADRs:</strong> decisiones clave sobre REST/gRPC, tipo de base de datos, seguridad y estilo de API.</li>
+              <li><strong>Contrato de API:</strong> OpenAPI 3.1 en YAML/JSON con al menos un ejemplo de request/response.</li>
+              <li><strong>Modelo de datos:</strong> SQL o NoSQL, más estrategia de migraciones o seed.</li>
+              <li><strong>Esqueleto de ejecución:</strong> <code>docker-compose.yml</code> inicial con servicios <code>hello</code> o placeholder para API, DB y broker, más README con pasos mínimos de ejecución local.</li>
+              <li><strong>Evidencia de entrega:</strong> tag de release <code>v1.0.0</code>, última commit hash en el README, archivo <code>.zip</code> descargado del repositorio y subido a la UV/Moodle.</li>
             </ul>
           </article>
           <article class="card">
             <span class="tag">Lunes 16/11/2026</span>
             <h3>Entrega 2 - Implementación y defensa</h3>
             <ul>
-              <li>Código de todos los componentes.</li>
-              <li>API REST operativa.</li>
-              <li>CRUD de al menos 2 entidades.</li>
-              <li>Al menos 1 transacción o flujo multi-paso de negocio.</li>
-              <li>Validación JWT contra Auth0 o proveedor equivalente.</li>
-              <li>Autorización por scopes en endpoints protegidos.</li>
-              <li>Flujo OAuth 2.0 <code>client_credentials</code> probado desde Postman, Newman, cURL o cliente equivalente.</li>
-              <li>Ejemplo mínimo de <code>api_key</code> funcionando y documentado.</li>
-              <li>Separación entre acciones públicas, protegidas y administrativas.</li>
-              <li>Flujo asincrónico productor -> broker -> consumidor, o equivalente aprobado, con efecto visible en la demo.</li>
-              <li>Integración adicional: Webhook, gRPC, WebSocket o equivalente aprobado.</li>
-              <li>Persistencia con datos reproducibles: seed, migraciones o script de carga.</li>
-              <li>Validación de entrada y manejo consistente de errores.</li>
-              <li>Contenedores por servicio cuando corresponda.</li>
-              <li><code>docker-compose.yml</code> funcional si se usan varios servicios.</li>
-              <li>Observabilidad mínima: logs JSON, correlation ID y al menos una métrica o vista de negocio.</li>
-              <li>Pruebas de integración mediante Postman/Newman, colección HTTP equivalente o suite automatizada.</li>
-              <li>README final completo y reproducible.</li>
-              <li>Tag o release de entrega y hash de commit documentado.</li>
-              <li>Demo y defensa técnica.</li>
+              <li><strong>Código y API REST operativa:</strong> todos los componentes, CRUD de 2 entidades y 1 transacción multi-paso funcionando.</li>
+              <li><strong>Seguridad:</strong> OAuth 2.0 + JWT con expiración/validación y scopes o roles básicos aplicados a endpoints protegidos.</li>
+              <li><strong>Asincronía:</strong> flujo productor -> broker -> consumidor con RabbitMQ, Kafka, SQS, EventBridge o equivalente aprobado, y un efecto visible.</li>
+              <li><strong>Integración adicional:</strong> elegir 1 entre Webhook con firma/secreto compartido, gRPC con proto/stub o WebSocket con stream/suscripción.</li>
+              <li><strong>Ejecución local y datos:</strong> Docker por servicio, Docker Compose funcional para levantar API, DB, broker y visualizadores si corresponde; DB SQL o NoSQL con migraciones/seed reproducibles.</li>
+              <li><strong>Observabilidad y pruebas:</strong> logs JSON, dashboard con latencia p95, throughput y error rate; Postman collection con variables/ambientes y una prueba de carga con JMeter o Postman, con reporte.</li>
+              <li><strong>README, release y entrega:</strong> README obligatorio en la raíz del repo, tag <code>v1.0.0</code>, última commit hash, archivo <code>.zip</code> subido a UV/Moodle y demo/defensa presencial de 15 minutos por equipo.</li>
             </ul>
           </article>
         </div>
@@ -547,11 +522,10 @@
         <table>
           <tr><th>Criterio</th><th>Puntaje</th><th>Qué se observará</th></tr>
           <tr><td>Funcionalidad end-to-end</td><td>2.5</td><td>CRUD, flujo multi-paso, asincronía e integración funcionando.</td></tr>
-          <tr><td>Diseño y arquitectura</td><td>2.0</td><td>Diagramas, componentes, modelo de datos, ADRs y coherencia con el código.</td></tr>
+          <tr><td>Diseño y arquitectura</td><td>2.5</td><td>C4 Context/Container/Component, despliegue consistente con el código y ADRs claras para broker, DB, seguridad y estilo de API.</td></tr>
           <tr><td>API y seguridad</td><td>1.5</td><td>Contrato, códigos HTTP, Auth0/OAuth 2.0, JWT, scopes y protección de acciones sensibles.</td></tr>
-          <tr><td>Observabilidad y pruebas</td><td>1.5</td><td>Logs, métricas o evidencias de diagnóstico, pruebas exitosas y fallidas.</td></tr>
-          <tr><td>README y reproducibilidad</td><td>1.5</td><td>Pasos claros, `.env.example`, seed, comandos, Compose si corresponde, tag y commit.</td></tr>
-          <tr><td>Defensa técnica</td><td>1.0</td><td>Demo funcional, explicación clara y justificación de decisiones.</td></tr>
+          <tr><td>Observabilidad y pruebas</td><td>1.5</td><td>Dashboard con latencia p95, throughput y error rate; logs correlacionables; Postman collection ejecutable y prueba de carga con resultados adjuntos.</td></tr>
+          <tr><td>README y reproducibilidad</td><td>2.0</td><td>README exhaustivo, Docker Compose de punta a punta, tag de release y commit hash incluidos.</td></tr>
         </table>
         <p class="muted" style="margin-top: 1rem"><strong>Aprobación:</strong> 6/10 o más, con demo defendible y ejecución reproducible.</p>
       </section>
