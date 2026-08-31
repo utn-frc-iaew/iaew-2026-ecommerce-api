@@ -1,5 +1,30 @@
 # iaew-2026-ecommerce-api
 
+> Rama `clase-03-inicio`: punto de partida para la Clase 03, construido con la actividad resuelta de la Clase 02.
+
+## Arranque rápido de la API
+
+```bash
+npm install
+cp .env.example .env
+docker start iaew-mongo
+npm run dev
+```
+
+Si el contenedor de MongoDB no existe todavía:
+
+```bash
+docker run --name iaew-mongo -p 27017:27017 -d mongo:7
+```
+
+Endpoints base:
+
+- `GET /health`
+- `GET /productos`
+- `POST /productos`
+- `POST /pedidos`
+- `POST /pedidos/:id/confirmar`
+
 Repositorio guía para las actividades prácticas de **Integración de Aplicaciones en Entorno Web - IAEW 2026**.
 
 El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una capacidad nueva al sistema: API REST, persistencia, seguridad, integraciones, eventos, observabilidad, documentación, testing y despliegue.
