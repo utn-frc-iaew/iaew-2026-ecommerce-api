@@ -11,6 +11,7 @@ El trabajo no se evalúa solo por tener endpoints funcionando. Se evalúa que el
 - Trabajo grupal.
 - Equipos sugeridos: 3 a 5 integrantes.
 - Un repositorio por equipo.
+- Cada equipo debe elegir un dominio y registrarlo con la cátedra para evitar que todos trabajen sobre el mismo caso.
 - Dos entregas principales.
 - Defensa técnica presencial al final de la cursada.
 - Documentación obligatoria en el `README.md` del repositorio, complementada por una carpeta `docs/` para diagramas, ADRs, OpenAPI, capturas o reportes.

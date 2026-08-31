@@ -27,7 +27,7 @@ Cada equipo puede elegir uno de estos dominios o proponer otro equivalente:
 | Biblioteca o préstamos | Registrar usuario, prestar, devolver, reservar. | Catálogo, alertas, penalidades, reportes. |
 | Eventos y entradas | Publicar evento, comprar entrada, validar ingreso. | Pago, QR, control de acceso, reportes. |
 
-Recomendación de la cátedra: **Pedidos en restaurante con cocina**. Es un caso rico para CRUD, estados, eventos, WebSockets, Webhooks, observabilidad y seguridad aplicada a integraciones.
+Cada equipo debe registrar el dominio elegido con la cátedra para evitar que todos trabajen sobre el mismo caso.
 
 ## Alcance mínimo
 
