@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clase 03 - Seguridad aplicada a acciones de negocio</title>
+    <style>
+      :root {
+        --bg: #09131f;
+        --panel: #f7fafc;
+        --ink: #10202f;
+        --muted: #61707f;
+        --blue: #005baa;
+        --cyan: #00a6c8;
+        --green: #35b779;
+        --line: #d8e2ea;
+        --code: #111827;
+        --warn: #d97706;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: linear-gradient(135deg, #07111d 0%, #123047 52%, #07111d 100%);
+        color: var(--panel);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        overflow: hidden;
+      }
+
+      .deck {
+        height: 100%;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        padding: 2.2rem;
+        overflow: hidden;
+      }
+
+      .slide {
+        display: none;
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        padding: 4.4rem 5rem 4rem;
+        overflow: hidden;
+        border-radius: 18px;
+        background: var(--panel);
+        color: var(--ink);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+        transform: scale(var(--slide-scale, 1));
+      }
+
+      .slide.active {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 14px;
+        background: linear-gradient(180deg, var(--cyan), var(--green));
+      }
+
+      .dark {
+        background: linear-gradient(135deg, #07111d 0%, #0f3149 58%, #07111d 100%);
+        color: #f8fbfd;
+      }
+
+      .dark::before {
+        width: 0;
+      }
+
+      .kicker {
+        margin: 0 0 0.9rem;
+        color: var(--cyan);
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 1.2rem;
+        font-size: clamp(2.4rem, 5.6vmin, 5rem);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 1.6rem;
+        font-size: clamp(2rem, 4.7vmin, 4rem);
+        line-height: 1.06;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin-bottom: 0.7rem;
+        font-size: clamp(1.15rem, 1.8vmin, 1.55rem);
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: clamp(0.92rem, 1.6vmin, 1.26rem);
+        line-height: 1.45;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.25rem;
+      }
+
+      li + li {
+        margin-top: 0.38rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      th,
+      td {
+        padding: 0.72rem 0.85rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #eaf3f9;
+        color: #0d2d44;
+        font-weight: 800;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      code,
+      pre {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      pre {
+        margin: 0;
+        padding: 1.15rem;
+        border-radius: 8px;
+        background: var(--code);
+        color: #e5f8ff;
+        font-size: 1.05rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
+      .subtitle {
+        color: #d9eef8;
+        font-size: clamp(1.18rem, 2.25vmin, 1.8rem);
+        max-width: 920px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .dark .muted {
+        color: #bdd0df;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        min-height: 150px;
+        padding: 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .dark .card {
+        border-color: rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .tag {
+        display: inline-block;
+        margin-bottom: 0.55rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(0, 91, 170, 0.12);
+        color: var(--blue);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .dark .tag {
+        background: rgba(0, 166, 200, 0.18);
+        color: #8be6f7;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        gap: 0.8rem;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      .node {
+        padding: 1.2rem;
+        border-radius: 8px;
+        background: #eaf3f9;
+        text-align: center;
+        font-weight: 800;
+      }
+
+      .arrow {
+        color: var(--cyan);
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .footer {
+        position: absolute;
+        left: 5rem;
+        right: 5rem;
+        bottom: 1.65rem;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .dark .footer {
+        color: #bdd0df;
+      }
+
+      .logo {
+        position: absolute;
+        right: 3rem;
+        bottom: 2.4rem;
+        max-width: 260px;
+        height: 54px;
+        object-fit: contain;
+      }
+
+      .controls {
+        position: fixed;
+        right: 1.2rem;
+        bottom: 1rem;
+        z-index: 20;
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      button {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 8px;
+        padding: 0.65rem 0.8rem;
+        background: rgba(8, 24, 38, 0.75);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .progress {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .progress > div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--cyan), var(--green));
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide dark active">
+        <p class="kicker">IAEW 2026 · Clase 03</p>
+        <h1>Seguridad aplicada a acciones de negocio</h1>
+        <p class="subtitle">OAuth 2.0, JWT, scopes y Auth0 aplicados a una API que decide quién puede ejecutar cada acción.</p>
+        <img class="logo" src="assets/logo-utn-frc-blanco.png" alt="UTN Facultad Regional Córdoba" />
+        <div class="footer"><span>Integración de Aplicaciones en Entorno Web</span><span>31/08/2026</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Punto de partida</p>
+        <h2>La Clase 02 dejó una API útil, pero confiada</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Ya funciona</span>
+            <ul>
+              <li><code>GET /productos</code></li>
+              <li><code>POST /productos</code></li>
+              <li><code>POST /pedidos</code></li>
+              <li><code>POST /pedidos/:id/confirmar</code></li>
+            </ul>
+          </div>
+          <div class="card">
+            <span class="tag">Pregunta nueva</span>
+            <p>¿Todas esas acciones deberían poder ejecutarse sin saber quién llama a la API?</p>
+          </div>
+        </div>
+        <div class="footer"><span>Una API no solo guarda datos.</span><span>02 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Objetivo visible</p>
+        <h2>Al final de la clase</h2>
+        <table>
+          <tr><th>Endpoint</th><th>Protección</th></tr>
+          <tr><td><code>GET /health</code></td><td>Público</td></tr>
+          <tr><td><code>GET /productos</code></td><td>Público</td></tr>
+          <tr><td><code>GET /pedidos</code></td><td>Bearer token con scope <code>read:pedidos</code></td></tr>
+          <tr><td><code>POST /pedidos</code></td><td>Bearer token con scope <code>write:pedidos</code></td></tr>
+          <tr><td><code>POST /pedidos/:id/confirmar</code></td><td>Bearer token con scope <code>confirm:pedidos</code></td></tr>
+          <tr><td><code>POST /productos</code></td><td><code>x-api-key</code> interna o scope <code>admin:productos</code></td></tr>
+        </table>
+        <div class="footer"><span>Seguridad como contrato de integración.</span><span>03 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Agenda</p>
+        <h2>120 minutos</h2>
+        <table>
+          <tr><th>Minutos</th><th>Trabajo</th></tr>
+          <tr><td>0-10</td><td>Recuperación del taller anterior.</td></tr>
+          <tr><td>10-25</td><td>Autenticación, autorización, OAuth 2.0, JWT y scopes.</td></tr>
+          <tr><td>25-45</td><td>Auth0: API, cliente Machine to Machine y permisos.</td></tr>
+          <tr><td>45-85</td><td>Validación JWT, scopes y ejemplo mínimo de API key.</td></tr>
+          <tr><td>85-105</td><td>Pruebas con Postman/cURL y evidencias.</td></tr>
+          <tr><td>105-120</td><td>Presentación TPI y cierre técnico.</td></tr>
+        </table>
+        <div class="footer"><span>Concepto, configuración, código, evidencia.</span><span>04 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Concepto base</p>
+        <h2>Autenticación no es autorización</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Autenticación</span>
+            <h3>¿Quién sos?</h3>
+            <p>Validar una credencial: token, sesión, certificado, API key o identidad federada.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Autorización</span>
+            <h3>¿Qué podés hacer?</h3>
+            <p>Decidir si esa identidad puede ejecutar una acción concreta sobre un recurso.</p>
+          </div>
+        </div>
+        <div class="footer"><span>Primero identidad, después permiso.</span><span>05 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Auth0</p>
+        <h2>Un Authorization Server como servicio</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Qué aporta</span>
+            <ul>
+              <li>Emisión de tokens OAuth 2.0.</li>
+              <li>Firma de JWT con claves administradas.</li>
+              <li>Definición de APIs, audience y scopes.</li>
+              <li>Clientes Machine to Machine.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <span class="tag">Qué no delegamos</span>
+            <ul>
+              <li>Diseñar permisos del dominio.</li>
+              <li>Validar scopes en cada endpoint.</li>
+              <li>Proteger secretos y configuración.</li>
+              <li>Responder bien ante errores.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer"><span>Auth0 resuelve identidad y emisión; la API sigue decidiendo.</span><span>06 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Opciones</p>
+        <h2>Herramientas que cumplen el mismo rol</h2>
+        <table>
+          <tr><th>Herramienta</th><th>Tipo</th><th>Uso típico</th></tr>
+          <tr><td>Auth0</td><td>SaaS</td><td>Configurar APIs, aplicaciones, scopes y flujos OAuth rápidamente.</td></tr>
+          <tr><td>Okta</td><td>SaaS</td><td>Gestión corporativa de identidades, aplicaciones y políticas.</td></tr>
+          <tr><td>AWS Cognito</td><td>Cloud managed</td><td>Identidad integrada con aplicaciones y servicios AWS.</td></tr>
+          <tr><td>Azure AD / Entra ID</td><td>Cloud enterprise</td><td>Identidad organizacional y permisos para ecosistemas Microsoft.</td></tr>
+          <tr><td>Keycloak</td><td>Self-hosted</td><td>Servidor de autorización propio, configurable y open source.</td></tr>
+        </table>
+        <div class="footer"><span>Cambia la herramienta; el concepto de Authorization Server se mantiene.</span><span>07 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">OAuth 2.0</p>
+        <h2>Quién cumple cada rol</h2>
+        <table>
+          <tr><th>Rol</th><th>En nuestra práctica</th><th>Responsabilidad</th></tr>
+          <tr><td>Client</td><td>Aplicación Machine to Machine</td><td>Pide un access token para consumir la API.</td></tr>
+          <tr><td>Authorization Server</td><td>Auth0</td><td>Emite tokens firmados y limita permisos mediante scopes.</td></tr>
+          <tr><td>Resource Server</td><td>API de pedidos</td><td>Valida JWT y decide si la acción está permitida.</td></tr>
+          <tr><td>Resource Owner</td><td>No participa en este flujo</td><td>En `client_credentials` no hay usuario final interactuando.</td></tr>
+        </table>
+        <div class="footer"><span>OAuth 2.0 es autorización delegada.</span><span>08 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Client credentials</p>
+        <h2>Flujo para servicios backend</h2>
+        <div class="flow">
+          <div class="node">Cliente M2M</div>
+          <div class="arrow">→</div>
+          <div class="node">Auth0</div>
+          <div class="arrow">→</div>
+          <div class="node">API</div>
+        </div>
+        <pre style="margin-top: 1.4rem"><code>POST /oauth/token
+grant_type=client_credentials
+client_id=...
+client_secret=...
+audience=https://iaew-pedidos-api</code></pre>
+        <p class="muted" style="margin-top: 1rem">El resultado es un access token que viaja como <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+        <div class="footer"><span>Ideal para integraciones servicio a servicio.</span><span>09 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Auth0</p>
+        <h2>Configurar API, scopes y cliente</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">API</span>
+            <ul>
+              <li>Nombre: <code>IAEW Pedidos API</code></li>
+              <li>Audience: <code>https://iaew-pedidos-api</code></li>
+              <li>Algoritmo: <code>RS256</code></li>
+            </ul>
+          </div>
+          <div class="card">
+            <span class="tag">Scopes</span>
+            <ul>
+              <li><code>read:pedidos</code></li>
+              <li><code>write:pedidos</code></li>
+              <li><code>confirm:pedidos</code></li>
+              <li><code>admin:productos</code></li>
+            </ul>
+          </div>
+        </div>
+        <p class="muted" style="margin-top: 1rem">El cliente Machine to Machine solo recibe los scopes que la API le autoriza.</p>
+        <div class="footer"><span>El permiso nace en el Authorization Server.</span><span>10 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">JWT</p>
+        <h2>Qué valida la API</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Token válido</span>
+            <ul>
+              <li>Firma correcta contra JWKS.</li>
+              <li><code>issuer</code> esperado.</li>
+              <li><code>audience</code> de nuestra API.</li>
+              <li>Token no expirado.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <span class="tag">Permiso suficiente</span>
+            <ul>
+              <li>La acción pide un scope.</li>
+              <li>El token trae ese scope.</li>
+              <li>Si falta: <code>403 Forbidden</code>.</li>
+              <li>Si no hay token válido: <code>401 Unauthorized</code>.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer"><span>Autenticación valida identidad; autorización valida alcance.</span><span>11 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Diseño</p>
+        <h2>Mirar acciones, no solo URLs</h2>
+        <table>
+          <tr><th>Acción</th><th>Riesgo</th><th>Protección</th></tr>
+          <tr><td>Consultar productos</td><td>Bajo</td><td>Público</td></tr>
+          <tr><td>Crear pedido</td><td>Medio</td><td>Scope <code>write:pedidos</code></td></tr>
+          <tr><td>Confirmar pedido</td><td>Medio/alto</td><td>Scope <code>confirm:pedidos</code> + estado pendiente</td></tr>
+          <tr><td>Crear producto</td><td>Alto</td><td>Scope <code>admin:productos</code> o <code>x-api-key</code> interna</td></tr>
+        </table>
+        <div class="footer"><span>La regla de negocio también es seguridad.</span><span>12 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Headers</p>
+        <h2>OAuth 2.0 y API key en HTTP</h2>
+        <pre><code>Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
+x-api-key: clave-interna-demo</code></pre>
+        <div class="grid" style="margin-top: 1rem">
+          <div class="card">
+            <span class="tag">Bearer JWT</span>
+            <p>Access token emitido por Auth0. La API valida firma, issuer, audience, expiración y scopes.</p>
+          </div>
+          <div class="card">
+            <span class="tag">API key</span>
+            <p>Clave compartida para una integración simple. Es fácil de probar, pero menos expresiva que OAuth 2.0.</p>
+          </div>
+        </div>
+        <div class="footer"><span>Ambas son credenciales; no expresan lo mismo.</span><span>13 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Middleware</p>
+        <h2>La seguridad entra antes del controlador</h2>
+        <div class="flow">
+          <div class="node">Request</div>
+          <div class="arrow">→</div>
+          <div class="node">Middleware</div>
+          <div class="arrow">→</div>
+          <div class="node">Controlador</div>
+        </div>
+        <pre style="margin-top: 1.4rem"><code>router.post(
+  '/pedidos/:id/confirmar',
+  checkJwt,
+  requiredScopes('confirm:pedidos'),
+  confirmarPedido
+);</code></pre>
+        <div class="footer"><span>Separar protección de lógica de negocio.</span><span>14 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Códigos HTTP</p>
+        <h2>Errores que enseñan qué pasó</h2>
+        <table>
+          <tr><th>Código</th><th>Significado en la clase</th></tr>
+          <tr><td><code>401</code></td><td>No hay credencial o es inválida.</td></tr>
+          <tr><td><code>403</code></td><td>La credencial existe, pero no alcanza.</td></tr>
+          <tr><td><code>409</code></td><td>La acción choca con el estado actual.</td></tr>
+          <tr><td><code>500</code></td><td>Falta configuración interna o hubo error inesperado.</td></tr>
+        </table>
+        <div class="footer"><span>Un buen error también integra.</span><span>15 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Taller</p>
+        <h2>Secuencia de implementación</h2>
+        <ol>
+          <li>Crear API en Auth0 con audience y scopes.</li>
+          <li>Crear cliente Machine to Machine y asignar permisos.</li>
+          <li>Obtener access token con <code>client_credentials</code>.</li>
+          <li>Validar JWT y scopes en Express.</li>
+          <li>Agregar ejemplo mínimo con <code>x-api-key</code>.</li>
+          <li>Guardar evidencias de casos permitidos y rechazados.</li>
+        </ol>
+        <div class="footer"><span>Cada estudiante produce un artefacto verificable.</span><span>16 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Evidencias</p>
+        <h2>Lo que tiene que quedar probado</h2>
+        <table>
+          <tr><th>Caso</th><th>Esperado</th></tr>
+          <tr><td><code>GET /productos</code> sin token</td><td><code>200 OK</code></td></tr>
+          <tr><td><code>GET /pedidos</code> sin token</td><td><code>401</code></td></tr>
+          <tr><td><code>POST /pedidos</code> con scope insuficiente</td><td><code>403</code></td></tr>
+          <tr><td><code>POST /pedidos</code> con <code>write:pedidos</code></td><td><code>201</code></td></tr>
+          <tr><td><code>POST /productos</code> con <code>x-api-key</code> válida</td><td><code>201</code></td></tr>
+          <tr><td>Confirmar dos veces</td><td><code>409</code></td></tr>
+        </table>
+        <div class="footer"><span>Probar también lo que debe fallar.</span><span>17 / 20</span></div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">TPI</p>
+        <h2>Trabajo Práctico Integrador</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Entrega 1</span>
+            <h3>Diseño y esqueleto</h3>
+            <p>Fecha: 28/09/2026. Dominio, endpoints, scopes, estrategia Auth0, ADRs y API ejecutable con <code>/health</code>.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Entrega 2</span>
+            <h3>Final y defensa</h3>
+            <p>Fecha: 16/11/2026. API integrada, OAuth 2.0/JWT, scopes, evidencia, documentación, observabilidad y demo.</p>
+          </div>
+        </div>
+        <div class="footer"><span>Trabajo grupal: 3 a 5 integrantes.</span><span>18 / 20</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Dominios TPI</p>
+        <h2>Elegir un problema integrable</h2>
+        <div class="grid three">
+          <div class="card"><span class="tag">Recomendado</span><h3>Restaurante con cocina</h3><p>Pedido, cocina, estado, pago, notificación.</p></div>
+          <div class="card"><span class="tag">Opción</span><h3>E-commerce</h3><p>Catálogo, compra, pago, envío, stock.</p></div>
+          <div class="card"><span class="tag">Opción</span><h3>Turnos médicos</h3><p>Paciente, agenda, confirmación, recordatorios.</p></div>
+        </div>
+        <p class="muted" style="margin-top: 1rem">También: mesa de ayuda, biblioteca, eventos y entradas, u otro dominio aprobado.</p>
+        <div class="footer"><span>El dominio debe permitir acciones, estados e integraciones.</span><span>19 / 20</span></div>
+      </section>
+
+      <section class="slide dark">
+        <p class="kicker">Cierre</p>
+        <h2>Lo importante para llevar al código</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">OAuth 2.0</span>
+            <p>El cliente obtiene un access token con permisos acotados antes de llamar a la API.</p>
+          </div>
+          <div class="card">
+            <span class="tag">API</span>
+            <p>La API valida token, scopes, configuración y reglas de negocio antes de ejecutar acciones.</p>
+          </div>
+        </div>
+        <p class="subtitle" style="margin-top: 1.4rem">Próximo paso: integrar esta seguridad en el TPI y pasar de request-response a flujos asincrónicos.</p>
+        <div class="footer"><span>Próxima clase: cuando REST request-response no alcanza.</span><span>20 / 20</span></div>
+      </section>
+    </main>
+
+    <div class="controls">
+      <button id="prev" type="button">←</button>
+      <button id="next" type="button">→</button>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const bar = document.querySelector('#bar');
+      const slideWidth = 1280;
+      const slideHeight = 720;
+      let current = 0;
+
+      function fitSlide() {
+        const padding = window.innerWidth <= 850 ? 32 : 70;
+        const availableWidth = Math.max(320, window.innerWidth - padding);
+        const availableHeight = Math.max(240, window.innerHeight - padding);
+        const scale = Math.min(availableWidth / slideWidth, availableHeight / slideHeight);
+        document.documentElement.style.setProperty('--slide-scale', String(scale));
+      }
+
+      function show(index) {
+        current = Math.max(0, Math.min(index, slides.length - 1));
+        slides.forEach((slide, position) => slide.classList.toggle('active', position === current));
+        bar.style.width = `${((current + 1) / slides.length) * 100}%`;
+      }
+
+      document.querySelector('#prev').addEventListener('click', () => show(current - 1));
+      document.querySelector('#next').addEventListener('click', () => show(current + 1));
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === ' ') show(current + 1);
+        if (event.key === 'ArrowLeft') show(current - 1);
+      });
+      window.addEventListener('resize', fitSlide);
+      fitSlide();
+      show(0);
+    </script>
+  </body>
+</html>

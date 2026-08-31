@@ -9,6 +9,7 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 | Recurso | Link |
 |---|---|
 | Sitio público | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/ |
+| TPI 2026 | https://utn-frc-iaew.github.io/iaew-2026-ecommerce-api/tpi/ |
 | Repositorio | https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api |
 
 ## Índice de clases
@@ -18,7 +19,7 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 | Clase 00 | Mapa de cursada y TPI | Pendiente |
 | Clase 01 | Integraciones web, cloud y ecosistemas | Pendiente |
 | Clase 02 | E-commerce integrado - API REST + MongoDB | [Disponible](clases/clase-02/) |
-| Clase 03 | Seguridad aplicada a acciones de negocio | Pendiente |
+| Clase 03 | Seguridad aplicada a acciones de negocio | [Disponible](clases/clase-03/) |
 | Clase 04 | Cuando REST request-response no alcanza | Pendiente |
 | Clase 05 | Resiliencia de integraciones | Pendiente |
 | Clase 06 | Observabilidad de integraciones | Pendiente |
@@ -27,6 +28,14 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 | Clase 09 | Testing de integración y contratos | Pendiente |
 | Clase 10 | Cloud e IaC con AWS Academy | Pendiente |
 | Clase 11 | Clínica TPI y demo final | Pendiente |
+
+## Trabajo Práctico Integrador
+
+| Recurso | Link |
+|---|---|
+| Página del TPI | [tpi/](tpi/) |
+| Enunciado | [tpi/enunciado.md](tpi/enunciado.md) |
+| Dominios | [tpi/dominios.md](tpi/dominios.md) |
 
 ## Cómo está organizado
 
@@ -44,11 +53,27 @@ iaew-2026-ecommerce-api/
       presentacion/
         index.html
         assets/
+    clase-03/
+      README.md
+      actividad-practica.md
+      tpi-consigna.md
+      material-adicional/
+        material-completo.md
+      presentacion/
+        index.html
+        assets/
 
   docs/
     caso-ecommerce.md
     dinamica-de-trabajo.md
     entregas.md
+
+  tpi/
+    README.md
+    index.html
+    enunciado.md
+    dominios.md
+    assets/
 ```
 
 ## Qué mira cada persona

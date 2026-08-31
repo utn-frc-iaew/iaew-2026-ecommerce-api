@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TPI IAEW 2026</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --ink: #142334;
+        --muted: #5e6c7a;
+        --line: #d8e1ea;
+        --blue: #005baa;
+        --cyan: #009fbd;
+        --green: #2a9d72;
+        --panel: #ffffff;
+        --soft: #edf6fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: #ffffff;
+      }
+
+      .topbar,
+      main,
+      footer {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 0;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        min-width: 0;
+      }
+
+      .logo img {
+        height: 46px;
+        width: auto;
+      }
+
+      .logo strong {
+        display: block;
+        font-size: 1rem;
+      }
+
+      .logo span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+
+      nav a,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0.55rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        background: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.92rem;
+      }
+
+      nav a:hover,
+      .button:hover {
+        border-color: var(--cyan);
+        color: var(--blue);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: 2rem;
+        align-items: center;
+        padding: 3rem 0 2.3rem;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 1rem;
+        font-size: clamp(2.4rem, 6vw, 4.8rem);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+        font-size: 1.9rem;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin-bottom: 0.55rem;
+        font-size: 1.08rem;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .lead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.18rem;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .hero-panel {
+        padding: 1.1rem;
+      }
+
+      .flow {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .flow div {
+        padding: 0.9rem;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--cyan);
+        border-radius: 8px;
+        background: var(--soft);
+        font-weight: 800;
+      }
+
+      section {
+        padding: 2.2rem 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        min-height: 150px;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .tag {
+        display: inline-flex;
+        margin-bottom: 0.55rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(0, 91, 170, 0.1);
+        color: var(--blue);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      th,
+      td {
+        padding: 0.8rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: var(--soft);
+        color: #0d2d44;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      code {
+        padding: 0.08rem 0.25rem;
+        border-radius: 4px;
+        background: #edf2f7;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      .domain {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+      }
+
+      .domain h3 {
+        margin-bottom: 0.4rem;
+      }
+
+      .domain ul {
+        margin: 0;
+        padding-left: 1.15rem;
+      }
+
+      footer {
+        padding: 2rem 0 3rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 850px) {
+        .topbar,
+        .hero,
+        .section-head,
+        .domain {
+          display: block;
+        }
+
+        nav {
+          justify-content: flex-start;
+          margin-top: 1rem;
+        }
+
+        .hero {
+          padding-top: 2rem;
+        }
+
+        .hero-panel {
+          margin-top: 1.4rem;
+        }
+
+        .grid,
+        .grid.three {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="topbar">
+        <div class="logo">
+          <img src="assets/logo-utn-frc-azul.png" alt="UTN Facultad Regional Córdoba" />
+          <div>
+            <strong>IAEW 2026</strong>
+            <span>Trabajo Práctico Integrador</span>
+          </div>
+        </div>
+        <nav aria-label="Navegación principal">
+          <a href="#entregas">Entregas</a>
+          <a href="#seguridad">Seguridad</a>
+          <a href="#evaluacion">Evaluación</a>
+          <a href="#dominios">Dominios</a>
+          <a href="enunciado.md">MD enunciado</a>
+          <a href="dominios.md">MD dominios</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <span class="tag">Trabajo grupal · 3 a 5 integrantes</span>
+          <h1>Trabajo Práctico Integrador</h1>
+          <p class="lead">Diseñar e implementar una API integrada con persistencia, OAuth 2.0/JWT, scopes, asincronía, una integración adicional, observabilidad, pruebas y documentación reproducible.</p>
+          <a class="button" href="#dominios">Ver dominios propuestos</a>
+        </div>
+        <div class="panel hero-panel" aria-label="Mapa conceptual del TPI">
+          <div class="flow">
+            <div>API REST + persistencia</div>
+            <div>Auth0 / Authorization Server</div>
+            <div>Eventos, broker o flujo diferido</div>
+            <div>Webhook, gRPC o WebSocket</div>
+            <div>Logs, pruebas, README y defensa</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="entregas">
+        <div class="section-head">
+          <div>
+            <h2>Entregas</h2>
+            <p class="muted">Dos hitos grupales con foco incremental.</p>
+          </div>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <span class="tag">Lunes 28/09/2026</span>
+            <h3>Entrega 1 - Diseño y esqueleto</h3>
+            <p>Dominio, alcance, entidades, operación no CRUD, endpoints previstos, scopes, estrategia Auth0, uso de API key, C4 inicial, ADRs, modelo de datos, contrato inicial, `.env.example`, README y `GET /health` funcionando.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Lunes 16/11/2026</span>
+            <h3>Entrega 2 - Implementación y defensa</h3>
+            <p>API operativa, CRUD de dos entidades, flujo multi-paso, OAuth 2.0/JWT con scopes, ejemplo `x-api-key`, asincronía, integración adicional, persistencia, Compose si corresponde, observabilidad, pruebas, README final y demo.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="seguridad">
+        <div class="section-head">
+          <div>
+            <h2>Seguridad requerida</h2>
+            <p class="muted">La API debe validar identidad, permisos y configuración antes de ejecutar acciones sensibles.</p>
+          </div>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <span class="tag">Authorization Server</span>
+            <h3>Auth0 o equivalente</h3>
+            <p>Configurar API, audience, issuer, scopes y un cliente Machine to Machine.</p>
+          </article>
+          <article class="card">
+            <span class="tag">OAuth 2.0</span>
+            <h3>client_credentials</h3>
+            <p>Obtener access token desde el cliente y enviarlo como Bearer token a la API.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Resource Server</span>
+            <h3>Validación JWT</h3>
+            <p>Verificar firma, issuer, audience, expiración y scopes requeridos por endpoint.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="evaluacion">
+        <h2>Evaluación</h2>
+        <table>
+          <tr><th>Criterio</th><th>Puntaje</th><th>Qué se observará</th></tr>
+          <tr><td>Funcionalidad end-to-end</td><td>2.5</td><td>CRUD, flujo multi-paso, asincronía e integración funcionando.</td></tr>
+          <tr><td>Diseño y arquitectura</td><td>2.0</td><td>Diagramas, componentes, modelo de datos, ADRs y coherencia con el código.</td></tr>
+          <tr><td>API y seguridad</td><td>1.5</td><td>Contrato, códigos HTTP, Auth0/OAuth 2.0, JWT, scopes y protección de acciones sensibles.</td></tr>
+          <tr><td>Observabilidad y pruebas</td><td>1.5</td><td>Logs, métricas o evidencias de diagnóstico, pruebas exitosas y fallidas.</td></tr>
+          <tr><td>README y reproducibilidad</td><td>1.5</td><td>Pasos claros, `.env.example`, seed, comandos, Compose si corresponde, tag y commit.</td></tr>
+          <tr><td>Defensa técnica</td><td>1.0</td><td>Demo funcional, explicación clara y justificación de decisiones.</td></tr>
+        </table>
+      </section>
+
+      <section id="dominios">
+        <div class="section-head">
+          <div>
+            <h2>Dominios ordenados</h2>
+            <p class="muted">Elegir uno de estos dominios o proponer uno equivalente para aprobación.</p>
+          </div>
+        </div>
+
+        <article class="panel domain">
+          <div><span class="tag">Recomendado</span><h3>1. Pedidos en restaurante</h3></div>
+          <ul>
+            <li>CRUD: productos y pedidos.</li>
+            <li>Flujo: confirmar pedido, calcular total, cambiar estado y generar orden de cocina.</li>
+            <li>Integración: WebSocket de cocina, Webhook de estado o gRPC a stock.</li>
+            <li>Scopes: `read:pedidos`, `write:pedidos`, `confirm:pedidos`, `admin:productos`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>2. E-commerce</h3></div>
+          <ul>
+            <li>CRUD: productos y pedidos o carritos.</li>
+            <li>Flujo: confirmar compra con stock, total, pedido y pago simulado.</li>
+            <li>Integración: Webhook de pago, gRPC a stock o WebSocket de estado.</li>
+            <li>Scopes: `read:productos`, `write:productos`, `write:pedidos`, `confirm:compras`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>3. Turnos de salud</h3></div>
+          <ul>
+            <li>CRUD: pacientes y turnos o profesionales.</li>
+            <li>Flujo: reservar turno validando disponibilidad y evitando solapamientos.</li>
+            <li>Integración: Webhook de confirmación, WebSocket de agenda o historia clínica simulada.</li>
+            <li>Scopes: `read:turnos`, `write:turnos`, `cancel:turnos`, `admin:profesionales`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>4. Mesa de ayuda</h3></div>
+          <ul>
+            <li>CRUD: tickets y usuarios o agentes.</li>
+            <li>Flujo: escalar ticket validando prioridad, estado, responsable y SLA.</li>
+            <li>Integración: Webhook a canal externo, WebSocket de tablero o gRPC a usuarios.</li>
+            <li>Scopes: `read:tickets`, `write:tickets`, `assign:tickets`, `close:tickets`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>5. Biblioteca digital</h3></div>
+          <ul>
+            <li>CRUD: títulos y usuarios o préstamos.</li>
+            <li>Flujo: prestar e-book validando cupo, usuario, vencimiento y espera.</li>
+            <li>Integración: WebSocket de lista de espera, Webhook a mailing o gRPC a catálogo.</li>
+            <li>Scopes: `read:titulos`, `write:titulos`, `read:prestamos`, `write:prestamos`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>6. Eventos y entradas</h3></div>
+          <ul>
+            <li>CRUD: eventos y entradas o compras.</li>
+            <li>Flujo: comprar entrada validando disponibilidad, pago y emisión.</li>
+            <li>Integración: Webhook de pago, WebSocket de control de acceso o gRPC a validador.</li>
+            <li>Scopes: `read:eventos`, `write:eventos`, `buy:entradas`, `validate:entradas`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>7. Alquiler de vehículos</h3></div>
+          <ul>
+            <li>CRUD: vehículos y reservas.</li>
+            <li>Flujo: confirmar reserva con disponibilidad, bloqueo, verificación y contrato.</li>
+            <li>Integración: gRPC a inventario, Webhook de reserva o WebSocket de disponibilidad.</li>
+            <li>Scopes: `read:vehiculos`, `write:vehiculos`, `read:reservas`, `confirm:reservas`.</li>
+          </ul>
+        </article>
+
+        <article class="panel domain">
+          <div><span class="tag">Opción</span><h3>8. Salas de co-working</h3></div>
+          <ul>
+            <li>CRUD: salas y reservas.</li>
+            <li>Flujo: programar reserva validando disponibilidad, capacidad y recursos.</li>
+            <li>Integración: Webhook con calendario, WebSocket de ocupación o gRPC a recursos.</li>
+            <li>Scopes: `read:salas`, `write:salas`, `read:reservas`, `admin:recursos`.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>IAEW 2026 · Integración de Aplicaciones en Entorno Web · UTN Facultad Regional Córdoba</p>
+    </footer>
+  </body>
+</html>
