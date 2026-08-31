@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dominios TPI IAEW 2026</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --ink: #142334;
+        --muted: #5e6c7a;
+        --line: #d8e1ea;
+        --blue: #005baa;
+        --cyan: #009fbd;
+        --green: #2a9d72;
+        --panel: #ffffff;
+        --soft: #edf6fb;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(10px);
+      }
+
+      .wrap {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 0;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      .brand img {
+        height: 44px;
+        width: auto;
+      }
+
+      .brand strong {
+        display: block;
+      }
+
+      .brand span {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.45rem;
+      }
+
+      a,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0.55rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        background: #fff;
+        text-decoration: none;
+        font-weight: 750;
+      }
+
+      a:hover,
+      .button:hover {
+        border-color: var(--cyan);
+        color: var(--blue);
+      }
+
+      main {
+        padding: 2.5rem 0 4rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 1.5rem;
+        align-items: start;
+        margin-bottom: 2rem;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 1rem;
+        font-size: clamp(2.2rem, 5vw, 4.2rem);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+      }
+
+      h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .lead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.15rem;
+      }
+
+      .panel,
+      .domain {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .panel {
+        padding: 1rem;
+      }
+
+      .toc {
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .domain {
+        margin-bottom: 1rem;
+        overflow: hidden;
+      }
+
+      .domain-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--soft);
+      }
+
+      .domain-body {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .block {
+        padding: 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      .tag {
+        display: inline-flex;
+        margin-bottom: 0.5rem;
+        padding: 0.24rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(0, 91, 170, 0.1);
+        color: var(--blue);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      code {
+        padding: 0.08rem 0.25rem;
+        border-radius: 4px;
+        background: #edf2f7;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.15rem;
+      }
+
+      li + li {
+        margin-top: 0.32rem;
+      }
+
+      .muted { color: var(--muted); }
+
+      @media (max-width: 900px) {
+        .topbar,
+        .hero,
+        .domain-body {
+          display: block;
+        }
+
+        nav {
+          justify-content: flex-start;
+          margin-top: 1rem;
+        }
+
+        .panel {
+          margin-top: 1rem;
+        }
+
+        .block + .block {
+          margin-top: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap topbar">
+        <div class="brand">
+          <img src="assets/logo-utn-frc-azul.png" alt="UTN Facultad Regional Córdoba" />
+          <div>
+            <strong>TPI IAEW 2026</strong>
+            <span>Detalle de dominios</span>
+          </div>
+        </div>
+        <nav aria-label="Navegación principal">
+          <a href="index.html">Inicio TPI</a>
+          <a href="enunciado.md">Enunciado</a>
+          <a href="#dominio-1">1</a>
+          <a href="#dominio-2">2</a>
+          <a href="#dominio-3">3</a>
+          <a href="#dominio-4">4</a>
+          <a href="#dominio-5">5</a>
+          <a href="#dominio-6">6</a>
+          <a href="#dominio-7">7</a>
+          <a href="#dominio-8">8</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <div>
+          <span class="tag">Dominios equivalentes</span>
+          <h1>Enunciados por dominio</h1>
+          <p class="lead">Cada equipo debe elegir un dominio y registrarlo con la cátedra. Estos enunciados delimitan el alcance esperado: entidades, operación principal, errores, integración, scopes y evidencias.</p>
+        </div>
+        <aside class="panel">
+          <h2>Índice</h2>
+          <div class="toc">
+            <a href="#dominio-1">1. Pedidos en restaurante</a>
+            <a href="#dominio-2">2. E-commerce</a>
+            <a href="#dominio-3">3. Turnos de salud</a>
+            <a href="#dominio-4">4. Mesa de ayuda</a>
+            <a href="#dominio-5">5. Biblioteca digital</a>
+            <a href="#dominio-6">6. Eventos y entradas</a>
+            <a href="#dominio-7">7. Alquiler de vehículos</a>
+            <a href="#dominio-8">8. Salas de co-working</a>
+          </div>
+        </aside>
+      </section>
+
+      <article class="domain" id="dominio-1">
+        <div class="domain-header">
+          <span class="tag">Dominio 1</span>
+          <h2>Pedidos en restaurante con cocina</h2>
+          <p class="muted">Registrar pedidos, confirmar disponibilidad, enviar pedidos a cocina y mostrar avance de preparación.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: productos y pedidos.</li>
+              <li>Entidades sugeridas: <code>Pedido</code>, <code>Producto</code>, <code>Mesa</code> o <code>Cliente</code>, <code>OrdenCocina</code>.</li>
+              <li>Flujo multi-paso: confirmar pedido validando productos, calculando total, cambiando estado y generando orden de cocina.</li>
+              <li>Errores a resolver: producto inexistente, pedido sin ítems, pedido ya confirmado, estado inválido.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>pedido.confirmado</code> consumido por cocina/notificación.</li>
+              <li>Integración: WebSocket para tablero de cocina, Webhook de cambio de estado o gRPC a stock simulado.</li>
+              <li>Scopes: <code>read:pedidos</code>, <code>write:pedidos</code>, <code>confirm:pedidos</code>, <code>admin:productos</code>.</li>
+              <li>Observabilidad: pedidos confirmados, rechazados, tiempo de confirmación y eventos procesados.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-2">
+        <div class="domain-header">
+          <span class="tag">Dominio 2</span>
+          <h2>E-commerce simplificado</h2>
+          <p class="muted">Publicar productos, crear carritos, confirmar compras y coordinar pago/envío.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: productos y pedidos o carritos.</li>
+              <li>Entidades sugeridas: <code>Producto</code>, <code>Carrito</code>, <code>Pedido</code>, <code>Pago</code>.</li>
+              <li>Flujo multi-paso: confirmar compra validando stock, calculando total, registrando pedido y simulando pago.</li>
+              <li>Errores a resolver: stock insuficiente, pago rechazado, confirmación duplicada, carrito vacío.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento de compra confirmada para notificación, envío o actualización diferida de stock.</li>
+              <li>Integración: Webhook de pago, gRPC a stock simulado o WebSocket de estado del pedido.</li>
+              <li>Scopes: <code>read:productos</code>, <code>write:productos</code>, <code>read:pedidos</code>, <code>write:pedidos</code>, <code>confirm:compras</code>.</li>
+              <li>Observabilidad: compras confirmadas, pagos rechazados, latencia de confirmación y errores por stock.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-3">
+        <div class="domain-header">
+          <span class="tag">Dominio 3</span>
+          <h2>Reserva de turnos de salud</h2>
+          <p class="muted">Administrar profesionales, pacientes y turnos evitando solapamientos y enviando recordatorios.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: pacientes y turnos o profesionales.</li>
+              <li>Entidades sugeridas: <code>Paciente</code>, <code>Profesional</code>, <code>Turno</code>, <code>Especialidad</code>.</li>
+              <li>Flujo multi-paso: reservar turno validando disponibilidad, bloqueando horario y confirmando turno.</li>
+              <li>Errores a resolver: turno ocupado, paciente inexistente, profesional no disponible, cancelación inválida.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>turno.reservado</code> para recordatorio diferido o notificación.</li>
+              <li>Integración: Webhook de confirmación/cancelación, WebSocket de agenda o integración simulada con historia clínica.</li>
+              <li>Scopes: <code>read:turnos</code>, <code>write:turnos</code>, <code>cancel:turnos</code>, <code>admin:profesionales</code>.</li>
+              <li>Observabilidad: turnos reservados, cancelaciones, solapamientos rechazados y recordatorios enviados.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-4">
+        <div class="domain-header">
+          <span class="tag">Dominio 4</span>
+          <h2>Mesa de ayuda</h2>
+          <p class="muted">Recibir tickets, asignarlos, escalarlos y controlar tiempos de atención.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: tickets y usuarios o agentes.</li>
+              <li>Entidades sugeridas: <code>Ticket</code>, <code>Usuario</code>, <code>Agente</code>, <code>Comentario</code>.</li>
+              <li>Flujo multi-paso: escalar ticket validando prioridad, estado, responsable asignado y reglas de SLA.</li>
+              <li>Errores a resolver: ticket cerrado, agente inexistente, escalamiento no permitido, SLA mal configurado.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>ticket.escalado</code> para notificar responsables o calcular vencimientos.</li>
+              <li>Integración: Webhook hacia canal externo, WebSocket de tablero de soporte o gRPC hacia servicio de usuarios.</li>
+              <li>Scopes: <code>read:tickets</code>, <code>write:tickets</code>, <code>assign:tickets</code>, <code>close:tickets</code>.</li>
+              <li>Observabilidad: tickets abiertos, vencidos, escalaciones y tiempo promedio de resolución.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-5">
+        <div class="domain-header">
+          <span class="tag">Dominio 5</span>
+          <h2>Biblioteca digital</h2>
+          <p class="muted">Gestionar títulos digitales, préstamos, devoluciones y listas de espera.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: títulos y usuarios o préstamos.</li>
+              <li>Entidades sugeridas: <code>Usuario</code>, <code>Titulo</code>, <code>Prestamo</code>, <code>Reserva</code>.</li>
+              <li>Flujo multi-paso: prestar e-book validando cupo disponible, usuario habilitado, vencimiento y lista de espera.</li>
+              <li>Errores a resolver: cupo agotado, préstamo duplicado, usuario bloqueado, título inexistente.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>prestamo.creado</code> para vencimientos, multas o avisos de devolución.</li>
+              <li>Integración: WebSocket para lista de espera, Webhook a mailing simulado o gRPC a catálogo externo.</li>
+              <li>Scopes: <code>read:titulos</code>, <code>write:titulos</code>, <code>read:prestamos</code>, <code>write:prestamos</code>.</li>
+              <li>Observabilidad: préstamos activos, préstamos vencidos, reservas en espera y avisos enviados.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-6">
+        <div class="domain-header">
+          <span class="tag">Dominio 6</span>
+          <h2>Eventos y entradas</h2>
+          <p class="muted">Publicar eventos, vender entradas y validar ingreso.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: eventos y entradas o compras.</li>
+              <li>Entidades sugeridas: <code>Evento</code>, <code>Entrada</code>, <code>Compra</code>, <code>Asistente</code>.</li>
+              <li>Flujo multi-paso: comprar entrada validando disponibilidad, registrando compra, simulando pago y emitiendo entrada.</li>
+              <li>Errores a resolver: evento agotado, pago rechazado, entrada ya usada, compra duplicada.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>entrada.comprada</code> para emisión diferida de QR o notificación.</li>
+              <li>Integración: Webhook de pago, WebSocket de control de acceso o gRPC a validador de entradas.</li>
+              <li>Scopes: <code>read:eventos</code>, <code>write:eventos</code>, <code>buy:entradas</code>, <code>validate:entradas</code>.</li>
+              <li>Observabilidad: entradas vendidas, validaciones exitosas, rechazos de acceso y pagos fallidos.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-7">
+        <div class="domain-header">
+          <span class="tag">Dominio 7</span>
+          <h2>Alquiler de vehículos urbanos</h2>
+          <p class="muted">Administrar vehículos, reservas y confirmaciones evitando solapamientos.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: vehículos y reservas.</li>
+              <li>Entidades sugeridas: <code>Vehiculo</code>, <code>Reserva</code>, <code>Usuario</code>, <code>Contrato</code>.</li>
+              <li>Flujo multi-paso: confirmar reserva validando disponibilidad, bloqueando vehículo, simulando verificación y generando contrato.</li>
+              <li>Errores a resolver: vehículo no disponible, reserva duplicada, verificación rechazada, fechas inválidas.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>reserva.confirmada</code> para verificación diferida o notificación.</li>
+              <li>Integración: gRPC a inventario, Webhook de reserva o WebSocket de disponibilidad.</li>
+              <li>Scopes: <code>read:vehiculos</code>, <code>write:vehiculos</code>, <code>read:reservas</code>, <code>confirm:reservas</code>.</li>
+              <li>Observabilidad: reservas confirmadas, rechazos por solapamiento, verificaciones fallidas y vehículos disponibles.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="domain" id="dominio-8">
+        <div class="domain-header">
+          <span class="tag">Dominio 8</span>
+          <h2>Reserva de salas de co-working</h2>
+          <p class="muted">Administrar salas, reservas, capacidad, recursos adicionales y ocupación.</p>
+        </div>
+        <div class="domain-body">
+          <div class="block">
+            <h3>Alcance funcional</h3>
+            <ul>
+              <li>CRUD mínimo: salas y reservas.</li>
+              <li>Entidades sugeridas: <code>Sala</code>, <code>Reserva</code>, <code>Usuario</code>, <code>Recurso</code>.</li>
+              <li>Flujo multi-paso: programar reserva validando disponibilidad, capacidad, extras y estado de la sala.</li>
+              <li>Errores a resolver: conflicto horario, capacidad insuficiente, sala bloqueada, recurso no disponible.</li>
+            </ul>
+          </div>
+          <div class="block">
+            <h3>Integración y evidencias</h3>
+            <ul>
+              <li>Asincronía: evento <code>reserva_sala.creada</code> para recordatorios o liberación por no-show.</li>
+              <li>Integración: Webhook con calendario externo, WebSocket de ocupación en tiempo real o gRPC a servicio de recursos.</li>
+              <li>Scopes: <code>read:salas</code>, <code>write:salas</code>, <code>read:reservas</code>, <code>admin:recursos</code>.</li>
+              <li>Observabilidad: reservas creadas, conflictos rechazados, ocupación por sala y recordatorios enviados.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

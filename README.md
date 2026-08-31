@@ -71,6 +71,7 @@ iaew-2026-ecommerce-api/
   tpi/
     README.md
     index.html
+    detalle-dominios.html
     enunciado.md
     dominios.md
     assets/

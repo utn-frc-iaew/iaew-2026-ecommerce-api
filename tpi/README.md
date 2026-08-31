@@ -7,6 +7,7 @@ Carpeta publicable para estudiantes con la consigna del TPI, dominios sugeridos 
 - [enunciado.md](enunciado.md): consigna formal, fechas, entregables y criterios de evaluación.
 - [dominios.md](dominios.md): dominios ordenados con alcance esperado, entidades, flujo principal, integración, seguridad y observabilidad.
 - [index.html](index.html): página navegable para consultar el TPI desde el navegador.
+- [detalle-dominios.html](detalle-dominios.html): página formateada con el enunciado detallado de cada dominio.
 
 ## Fechas principales
 
