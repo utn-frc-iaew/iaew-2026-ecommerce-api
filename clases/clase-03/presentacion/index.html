@@ -337,7 +337,7 @@
             <p>¿Todas esas acciones deberían poder ejecutarse sin saber quién llama a la API?</p>
           </div>
         </div>
-        <div class="footer"><span>Una API no solo guarda datos.</span><span>02 / 20</span></div>
+        <div class="footer"><span>Una API no solo guarda datos.</span><span>02 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -352,7 +352,7 @@
           <tr><td><code>POST /pedidos/:id/confirmar</code></td><td>Bearer token con scope <code>confirm:pedidos</code></td></tr>
           <tr><td><code>POST /productos</code></td><td><code>x-api-key</code> interna o scope <code>admin:productos</code></td></tr>
         </table>
-        <div class="footer"><span>Seguridad como contrato de integración.</span><span>03 / 20</span></div>
+        <div class="footer"><span>Seguridad como contrato de integración.</span><span>03 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -362,12 +362,13 @@
           <tr><th>Minutos</th><th>Trabajo</th></tr>
           <tr><td>0-10</td><td>Recuperación del taller anterior.</td></tr>
           <tr><td>10-25</td><td>Autenticación, autorización, OAuth 2.0, JWT y scopes.</td></tr>
-          <tr><td>25-45</td><td>Auth0: API, cliente Machine to Machine y permisos.</td></tr>
-          <tr><td>45-85</td><td>Validación JWT, scopes y ejemplo mínimo de API key.</td></tr>
+          <tr><td>25-35</td><td>Authorization Code + PKCE como panorama para frontends.</td></tr>
+          <tr><td>35-50</td><td>Auth0: API, cliente Machine to Machine y permisos.</td></tr>
+          <tr><td>50-85</td><td>Validación JWT, scopes y ejemplo mínimo de API key.</td></tr>
           <tr><td>85-105</td><td>Pruebas con Postman/cURL y evidencias.</td></tr>
           <tr><td>105-120</td><td>Presentación TPI y cierre técnico.</td></tr>
         </table>
-        <div class="footer"><span>Concepto, configuración, código, evidencia.</span><span>04 / 20</span></div>
+        <div class="footer"><span>Concepto, configuración, código, evidencia.</span><span>04 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -385,7 +386,7 @@
             <p>Decidir si esa identidad puede ejecutar una acción concreta sobre un recurso.</p>
           </div>
         </div>
-        <div class="footer"><span>Primero identidad, después permiso.</span><span>05 / 20</span></div>
+        <div class="footer"><span>Primero identidad, después permiso.</span><span>05 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -411,7 +412,7 @@
             </ul>
           </div>
         </div>
-        <div class="footer"><span>Auth0 resuelve identidad y emisión; la API sigue decidiendo.</span><span>06 / 20</span></div>
+        <div class="footer"><span>Auth0 resuelve identidad y emisión; la API sigue decidiendo.</span><span>06 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -425,7 +426,7 @@
           <tr><td>Azure AD / Entra ID</td><td>Cloud enterprise</td><td>Identidad organizacional y permisos para ecosistemas Microsoft.</td></tr>
           <tr><td>Keycloak</td><td>Self-hosted</td><td>Servidor de autorización propio, configurable y open source.</td></tr>
         </table>
-        <div class="footer"><span>Cambia la herramienta; el concepto de Authorization Server se mantiene.</span><span>07 / 20</span></div>
+        <div class="footer"><span>Cambia la herramienta; el concepto de Authorization Server se mantiene.</span><span>07 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -438,7 +439,38 @@
           <tr><td>Resource Server</td><td>API de pedidos</td><td>Valida JWT y decide si la acción está permitida.</td></tr>
           <tr><td>Resource Owner</td><td>No participa en este flujo</td><td>En `client_credentials` no hay usuario final interactuando.</td></tr>
         </table>
-        <div class="footer"><span>OAuth 2.0 es autorización delegada.</span><span>08 / 20</span></div>
+        <div class="footer"><span>OAuth 2.0 es autorización delegada.</span><span>08 / 22</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">Frontend</p>
+        <h2>Authorization Code + PKCE</h2>
+        <div class="grid">
+          <div class="card">
+            <span class="tag">Cuándo aparece</span>
+            <p>Es el flujo recomendado para SPAs y aplicaciones móviles cuando hay login de usuario y la app necesita llamar a una API.</p>
+          </div>
+          <div class="card">
+            <span class="tag">Por qué PKCE</span>
+            <p>El frontend no puede guardar un <code>client_secret</code>. PKCE agrega una prueba criptográfica para proteger el intercambio del código por tokens.</p>
+          </div>
+        </div>
+        <p class="muted" style="margin-top: 1rem">Hoy lo ubicamos conceptualmente. En esta clase implementamos <code>client_credentials</code> para integración servicio a servicio.</p>
+        <div class="footer"><span>Autenticación de usuario y autorización para llamar APIs.</span><span>09 / 22</span></div>
+      </section>
+
+      <section class="slide">
+        <p class="kicker">PKCE</p>
+        <h2>Flujo conceptual</h2>
+        <ol>
+          <li>El frontend genera <code>code_verifier</code> y <code>code_challenge</code>.</li>
+          <li>Redirige al usuario al Authorization Server para iniciar sesión.</li>
+          <li>El Authorization Server devuelve un <code>authorization_code</code>.</li>
+          <li>El frontend canjea el código junto con el <code>code_verifier</code>.</li>
+          <li>Recibe tokens y llama a la API con <code>Authorization: Bearer</code>.</li>
+        </ol>
+        <p class="muted" style="margin-top: 1rem">Lo importante: el usuario autentica en el proveedor; la API valida token y scopes antes de ejecutar acciones.</p>
+        <div class="footer"><span>Lo veremos con más detalle al final de la cursada.</span><span>10 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -457,7 +489,7 @@ client_id=...
 client_secret=...
 audience=https://iaew-pedidos-api</code></pre>
         <p class="muted" style="margin-top: 1rem">El resultado es un access token que viaja como <code>Authorization: Bearer &lt;token&gt;</code>.</p>
-        <div class="footer"><span>Ideal para integraciones servicio a servicio.</span><span>09 / 20</span></div>
+        <div class="footer"><span>Ideal para integraciones servicio a servicio.</span><span>11 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -483,7 +515,7 @@ audience=https://iaew-pedidos-api</code></pre>
           </div>
         </div>
         <p class="muted" style="margin-top: 1rem">El cliente Machine to Machine solo recibe los scopes que la API le autoriza.</p>
-        <div class="footer"><span>El permiso nace en el Authorization Server.</span><span>10 / 20</span></div>
+        <div class="footer"><span>El permiso nace en el Authorization Server.</span><span>12 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -509,7 +541,7 @@ audience=https://iaew-pedidos-api</code></pre>
             </ul>
           </div>
         </div>
-        <div class="footer"><span>Autenticación valida identidad; autorización valida alcance.</span><span>11 / 20</span></div>
+        <div class="footer"><span>Autenticación valida identidad; autorización valida alcance.</span><span>13 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -522,7 +554,7 @@ audience=https://iaew-pedidos-api</code></pre>
           <tr><td>Confirmar pedido</td><td>Medio/alto</td><td>Scope <code>confirm:pedidos</code> + estado pendiente</td></tr>
           <tr><td>Crear producto</td><td>Alto</td><td>Scope <code>admin:productos</code> o <code>x-api-key</code> interna</td></tr>
         </table>
-        <div class="footer"><span>La regla de negocio también es seguridad.</span><span>12 / 20</span></div>
+        <div class="footer"><span>La regla de negocio también es seguridad.</span><span>14 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -540,7 +572,7 @@ x-api-key: clave-interna-demo</code></pre>
             <p>Clave compartida para una integración simple. Es fácil de probar, pero menos expresiva que OAuth 2.0.</p>
           </div>
         </div>
-        <div class="footer"><span>Ambas son credenciales; no expresan lo mismo.</span><span>13 / 20</span></div>
+        <div class="footer"><span>Ambas son credenciales; no expresan lo mismo.</span><span>15 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -559,7 +591,7 @@ x-api-key: clave-interna-demo</code></pre>
   requiredScopes('confirm:pedidos'),
   confirmarPedido
 );</code></pre>
-        <div class="footer"><span>Separar protección de lógica de negocio.</span><span>14 / 20</span></div>
+        <div class="footer"><span>Separar protección de lógica de negocio.</span><span>16 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -572,7 +604,7 @@ x-api-key: clave-interna-demo</code></pre>
           <tr><td><code>409</code></td><td>La acción choca con el estado actual.</td></tr>
           <tr><td><code>500</code></td><td>Falta configuración interna o hubo error inesperado.</td></tr>
         </table>
-        <div class="footer"><span>Un buen error también integra.</span><span>15 / 20</span></div>
+        <div class="footer"><span>Un buen error también integra.</span><span>17 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -586,7 +618,7 @@ x-api-key: clave-interna-demo</code></pre>
           <li>Agregar ejemplo mínimo con <code>x-api-key</code>.</li>
           <li>Guardar evidencias de casos permitidos y rechazados.</li>
         </ol>
-        <div class="footer"><span>Cada estudiante produce un artefacto verificable.</span><span>16 / 20</span></div>
+        <div class="footer"><span>Cada estudiante produce un artefacto verificable.</span><span>18 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -601,7 +633,7 @@ x-api-key: clave-interna-demo</code></pre>
           <tr><td><code>POST /productos</code> con <code>x-api-key</code> válida</td><td><code>201</code></td></tr>
           <tr><td>Confirmar dos veces</td><td><code>409</code></td></tr>
         </table>
-        <div class="footer"><span>Probar también lo que debe fallar.</span><span>17 / 20</span></div>
+        <div class="footer"><span>Probar también lo que debe fallar.</span><span>19 / 22</span></div>
       </section>
 
       <section class="slide dark">
@@ -619,7 +651,7 @@ x-api-key: clave-interna-demo</code></pre>
             <p>Fecha: 16/11/2026. API integrada, OAuth 2.0/JWT, scopes, evidencia, documentación, observabilidad y demo.</p>
           </div>
         </div>
-        <div class="footer"><span>Trabajo grupal: 3 a 5 integrantes.</span><span>18 / 20</span></div>
+        <div class="footer"><span>Trabajo grupal: 3 a 5 integrantes.</span><span>20 / 22</span></div>
       </section>
 
       <section class="slide">
@@ -631,7 +663,7 @@ x-api-key: clave-interna-demo</code></pre>
           <div class="card"><span class="tag">Dominio</span><h3>Turnos médicos</h3><p>Paciente, agenda, confirmación, recordatorios.</p></div>
         </div>
         <p class="muted" style="margin-top: 1rem">También: mesa de ayuda, biblioteca, eventos y entradas, u otro dominio aprobado.</p>
-        <div class="footer"><span>El dominio debe permitir acciones, estados e integraciones.</span><span>19 / 20</span></div>
+        <div class="footer"><span>El dominio debe permitir acciones, estados e integraciones.</span><span>21 / 22</span></div>
       </section>
 
       <section class="slide dark">
@@ -648,7 +680,7 @@ x-api-key: clave-interna-demo</code></pre>
           </div>
         </div>
         <p class="subtitle" style="margin-top: 1.4rem">Próximo paso: integrar esta seguridad en el TPI y pasar de request-response a flujos asincrónicos.</p>
-        <div class="footer"><span>Próxima clase: cuando REST request-response no alcanza.</span><span>20 / 20</span></div>
+        <div class="footer"><span>Próxima clase: cuando REST request-response no alcanza.</span><span>22 / 22</span></div>
       </section>
     </main>
 
