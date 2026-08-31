@@ -30,7 +30,7 @@ clases/
 
 En esta clase el proyecto se crea desde cero. No hay rama de inicio.
 
-Desde la Clase 03, cuando haya una rama de inicio publicada, se indicará explícitamente qué rama usar para comenzar. Ejemplo:
+Desde la Clase 03, la cátedra publica una rama de inicio para cada clase. Esa rama se construye con la actividad resuelta de la clase anterior y se indica explícitamente en el material correspondiente. Ejemplo:
 
 ```bash
 git fetch origin

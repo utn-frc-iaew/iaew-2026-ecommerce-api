@@ -110,7 +110,14 @@ No buscamos construir un marketplace completo. El objetivo es usar un caso reali
 
 En la Clase 02 vamos a crear el proyecto desde cero durante la clase. Este repositorio funciona como guía de trabajo y consigna.
 
-En clases posteriores la cátedra podrá publicar puntos de partida funcionales en ramas de inicio, por ejemplo `clase-03-inicio`, para que nadie quede bloqueado si se atrasó o si su proyecto dejó de funcionar.
+Desde la Clase 03, la cátedra publica el punto de partida funcional de cada clase en una rama nueva. Esa rama se arma a partir de la actividad resuelta de la clase anterior.
+
+Convención:
+
+- `main`: materiales públicos, índice, consignas y documentación general.
+- `clase-XX-inicio`: punto de partida para la clase `XX`, construido con la actividad resuelta de la clase anterior.
+
+Por ejemplo, `clase-03-inicio` contiene la base necesaria para comenzar la Clase 03, tomando como punto de partida lo trabajado en la Clase 02.
 
 Dinámica esperada desde la Clase 03:
 

@@ -4,7 +4,12 @@ En cada clase vamos a trabajar con una consigna práctica y un punto de partida 
 
 En la Clase 02 el punto de partida es una carpeta vacía: el proyecto se crea desde cero durante la clase.
 
-En clases posteriores la cátedra podrá publicar ramas de inicio funcionales para que quienes se atrasen puedan volver a engancharse al trabajo de clase.
+Desde la Clase 03, la cátedra publica una rama de inicio funcional por clase. Esa rama se construye a partir de la actividad resuelta de la clase anterior, para que todos puedan empezar desde una base común.
+
+Convención:
+
+- `main`: materiales públicos, índice, consignas y documentación general.
+- `clase-XX-inicio`: punto de partida para la clase `XX`, construido con la actividad resuelta de la clase anterior.
 
 Ejemplo:
 

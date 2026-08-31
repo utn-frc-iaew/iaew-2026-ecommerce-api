@@ -41,7 +41,7 @@ Que cada estudiante transforme la API de e-commerce de la clase anterior en una 
 
 ## Punto de partida
 
-Si la cátedra publica la rama de inicio:
+La Clase 03 debería comenzar desde una rama de inicio publicada por la cátedra. Esa rama se construye con la actividad resuelta de la Clase 02.
 
 ```bash
 git fetch origin
