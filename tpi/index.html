@@ -200,12 +200,25 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
       .card {
         min-height: 150px;
         padding: 1rem;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--panel);
+      }
+
+      .card.compact {
+        min-height: 0;
+      }
+
+      .card ul {
+        margin: 0;
+        padding-left: 1.15rem;
       }
 
       .tag {
@@ -269,6 +282,13 @@
         padding-left: 1.15rem;
       }
 
+      .checklist {
+        columns: 2;
+        column-gap: 2rem;
+        margin: 0;
+        padding-left: 1.15rem;
+      }
+
       footer {
         padding: 2rem 0 3rem;
         color: var(--muted);
@@ -296,8 +316,13 @@
         }
 
         .grid,
-        .grid.three {
+        .grid.three,
+        .grid.four {
           grid-template-columns: 1fr;
+        }
+
+        .checklist {
+          columns: 1;
         }
       }
     </style>
@@ -363,21 +388,51 @@
             <p>Equipos de 3 a 5 integrantes, un repositorio por equipo, elección de dominio registrada con la cátedra, dos entregas principales y defensa técnica presencial.</p>
           </article>
         </div>
-        <div class="grid three" style="margin-top: 1rem">
-          <article class="card">
+      </section>
+
+      <section id="alcance">
+        <div class="section-head">
+          <div>
+            <h2>Alcance mínimo obligatorio</h2>
+            <p class="muted">Estos puntos deben estar resueltos en la entrega final.</p>
+          </div>
+        </div>
+        <div class="grid four">
+          <article class="card compact">
             <span class="tag">API</span>
-            <h3>Funcionalidad mínima</h3>
-            <p>Al menos 3 entidades, 8 endpoints relevantes, CRUD de 2 entidades y una operación de negocio multi-paso que no sea solo ABM.</p>
+            <ul>
+              <li>API REST sobre HTTP.</li>
+              <li>Recursos, métodos y códigos de estado correctos.</li>
+              <li>Contrato documentado: OpenAPI 3.1, colección HTTP o equivalente.</li>
+              <li>Al menos 8 endpoints relevantes.</li>
+            </ul>
           </article>
-          <article class="card">
+          <article class="card compact">
+            <span class="tag">Dominio</span>
+            <ul>
+              <li>Persistencia en MongoDB, SQL u otra base aprobada.</li>
+              <li>Al menos 3 entidades de negocio.</li>
+              <li>CRUD de al menos 2 entidades.</li>
+              <li>Una transacción o flujo multi-paso de negocio.</li>
+            </ul>
+          </article>
+          <article class="card compact">
             <span class="tag">Integración</span>
-            <h3>Asincronía + canal extra</h3>
-            <p>Un flujo productor-consumidor o diferido con efecto visible, más una integración mediante Webhook, gRPC, WebSocket o equivalente aprobado.</p>
+            <ul>
+              <li>Flujo asincrónico o diferido con efecto visible.</li>
+              <li>Integración adicional: Webhook, gRPC, WebSocket o equivalente aprobado.</li>
+              <li>Variables de entorno y <code>.env.example</code>.</li>
+              <li>Ejecución local reproducible.</li>
+            </ul>
           </article>
-          <article class="card">
+          <article class="card compact">
             <span class="tag">Evidencia</span>
-            <h3>Reproducibilidad</h3>
-            <p>README completo, `.env.example`, datos iniciales, pruebas, observabilidad, tag/release, hash de commit y demo final.</p>
+            <ul>
+              <li>Seguridad con OAuth 2.0/JWT y scopes.</li>
+              <li>Ejemplo mínimo de <code>api_key</code>.</li>
+              <li>Evidencias de pruebas y observabilidad.</li>
+              <li>README completo y defensa presencial con demo.</li>
+            </ul>
           </article>
         </div>
       </section>
@@ -393,12 +448,52 @@
           <article class="card">
             <span class="tag">Lunes 28/09/2026</span>
             <h3>Entrega 1 - Diseño y esqueleto</h3>
-            <p>Dominio, alcance, entidades, operación no CRUD, endpoints previstos, scopes, estrategia Auth0, uso de API key, C4 inicial, ADRs, modelo de datos, contrato inicial, `.env.example`, README y `GET /health` funcionando.</p>
+            <ul>
+              <li>Nombre del equipo e integrantes.</li>
+              <li>Dominio elegido y problema que resuelve.</li>
+              <li>Alcance funcional inicial.</li>
+              <li>Al menos 3 entidades principales.</li>
+              <li>Una operación de negocio que no sea solamente CRUD.</li>
+              <li>Tabla inicial de endpoints previstos.</li>
+              <li>Matriz inicial de permisos por rol o scope.</li>
+              <li>Scopes OAuth 2.0 previstos para el dominio.</li>
+              <li>Estrategia de uso de Auth0 o proveedor equivalente.</li>
+              <li>Caso mínimo donde se usará <code>api_key</code>.</li>
+              <li>Diagramas C4 iniciales: Context y Container.</li>
+              <li>Modelo de datos inicial: SQL o NoSQL.</li>
+              <li>ADRs breves sobre API, base de datos, seguridad e integración.</li>
+              <li>Contrato inicial de API: OpenAPI 3.1, colección HTTP o tabla de endpoints con ejemplos.</li>
+              <li>Esqueleto ejecutable con <code>GET /health</code>.</li>
+              <li><code>.env.example</code> sin secretos reales.</li>
+              <li>README inicial con pasos de ejecución local.</li>
+              <li>Estrategia de ejecución reproducible y <code>docker-compose.yml</code> si ya necesitan varios servicios.</li>
+            </ul>
           </article>
           <article class="card">
             <span class="tag">Lunes 16/11/2026</span>
             <h3>Entrega 2 - Implementación y defensa</h3>
-            <p>API operativa, CRUD de dos entidades, flujo multi-paso, OAuth 2.0/JWT con scopes, ejemplo `x-api-key`, asincronía, integración adicional, persistencia, Compose si corresponde, observabilidad, pruebas, README final y demo.</p>
+            <ul>
+              <li>Código de todos los componentes.</li>
+              <li>API REST operativa.</li>
+              <li>CRUD de al menos 2 entidades.</li>
+              <li>Al menos 1 transacción o flujo multi-paso de negocio.</li>
+              <li>Validación JWT contra Auth0 o proveedor equivalente.</li>
+              <li>Autorización por scopes en endpoints protegidos.</li>
+              <li>Flujo OAuth 2.0 <code>client_credentials</code> probado desde Postman, Newman, cURL o cliente equivalente.</li>
+              <li>Ejemplo mínimo de <code>api_key</code> funcionando y documentado.</li>
+              <li>Separación entre acciones públicas, protegidas y administrativas.</li>
+              <li>Flujo asincrónico productor -> broker -> consumidor, o equivalente aprobado, con efecto visible en la demo.</li>
+              <li>Integración adicional: Webhook, gRPC, WebSocket o equivalente aprobado.</li>
+              <li>Persistencia con datos reproducibles: seed, migraciones o script de carga.</li>
+              <li>Validación de entrada y manejo consistente de errores.</li>
+              <li>Contenedores por servicio cuando corresponda.</li>
+              <li><code>docker-compose.yml</code> funcional si se usan varios servicios.</li>
+              <li>Observabilidad mínima: logs JSON, correlation ID y al menos una métrica o vista de negocio.</li>
+              <li>Pruebas de integración mediante Postman/Newman, colección HTTP equivalente o suite automatizada.</li>
+              <li>README final completo y reproducible.</li>
+              <li>Tag o release de entrega y hash de commit documentado.</li>
+              <li>Demo y defensa técnica.</li>
+            </ul>
           </article>
         </div>
       </section>
@@ -414,7 +509,7 @@
           <article class="card">
             <span class="tag">Authorization Server</span>
             <h3>Auth0 o equivalente</h3>
-            <p>Configurar API, audience, issuer, scopes y un cliente Machine to Machine.</p>
+            <p>Configurar una API, audience, issuer, scopes y un cliente Machine to Machine.</p>
           </article>
           <article class="card">
             <span class="tag">OAuth 2.0</span>
@@ -425,6 +520,24 @@
             <span class="tag">Resource Server</span>
             <h3>Validación JWT</h3>
             <p>Verificar firma, issuer, audience, expiración y scopes requeridos por endpoint.</p>
+          </article>
+        </div>
+        <div class="grid" style="margin-top: 1rem">
+          <article class="card compact">
+            <span class="tag">Configuración requerida</span>
+            <ul>
+              <li>Definir scopes según el dominio, por ejemplo <code>read:pedidos</code>, <code>write:pedidos</code>, <code>confirm:pedidos</code>, <code>admin:productos</code>.</li>
+              <li>Asignar permisos/scopes al cliente Machine to Machine.</li>
+              <li>Documentar en el README cómo configurar Auth0, qué scopes existen y cómo probar operaciones protegidas.</li>
+            </ul>
+          </article>
+          <article class="card compact">
+            <span class="tag">API key</span>
+            <ul>
+              <li>Incluir un endpoint básico protegido con <code>x-api-key</code>.</li>
+              <li>Usarlo como comparación con OAuth 2.0/JWT, no como reemplazo del esquema principal.</li>
+              <li>No subir secretos reales al repositorio.</li>
+            </ul>
           </article>
         </div>
       </section>
@@ -440,6 +553,54 @@
           <tr><td>README y reproducibilidad</td><td>1.5</td><td>Pasos claros, `.env.example`, seed, comandos, Compose si corresponde, tag y commit.</td></tr>
           <tr><td>Defensa técnica</td><td>1.0</td><td>Demo funcional, explicación clara y justificación de decisiones.</td></tr>
         </table>
+        <p class="muted" style="margin-top: 1rem"><strong>Aprobación:</strong> 6/10 o más, con demo defendible y ejecución reproducible.</p>
+      </section>
+
+      <section id="readme">
+        <div class="section-head">
+          <div>
+            <h2>Checklist obligatorio del README</h2>
+            <p class="muted">El README debe permitir que otra persona levante, pruebe y entienda el proyecto sin depender de explicaciones orales.</p>
+          </div>
+        </div>
+        <article class="card compact">
+          <ul class="checklist">
+            <li>Proyecto, dominio elegido e integrantes.</li>
+            <li>Descripción del problema y alcance.</li>
+            <li>Arquitectura en un vistazo: diagrama C4 o link a <code>docs/</code>.</li>
+            <li>Requisitos previos.</li>
+            <li>Variables de entorno y explicación de <code>.env.example</code>.</li>
+            <li>Configuración de Auth0 o proveedor equivalente: API, audience, issuer, scopes, cliente Machine to Machine y permisos.</li>
+            <li>Cómo obtener un token con <code>client_credentials</code>.</li>
+            <li>Cómo probar endpoints protegidos con Bearer token.</li>
+            <li>Cómo probar el ejemplo con <code>x-api-key</code>.</li>
+            <li>Comandos para levantar localmente.</li>
+            <li>Cómo cargar datos iniciales.</li>
+            <li>Cómo ejecutar pruebas.</li>
+            <li>Cómo disparar el flujo asincrónico y dónde ver el efecto.</li>
+            <li>Cómo probar la integración elegida.</li>
+            <li>Cómo observar el sistema: logs, correlation ID, dashboard o métricas.</li>
+            <li>Endpoints principales y ejemplos de uso.</li>
+            <li>Decisiones técnicas principales o links a ADRs.</li>
+            <li>Limitaciones conocidas y mejoras futuras.</li>
+            <li>Tag/release y hash de commit de la entrega.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="optativos">
+        <div class="section-head">
+          <div>
+            <h2>Optativos con bono</h2>
+            <p class="muted">Suman valor cuando lo obligatorio está resuelto y defendible.</p>
+          </div>
+        </div>
+        <div class="grid four">
+          <article class="card compact"><span class="tag">Cloud</span><p>Despliegue en nube usando AWS Academy u otro entorno aprobado.</p></article>
+          <article class="card compact"><span class="tag">BFF</span><p>BFF o GraphQL además de REST.</p></article>
+          <article class="card compact"><span class="tag">Trazas</span><p>Métricas y trazas con OpenTelemetry exportadas a Jaeger/Grafana.</p></article>
+          <article class="card compact"><span class="tag">CI</span><p>Ejecución automática de linters, tests o colección Newman.</p></article>
+        </div>
       </section>
 
       <section id="dominios">
