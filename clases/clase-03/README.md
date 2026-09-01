@@ -10,20 +10,21 @@ Tema: Seguridad aplicada a acciones de negocio
 
 | Recurso | Ubicación | Uso |
 |---|---|---|
-| Actividad práctica | [actividad-practica.md](actividad-practica.md) | Guía paso a paso para incorporar seguridad básica a la API. |
+| Actividad práctica | [actividad-practica.md](actividad-practica.md) | Guía paso a paso para proteger la API con Auth0, OAuth 2.0, JWT, scopes y un ejemplo mínimo de API key. |
 | Presentación | [presentacion/](presentacion/) | Diapositivas HTML navegables para usar en clase. |
 | Material adicional | [material-adicional/material-completo.md](material-adicional/material-completo.md) | Apunte ampliado con conceptos, ejemplos y glosario. |
 | Consigna TPI | [tpi-consigna.md](tpi-consigna.md) | Presentación formal del Trabajo Práctico Integrador. |
 
 ## Objetivo de la clase
 
-Que cada estudiante transforme la API de e-commerce de la clase anterior en una API que empiece a proteger acciones de negocio:
+Que cada estudiante transforme la API de e-commerce de la clase anterior en una API que proteja acciones de negocio usando Auth0 como servidor de autorización:
 
 - distinguir endpoints públicos y privados;
-- usar variables de entorno para secretos;
-- validar una API key para integraciones internas;
-- validar un Bearer token simulado para acciones de usuario;
-- aplicar roles simples para operaciones sensibles;
+- configurar una API, audience, scopes y cliente Machine to Machine en Auth0;
+- obtener un access token con el flujo OAuth 2.0 `client_credentials`;
+- validar JWT en Express usando `issuer`, `audience`, firma y expiración;
+- aplicar scopes sobre operaciones sensibles;
+- incluir un ejemplo mínimo de API key para comparar mecanismos;
 - conservar evidencias de pruebas HTTP;
 - conectar estas decisiones con el TPI.
 
@@ -32,9 +33,9 @@ Que cada estudiante transforme la API de e-commerce de la clase anterior en una 
 | Minutos | Bloque | Actividad |
 |---:|---|---|
 | 0-10 | Apertura | Recuperar lo construido en Clase 02 y nombrar qué acciones necesitan protección. |
-| 10-30 | Conceptos | Autenticación, autorización, secretos, tokens, roles y superficie de ataque. |
-| 30-45 | Diseño guiado | Mapa de endpoints públicos, privados y administrativos. |
-| 45-90 | Taller | Implementar middlewares de API key, Bearer token simulado y roles. |
+| 10-30 | Conceptos | OAuth 2.0, JWT, issuer, audience, scopes y superficie de ataque. |
+| 30-45 | Auth0 | Configurar API, scopes y cliente Machine to Machine. |
+| 45-90 | Taller | Validar JWT en Express, aplicar scopes y sumar API key mínima. |
 | 90-105 | Evidencias | Probar casos permitidos y rechazados con herramienta HTTP. |
 | 105-115 | TPI | Presentar dominios, entregas, fechas tentativas y criterios. |
 | 115-120 | Cierre | Recapitulación y pregunta IA/MCP: ¿qué pasaría si esta acción la ejecuta un agente de IA? |
@@ -76,8 +77,8 @@ Al finalizar la clase, la API debería tener al menos estos comportamientos:
 |---|---|
 | `GET /health` | Público. |
 | `GET /productos` | Público. |
-| `POST /pedidos` | Requiere `Authorization: Bearer cliente-demo`. |
-| `POST /pedidos/:id/confirmar` | Requiere usuario autenticado con rol `cliente`. |
-| `POST /productos` | Requiere `x-api-key` válida y rol `admin`. |
+| `POST /pedidos` | Requiere Bearer token válido con scope `write:pedidos`. |
+| `POST /pedidos/:id/confirmar` | Requiere Bearer token válido con scope `confirm:pedidos`. |
+| `POST /productos` | Requiere `x-api-key` válida y Bearer token válido con scope `admin:productos`. |
 
-No buscamos seguridad productiva completa todavía. Buscamos entender dónde se ubican las decisiones de seguridad en una API y cómo afectan a una integración.
+No buscamos implementar login de usuarios finales todavía. Buscamos entender cómo una API valida tokens emitidos por un Authorization Server y cómo usa scopes para decidir si una integración puede ejecutar una acción.

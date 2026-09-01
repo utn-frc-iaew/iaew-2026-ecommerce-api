@@ -28,10 +28,10 @@ Autorización responde:
 
 Ejemplo:
 
-- `cliente-demo` está autenticado como cliente.
-- Puede crear pedidos.
-- No puede crear productos.
-- `admin-demo` puede administrar catálogo.
+- Un cliente Machine to Machine obtiene un access token en Auth0.
+- El token está emitido para el audience de nuestra API.
+- Si trae `write:pedidos`, puede crear pedidos.
+- Si no trae `admin:productos`, no puede crear productos.
 - Una integración interna puede requerir además una API key.
 
 Un error frecuente es autenticar al usuario y asumir que eso alcanza. En una API real, cada endpoint sensible debería expresar su regla de autorización.
@@ -61,30 +61,33 @@ En esta clase usamos `x-api-key` para representar una integración interna que a
 Un Bearer token es una credencial enviada normalmente en el header:
 
 ```http
-Authorization: Bearer cliente-demo
+Authorization: Bearer eyJhbGciOiJSUzI1NiIs...
 ```
 
-En producción, ese token podría ser un JWT emitido por un proveedor de identidad. En esta clase usamos tokens simulados para enfocarnos en el flujo:
+En esta clase usamos access tokens JWT emitidos por Auth0. La API no genera esos tokens: actúa como Resource Server y valida que el token sea confiable antes de ejecutar la acción.
 
-- leer header;
-- validar formato;
-- resolver usuario;
-- adjuntar `req.user`;
-- aplicar roles.
+La validación mínima incluye:
+
+- leer el header `Authorization`;
+- validar que el token fue emitido por el issuer esperado;
+- validar que el audience corresponde a nuestra API;
+- verificar firma y expiración;
+- aplicar scopes sobre las rutas protegidas.
 
 La idea importante es que las rutas no deberían duplicar lógica de autenticación. Esa lógica vive mejor como middleware.
 
-## 5. Roles y permisos
+## 5. Scopes, roles y permisos
 
-Un rol agrupa permisos. Para el taller usamos:
+Un scope expresa qué permiso trae un access token para una API determinada. Para el taller usamos:
 
-| Rol | Puede hacer |
+| Scope | Puede hacer |
 |---|---|
 | Público | Consultar salud y productos. |
-| Cliente | Crear y confirmar sus pedidos. |
-| Admin | Crear productos y modificar catálogo. |
+| `write:pedidos` | Crear pedidos. |
+| `confirm:pedidos` | Confirmar pedidos. |
+| `admin:productos` | Crear productos y modificar catálogo. |
 
-En sistemas reales, los roles pueden no alcanzar. A veces hacen falta permisos más finos:
+En sistemas reales, los roles pueden convivir con permisos más finos:
 
 - `productos:crear`;
 - `pedidos:confirmar`;
@@ -106,7 +109,7 @@ La decisión depende del dominio, del riesgo y de la cantidad de integraciones.
 Ejemplos:
 
 - Crear pedido sin token: `401`.
-- Crear producto con API key válida y token de cliente: `403`.
+- Crear producto con API key válida pero sin scope `admin:productos`: `403`.
 - Confirmar dos veces el mismo pedido: `409`.
 - API key esperada no configurada en el servidor: `500`.
 
@@ -170,14 +173,15 @@ No alcanza con confiar en que el agente "entienda" lo que hace. La API debe prot
 Cada equipo debería poder responder:
 
 - ¿Qué endpoints son públicos?
-- ¿Qué endpoints requieren usuario autenticado?
-- ¿Qué endpoints requieren rol administrativo?
+- ¿Qué endpoints requieren Bearer token?
+- ¿Qué scopes requiere cada acción protegida?
+- ¿Qué audience e issuer valida la API?
+- ¿Cómo se obtiene un token con `client_credentials`?
 - ¿Qué secretos usa el proyecto?
 - ¿Dónde están documentadas las variables de entorno?
 - ¿Qué pasa si falta un token?
 - ¿Qué pasa si el token existe pero no tiene permisos?
 - ¿Qué acciones deberían quedar auditadas?
-- ¿Qué acción sería peligrosa si la ejecuta un agente de IA?
 
 ## Glosario
 
@@ -187,6 +191,9 @@ Cada equipo debería poder responder:
 | Autorización | Proceso para decidir qué puede hacer quien hace el request. |
 | API key | Clave compartida para identificar una aplicación o integración. |
 | Bearer token | Credencial enviada en `Authorization` que permite acceder a recursos protegidos. |
+| Audience | Identificador de la API para la cual fue emitido un access token. |
+| Issuer | Servidor de autorización que emitió el token. |
+| Scope | Permiso incluido en el access token para limitar qué puede hacer el cliente. |
 | Rol | Categoría que agrupa permisos. |
 | Middleware | Función intermedia que procesa un request antes del controlador. |
 | Secreto | Dato sensible que no debe publicarse. |
