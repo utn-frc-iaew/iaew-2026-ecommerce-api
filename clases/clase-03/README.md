@@ -20,7 +20,7 @@ Tema: Seguridad aplicada a acciones de negocio
 Que cada estudiante transforme la API de e-commerce de la clase anterior en una API que proteja acciones de negocio usando Auth0 como servidor de autorización:
 
 - distinguir endpoints públicos y privados;
-- configurar una API, audience, scopes y cliente Machine to Machine en Auth0;
+- configurar una API con audience `https://iaew-pedidos-api`, scopes y cliente Machine to Machine en Auth0;
 - obtener un access token con el flujo OAuth 2.0 `client_credentials`;
 - validar JWT en Express usando `issuer`, `audience`, firma y expiración;
 - aplicar scopes sobre operaciones sensibles;
@@ -77,8 +77,9 @@ Al finalizar la clase, la API debería tener al menos estos comportamientos:
 |---|---|
 | `GET /health` | Público. |
 | `GET /productos` | Público. |
+| `GET /pedidos` | Requiere Bearer token válido con scope `read:pedidos`. |
 | `POST /pedidos` | Requiere Bearer token válido con scope `write:pedidos`. |
 | `POST /pedidos/:id/confirmar` | Requiere Bearer token válido con scope `confirm:pedidos`. |
-| `POST /productos` | Requiere `x-api-key` válida y Bearer token válido con scope `admin:productos`. |
+| `POST /productos` | Requiere `x-api-key` válida. |
 
 No buscamos implementar login de usuarios finales todavía. Buscamos entender cómo una API valida tokens emitidos por un Authorization Server y cómo usa scopes para decidir si una integración puede ejecutar una acción.
