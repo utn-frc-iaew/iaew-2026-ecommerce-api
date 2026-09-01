@@ -11,7 +11,7 @@ Al finalizar, tu API deberá:
 - mantener públicos `GET /health` y `GET /productos`;
 - validar access tokens JWT emitidos por Auth0;
 - verificar `issuer`, `audience`, firma y expiración del token;
-- exigir scopes para crear productos, crear pedidos y confirmar pedidos;
+- exigir scopes para consultar, crear y confirmar pedidos;
 - incluir un ejemplo mínimo de `api_key` con `x-api-key`;
 - responder `401 Unauthorized`, `403 Forbidden` y `409 Conflict` en los casos correctos;
 - documentar la configuración usada sin subir secretos reales.
@@ -54,7 +54,7 @@ Crear `.env` desde `.env.example` si todavía no existe:
 PORT=3000
 MONGODB_URI=mongodb://127.0.0.1:27017/iaew_ecommerce
 AUTH0_DOMAIN=tu-tenant.us.auth0.com
-AUTH0_AUDIENCE=https://iaew-ecommerce-api
+AUTH0_AUDIENCE=https://iaew-pedidos-api
 INTERNAL_API_KEY=clave-interna-demo
 ```
 
@@ -64,7 +64,7 @@ Actualizar `.env.example` sin secretos reales:
 PORT=3000
 MONGODB_URI=mongodb://127.0.0.1:27017/iaew_ecommerce
 AUTH0_DOMAIN=tu-tenant.us.auth0.com
-AUTH0_AUDIENCE=https://iaew-ecommerce-api
+AUTH0_AUDIENCE=https://iaew-pedidos-api
 INTERNAL_API_KEY=colocar-api-key-local
 ```
 
@@ -102,16 +102,17 @@ Entrar al dashboard de Auth0 y crear una API:
 | Campo | Valor sugerido |
 |---|---|
 | Name | `IAEW E-commerce API` |
-| Identifier / Audience | `https://iaew-ecommerce-api` |
+| Identifier / Audience | `https://iaew-pedidos-api` |
 | Signing Algorithm | `RS256` |
 
 Agregar estos scopes o permisos en la API:
 
 | Scope | Uso en esta actividad |
 |---|---|
-| `admin:productos` | Crear productos del catálogo. |
+| `read:pedidos` | Consultar pedidos. |
 | `write:pedidos` | Crear pedidos. |
 | `confirm:pedidos` | Confirmar pedidos. |
+| `admin:productos` | Alternativa OAuth para administrar productos. En el taller se usa `x-api-key` para ver ese mecanismo funcionando. |
 
 Crear una aplicación en Auth0:
 
@@ -119,7 +120,7 @@ Crear una aplicación en Auth0:
 |---|---|
 | Application type | `Machine to Machine Applications` |
 | API autorizada | `IAEW E-commerce API` |
-| Permisos asignados | `admin:productos`, `write:pedidos`, `confirm:pedidos` |
+| Permisos asignados | `read:pedidos`, `write:pedidos`, `confirm:pedidos`, `admin:productos` |
 
 Guardar para uso local:
 
@@ -143,7 +144,7 @@ curl --request POST \
   --data '{
     "client_id": "TU_CLIENT_ID",
     "client_secret": "TU_CLIENT_SECRET",
-    "audience": "https://iaew-ecommerce-api",
+    "audience": "https://iaew-pedidos-api",
     "grant_type": "client_credentials"
   }'
 ```
@@ -153,7 +154,7 @@ La respuesta debe incluir:
 ```json
 {
   "access_token": "eyJ...",
-  "scope": "admin:productos write:pedidos confirm:pedidos",
+  "scope": "read:pedidos write:pedidos confirm:pedidos admin:productos",
   "expires_in": 86400,
   "token_type": "Bearer"
 }
@@ -176,7 +177,7 @@ Verificar estos claims:
 | Claim | Qué validar |
 |---|---|
 | `iss` | Debe corresponder al tenant de Auth0. |
-| `aud` | Debe incluir `https://iaew-ecommerce-api`. |
+| `aud` | Debe incluir `https://iaew-pedidos-api`. |
 | `scope` | Debe incluir los permisos asignados. |
 | `exp` | Debe tener una fecha de expiración. |
 | `sub` | Debe identificar al cliente Machine to Machine. |
@@ -266,13 +267,12 @@ const { requireScope } = require('../middleware/auth0');
 const { requireApiKey } = require('../middleware/apiKey');
 ```
 
-Dejar `GET /productos` público y proteger `POST /productos`:
+Dejar `GET /productos` público y proteger `POST /productos` con API key:
 
 ```js
 router.post(
   '/',
   requireApiKey,
-  requireScope('admin:productos'),
   async (req, res) => {
     try {
       if (!req.body.nombre || !req.body.categoria) {
@@ -315,34 +315,12 @@ Respuesta esperada:
 401 Unauthorized
 ```
 
-Probar con API key pero sin token:
+Probar con API key válida:
 
 ```http
 POST http://localhost:3000/productos
 Content-Type: application/json
 x-api-key: clave-interna-demo
-
-{
-  "nombre": "Teclado mecánico",
-  "precio": 69999,
-  "categoria": "periféricos",
-  "stock": 8
-}
-```
-
-Respuesta esperada:
-
-```http
-401 Unauthorized
-```
-
-Probar con API key y token válido:
-
-```http
-POST http://localhost:3000/productos
-Content-Type: application/json
-x-api-key: clave-interna-demo
-Authorization: Bearer PEGAR_ACCESS_TOKEN
 
 {
   "nombre": "Teclado mecánico",
@@ -358,6 +336,8 @@ Respuesta esperada:
 201 Created
 ```
 
+Si el equipo quiere practicar una variante más estricta, puede proteger `POST /productos` con scope `admin:productos` en lugar de API key. En esta actividad dejamos `x-api-key` para ver el mecanismo funcionando de forma directa.
+
 ## Paso 8 - Proteger pedidos con scopes
 
 Modificar `routes/pedidos.js`.
@@ -366,6 +346,19 @@ Importar:
 
 ```js
 const { requireScope } = require('../middleware/auth0');
+```
+
+Agregar un endpoint para consultar pedidos protegidos:
+
+```js
+router.get('/', requireScope('read:pedidos'), async (req, res) => {
+  try {
+    const pedidos = await Pedido.find().sort({ createdAt: -1 });
+    res.json(pedidos);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al consultar pedidos' });
+  }
+});
 ```
 
 Proteger creación de pedidos:
@@ -540,10 +533,11 @@ Crear `evidencias/pruebas-http.md` con:
 |---|---|
 | `GET /health` sin token | `200 OK` |
 | `GET /productos` sin token | `200 OK` |
+| `GET /pedidos` sin token | `401 Unauthorized` |
 | `POST /productos` sin headers | `401 Unauthorized` |
-| `POST /productos` con `x-api-key` pero sin Bearer token | `401 Unauthorized` |
-| `POST /productos` con `x-api-key` y scope `admin:productos` | `201 Created` |
+| `POST /productos` con `x-api-key` válida | `201 Created` |
 | `POST /pedidos` sin token | `401 Unauthorized` |
+| `GET /pedidos` con scope `read:pedidos` | `200 OK` |
 | `POST /pedidos` con scope `write:pedidos` | `201 Created` |
 | `POST /pedidos/:id/confirmar` con scope `confirm:pedidos` | `200 OK` |
 | `POST /pedidos/:id/confirmar` repetido | `409 Conflict` |

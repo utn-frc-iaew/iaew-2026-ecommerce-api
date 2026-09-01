@@ -31,7 +31,7 @@ Ejemplo:
 - Un cliente Machine to Machine obtiene un access token en Auth0.
 - El token está emitido para el audience de nuestra API.
 - Si trae `write:pedidos`, puede crear pedidos.
-- Si no trae `admin:productos`, no puede crear productos.
+- Para pedidos, la API valida scopes como `read:pedidos`, `write:pedidos` o `confirm:pedidos`.
 - Una integración interna puede requerir además una API key.
 
 Un error frecuente es autenticar al usuario y asumir que eso alcanza. En una API real, cada endpoint sensible debería expresar su regla de autorización.
@@ -83,9 +83,10 @@ Un scope expresa qué permiso trae un access token para una API determinada. Par
 | Scope | Puede hacer |
 |---|---|
 | Público | Consultar salud y productos. |
+| `read:pedidos` | Consultar pedidos. |
 | `write:pedidos` | Crear pedidos. |
 | `confirm:pedidos` | Confirmar pedidos. |
-| `admin:productos` | Crear productos y modificar catálogo. |
+| `admin:productos` | Crear productos y modificar catálogo, si el equipo elige la variante OAuth para esa acción. |
 
 En sistemas reales, los roles pueden convivir con permisos más finos:
 
@@ -109,7 +110,7 @@ La decisión depende del dominio, del riesgo y de la cantidad de integraciones.
 Ejemplos:
 
 - Crear pedido sin token: `401`.
-- Crear producto con API key válida pero sin scope `admin:productos`: `403`.
+- Crear pedido con token válido pero sin scope `write:pedidos`: `403`.
 - Confirmar dos veces el mismo pedido: `409`.
 - API key esperada no configurada en el servidor: `500`.
 
