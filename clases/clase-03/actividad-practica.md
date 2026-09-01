@@ -263,7 +263,6 @@ Modificar `routes/productos.js`.
 Importar middlewares:
 
 ```js
-const { requireScope } = require('../middleware/auth0');
 const { requireApiKey } = require('../middleware/apiKey');
 ```
 
@@ -537,6 +536,7 @@ Crear `evidencias/pruebas-http.md` con:
 | `POST /productos` sin headers | `401 Unauthorized` |
 | `POST /productos` con `x-api-key` válida | `201 Created` |
 | `POST /pedidos` sin token | `401 Unauthorized` |
+| `POST /pedidos` con token válido sin scope `write:pedidos` | `403 Forbidden` |
 | `GET /pedidos` con scope `read:pedidos` | `200 OK` |
 | `POST /pedidos` con scope `write:pedidos` | `201 Created` |
 | `POST /pedidos/:id/confirmar` con scope `confirm:pedidos` | `200 OK` |
