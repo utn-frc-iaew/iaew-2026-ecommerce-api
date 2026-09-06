@@ -1,6 +1,8 @@
 const FORM_TITLE = 'Registro de grupos TPI - IAEW 2026';
 const DOMAIN_ITEM_TITLE = 'Dominio elegido';
+const GROUP_HEADER = 'Grupo asignado';
 const STATUS_HEADER = 'Estado de asignación';
+const EMAIL_SENT_HEADER = 'Confirmación enviada';
 
 const DOMAINS = [
   'Pedidos en restaurante con cocina',
@@ -23,16 +25,8 @@ function crearFormularioRegistroTpi() {
   form.setLimitOneResponsePerUser(false);
   form.setAllowResponseEdits(false);
   form.setConfirmationMessage(
-    'Registro recibido. La cátedra confirmará la asignación del dominio.'
+    'Registro recibido. El responsable recibirá por correo el nombre del grupo asignado.'
   );
-
-  form.addTextItem()
-    .setTitle('Nombre del grupo')
-    .setRequired(true);
-
-  form.addTextItem()
-    .setTitle('Comisión')
-    .setRequired(true);
 
   agregarIntegrante(form, 1, true);
   agregarIntegrante(form, 2, true);
@@ -88,6 +82,11 @@ function moverArchivosACarpetaDelScript(fileIds) {
 }
 
 function agregarIntegrante(form, numero, requerido) {
+  const emailValidation = FormApp.createTextValidation()
+    .requireTextIsEmail()
+    .setHelpText('Ingresá un correo válido.')
+    .build();
+
   form.addSectionHeaderItem()
     .setTitle('Integrante ' + numero + (requerido ? '' : ' (opcional)'));
 
@@ -102,6 +101,11 @@ function agregarIntegrante(form, numero, requerido) {
   form.addTextItem()
     .setTitle('Integrante ' + numero + ' - Legajo')
     .setRequired(requerido);
+
+  form.addTextItem()
+    .setTitle('Integrante ' + numero + ' - Mail')
+    .setRequired(requerido)
+    .setValidation(emailValidation);
 }
 
 function actualizarDominiosDisponibles() {
@@ -126,7 +130,9 @@ function actualizarDominiosDisponibles() {
       throw new Error('No se encontró la columna "' + DOMAIN_ITEM_TITLE + '".');
     }
 
-    const statusColumn = asegurarColumnaEstado(responseSheet, headers);
+    const groupColumn = asegurarColumna(responseSheet, headers, GROUP_HEADER);
+    const statusColumn = asegurarColumna(responseSheet, headers, STATUS_HEADER);
+    asegurarColumna(responseSheet, headers, EMAIL_SENT_HEADER);
     const dominiosTomados = new Set();
 
     for (let row = 1; row < values.length; row++) {
@@ -139,9 +145,14 @@ function actualizarDominiosDisponibles() {
           .setValue('DUPLICADO - revisar manualmente');
       } else {
         dominiosTomados.add(dominio);
+        const groupName = 'Grupo ' + String(dominiosTomados.size).padStart(2, '0');
+        responseSheet
+          .getRange(row + 1, groupColumn + 1)
+          .setValue(groupName);
         responseSheet
           .getRange(row + 1, statusColumn + 1)
           .setValue('Asignado');
+        enviarConfirmacionSiCorresponde(responseSheet, headers, row, groupName, dominio);
       }
     }
 
@@ -173,12 +184,40 @@ function actualizarOpcionesDominio(form, disponibles) {
   form.setAcceptingResponses(true);
 }
 
-function asegurarColumnaEstado(sheet, headers) {
-  const existingIndex = headers.indexOf(STATUS_HEADER);
+function enviarConfirmacionSiCorresponde(sheet, headers, row, groupName, dominio) {
+  const emailColumn = headers.indexOf('Dirección de correo electrónico');
+  if (emailColumn === -1) return;
+
+  const emailSentColumn = headers.indexOf(EMAIL_SENT_HEADER);
+  if (emailSentColumn !== -1 && sheet.getRange(row + 1, emailSentColumn + 1).getValue() === 'Sí') {
+    return;
+  }
+
+  const email = sheet.getRange(row + 1, emailColumn + 1).getValue();
+  if (!email) return;
+
+  MailApp.sendEmail({
+    to: email,
+    subject: 'Registro TPI IAEW 2026 - ' + groupName,
+    body:
+      'Registro recibido.\n\n' +
+      'Grupo asignado: ' + groupName + '\n' +
+      'Dominio elegido: ' + dominio + '\n\n' +
+      'La cátedra usará este nombre para identificar al equipo durante el TPI.'
+  });
+
+  if (emailSentColumn !== -1) {
+    sheet.getRange(row + 1, emailSentColumn + 1).setValue('Sí');
+  }
+}
+
+function asegurarColumna(sheet, headers, title) {
+  const existingIndex = headers.indexOf(title);
   if (existingIndex !== -1) return existingIndex;
 
   const nextColumn = headers.length + 1;
-  sheet.getRange(1, nextColumn).setValue(STATUS_HEADER);
+  sheet.getRange(1, nextColumn).setValue(title);
+  headers.push(title);
   return nextColumn - 1;
 }
 
