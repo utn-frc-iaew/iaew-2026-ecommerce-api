@@ -21,7 +21,7 @@ function crearFormularioRegistroTpi() {
       'El dominio elegido queda reservado para ese grupo.'
   );
   form.setCollectEmail(false);
-  form.setLimitOneResponsePerUser(false);
+  form.setLimitOneResponsePerUser(true);
   form.setAllowResponseEdits(false);
   form.setConfirmationMessage(
     'Registro recibido. La cátedra asignará luego el nombre del grupo.'
@@ -49,6 +49,11 @@ function crearFormularioRegistroTpi() {
   ScriptApp.newTrigger('actualizarDominiosDisponibles')
     .forForm(form)
     .onFormSubmit()
+    .create();
+
+  ScriptApp.newTrigger('actualizarDominiosDisponibles')
+    .forSpreadsheet(sheet)
+    .onChange()
     .create();
 
   PropertiesService.getScriptProperties().setProperties({
