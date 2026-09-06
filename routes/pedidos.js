@@ -3,9 +3,18 @@ const mongoose = require('mongoose');
 const Pedido = require('../models/Pedido');
 const Producto = require('../models/Producto');
 
+const { requireScope } = require('../middleware/auth0');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.get('/', requireScope('read:pedidos'), async (req, res) => {
+  try {
+    res.json(await Pedido.find().sort({ createdAt: -1 }));
+  } catch (error) {
+    res.status(500).json({ error: 'Error al consultar pedidos' });
+  }
+});
+
+router.post('/', requireScope('write:pedidos'), async (req, res) => {
   try {
     if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
       return res.status(400).json({
@@ -55,7 +64,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.post('/:id/confirmar', async (req, res) => {
+router.post('/:id/confirmar', requireScope('confirm:pedidos'), async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: 'ID de pedido inválido' });
