@@ -46,11 +46,12 @@ function crearFormularioRegistroTpi() {
     .setRequired(true);
 
   form.addParagraphTextItem()
-    .setTitle('Comentarios para la catedra')
+    .setTitle('Comentarios para la cátedra')
     .setRequired(false);
 
   const sheet = SpreadsheetApp.create('Respuestas - ' + FORM_TITLE);
   form.setDestination(FormApp.DestinationType.SPREADSHEET, sheet.getId());
+  moverArchivosACarpetaDelScript([form.getId(), sheet.getId()]);
 
   ScriptApp.newTrigger('actualizarDominiosDisponibles')
     .forForm(form)
@@ -64,9 +65,26 @@ function crearFormularioRegistroTpi() {
 
   actualizarDominiosDisponibles();
 
-  Logger.log('Formulario de edicion: ' + form.getEditUrl());
+  Logger.log('Formulario de edición: ' + form.getEditUrl());
   Logger.log('Formulario para estudiantes: ' + form.getPublishedUrl());
   Logger.log('Planilla de respuestas: ' + sheet.getUrl());
+}
+
+function moverArchivosACarpetaDelScript(fileIds) {
+  const scriptFile = DriveApp.getFileById(ScriptApp.getScriptId());
+  const parents = scriptFile.getParents();
+
+  if (!parents.hasNext()) {
+    Logger.log('No se encontró carpeta padre del script. Los archivos quedan en Mi unidad.');
+    return;
+  }
+
+  const targetFolder = parents.next();
+
+  fileIds.forEach((fileId) => {
+    const file = DriveApp.getFileById(fileId);
+    file.moveTo(targetFolder);
+  });
 }
 
 function agregarIntegrante(form, numero, requerido) {
