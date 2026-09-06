@@ -84,13 +84,7 @@ function agregarIntegrante(form, numero, requerido) {
   form.addTextItem()
     .setTitle('Integrante ' + numero + (requerido ? '' : ' (opcional)'))
     .setHelpText('Formato sugerido: Nombre Apellido - Legajo')
-    .setRequired(requerido)
-    .setValidation(
-      FormApp.createTextValidation()
-        .requireTextMatchesPattern('^\\s*\\S+\\s+\\S+.*-\\s*\\d+\\s*$')
-        .setHelpText('Ingresá nombre, apellido y legajo. Ejemplo: Ana Pérez - 12345')
-        .build()
-    );
+    .setRequired(requerido);
 }
 
 function actualizarDominiosDisponibles() {
