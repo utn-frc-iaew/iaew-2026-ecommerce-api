@@ -208,6 +208,19 @@ En `src/models/Pedido.js`, agregá:
 - `notificacionEstado`, con valores `pendiente` y `procesada`, inicialmente `pendiente`;
 - `notificadoEn`, de tipo fecha y opcional.
 
+Dentro del objeto principal de `pedidoSchema`, después de `confirmadoEn`, incorporá estos campos:
+
+```js
+notificacionEstado: {
+  type: String,
+  enum: ['pendiente', 'procesada'],
+  default: 'pendiente'
+},
+notificadoEn: {
+  type: Date
+}
+```
+
 Creá `src/worker.js`. El consumidor debe:
 
 1. conectar MongoDB y RabbitMQ;
