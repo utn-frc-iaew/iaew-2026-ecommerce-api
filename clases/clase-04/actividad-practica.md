@@ -116,6 +116,59 @@ Creá `src/lib/rabbit.js`. Debe:
 
 No alcanza con `await channel.publish(...)`: el booleano de `publish()` representa presión del búfer, no la confirmación del broker.
 
+Usá esta implementación base:
+
+```js
+const amqp = require('amqplib');
+
+const EXCHANGE = 'pedidos.exchange';
+const ROUTING_KEY = 'pedido.confirmado';
+const QUEUE = 'notificaciones.pedido-confirmado';
+
+async function crearCanal() {
+  const connection = await amqp.connect(process.env.RABBIT_URL);
+  const channel = await connection.createConfirmChannel();
+
+  await channel.assertExchange(EXCHANGE, 'direct', { durable: true });
+  await channel.assertQueue(QUEUE, { durable: true });
+  await channel.bindQueue(QUEUE, EXCHANGE, ROUTING_KEY);
+
+  return { connection, channel };
+}
+
+async function publicarPedidoConfirmado(evento) {
+  const { connection, channel } = await crearCanal();
+
+  try {
+    channel.publish(
+      EXCHANGE,
+      ROUTING_KEY,
+      Buffer.from(JSON.stringify(evento)),
+      { contentType: 'application/json', persistent: true }
+    );
+    await channel.waitForConfirms();
+  } finally {
+    await channel.close();
+    await connection.close();
+  }
+}
+
+module.exports = {
+  EXCHANGE,
+  QUEUE,
+  ROUTING_KEY,
+  crearCanal,
+  publicarPedidoConfirmado
+};
+```
+
+En `src/routes/pedidos.js`, agregá estos imports:
+
+```js
+const crypto = require('crypto');
+const { publicarPedidoConfirmado } = require('../lib/rabbit');
+```
+
 En `POST /pedidos/:id/confirmar`, conservá `requireScope('confirm:pedidos')` y las validaciones existentes. Después de descontar stock y guardar el pedido confirmado, construí:
 
 ```js
@@ -128,7 +181,23 @@ const evento = {
 };
 ```
 
-Publicalo y respondé `200` con el pedido y el evento. No incluyas el Bearer token, la API key ni datos personales en el mensaje.
+Publicalo y respondé `200` con el pedido y el evento:
+
+```js
+try {
+  await publicarPedidoConfirmado(evento);
+} catch (error) {
+  return res.status(503).json({
+    error: 'Pedido confirmado, pero no se pudo publicar la notificación',
+    detalle: 'Consultar el estado del pedido antes de reintentar',
+    pedidoId: pedido.id
+  });
+}
+
+res.json({ pedido, evento });
+```
+
+No incluyas el Bearer token, la API key ni datos personales en el mensaje.
 
 Si MongoDB ya guardó la confirmación pero falla RabbitMQ, respondé `503` y explicá que el pedido puede haber quedado confirmado. No hagas rollback ni reintento automático: ese hueco es una limitación deliberada que analizaremos.
 
@@ -148,6 +217,90 @@ Creá `src/worker.js`. El consumidor debe:
 5. ejecutar `ack` después de persistir.
 
 Ante un mensaje inválido o un error, registrá la causa y usá `nack(message, false, false)`. Hoy no implementamos reintentos ni DLQ; evitá un ciclo infinito. El worker no confirma pedidos ni descuenta stock.
+
+Usá esta implementación base:
+
+```js
+require('dotenv').config();
+
+const mongoose = require('mongoose');
+const { connectDb } = require('./db');
+const Pedido = require('./models/Pedido');
+const { crearCanal, QUEUE } = require('./lib/rabbit');
+
+function validarEvento(evento) {
+  if (evento.type !== 'pedido.confirmado') return false;
+  if (evento.version !== 1) return false;
+  if (!evento.eventId || !evento.occurredAt) return false;
+  if (!evento.data || !mongoose.Types.ObjectId.isValid(evento.data.pedidoId)) return false;
+  return !Number.isNaN(Date.parse(evento.occurredAt));
+}
+
+async function procesarMensaje(message, channel) {
+  try {
+    const evento = JSON.parse(message.content.toString());
+
+    if (!validarEvento(evento)) {
+      throw new Error('Evento inválido');
+    }
+
+    const pedido = await Pedido.findOneAndUpdate(
+      {
+        _id: evento.data.pedidoId,
+        estado: 'confirmado',
+        notificacionEstado: 'pendiente'
+      },
+      {
+        notificacionEstado: 'procesada',
+        notificadoEn: new Date()
+      },
+      { new: true }
+    );
+
+    if (!pedido) {
+      const existente = await Pedido.findById(evento.data.pedidoId);
+
+      if (existente && existente.notificacionEstado === 'procesada') {
+        console.log('Notificación ya procesada', evento.eventId);
+        channel.ack(message);
+        return;
+      }
+
+      throw new Error('Pedido confirmado pendiente no encontrado');
+    }
+
+    console.log('Notificación procesada', {
+      eventId: evento.eventId,
+      pedidoId: pedido.id
+    });
+    channel.ack(message);
+  } catch (error) {
+    console.error('No se pudo procesar el mensaje', error.message);
+    channel.nack(message, false, false);
+  }
+}
+
+async function main() {
+  await connectDb();
+  const { channel } = await crearCanal();
+
+  await channel.consume(
+    QUEUE,
+    (message) => {
+      if (message) procesarMensaje(message, channel);
+    },
+    { noAck: false }
+  );
+
+  console.log('Worker escuchando cola ' + QUEUE);
+}
+
+main().catch((error) => {
+  console.error('No se pudo iniciar el worker');
+  console.error(error.message);
+  process.exit(1);
+});
+```
 
 ## A5 — Demostrar el desacople
 
