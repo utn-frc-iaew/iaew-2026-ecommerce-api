@@ -64,7 +64,7 @@ npm install amqplib@2.0.1
 Agregá este script a `package.json`:
 
 ```json
-"worker": "node worker.js"
+"worker": "node src/worker.js"
 ```
 
 Creá `compose.yaml` con un único servicio RabbitMQ:
@@ -106,7 +106,7 @@ Abrí `http://localhost:15672`. Compose es una herramienta del laboratorio: no v
 
 ## A3 — Publicar `pedido.confirmado`
 
-Creá `lib/rabbit.js`. Debe:
+Creá `src/lib/rabbit.js`. Debe:
 
 1. conectarse usando `RABBIT_URL`;
 2. crear un canal de confirmaciones;
@@ -134,12 +134,12 @@ Si MongoDB ya guardó la confirmación pero falla RabbitMQ, respondé `503` y ex
 
 ## A4 — Crear el worker
 
-En `models/Pedido.js`, agregá:
+En `src/models/Pedido.js`, agregá:
 
 - `notificacionEstado`, con valores `pendiente` y `procesada`, inicialmente `pendiente`;
 - `notificadoEn`, de tipo fecha y opcional.
 
-Creá `worker.js`. El consumidor debe:
+Creá `src/worker.js`. El consumidor debe:
 
 1. conectar MongoDB y RabbitMQ;
 2. consumir `notificaciones.pedido-confirmado` con `noAck: false`;
