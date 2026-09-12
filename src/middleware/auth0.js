@@ -6,7 +6,9 @@ const validateAccessToken = auth({
   audience: process.env.AUTH0_AUDIENCE,
   tokenSigningAlg: 'RS256'
 });
+
 function requireScope(scope) {
   return [validateAccessToken, requiredScopes(scope)];
 }
+
 module.exports = { validateAccessToken, requireScope };

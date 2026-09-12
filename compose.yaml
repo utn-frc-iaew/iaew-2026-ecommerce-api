@@ -1,0 +1,13 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    container_name: iaew-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER:-iaew}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS:-iaew-local}
+      RUNNING_UNDER_SYSTEMD: "true"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    tmpfs:
+      - /var/lib/rabbitmq:uid=999,gid=999,mode=0770

@@ -1,109 +1,57 @@
+const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
 const Pedido = require('../models/Pedido');
 const Producto = require('../models/Producto');
-
+const { publishPedidoConfirmado } = require('../lib/rabbit');
 const { requireScope } = require('../middleware/auth0');
 const router = express.Router();
 
 router.get('/', requireScope('read:pedidos'), async (req, res) => {
-  try {
-    res.json(await Pedido.find().sort({ createdAt: -1 }));
-  } catch (error) {
-    res.status(500).json({ error: 'Error al consultar pedidos' });
-  }
+  try { res.json(await Pedido.find().sort({ createdAt: -1 })); }
+  catch { res.status(500).json({ error: 'Error al consultar pedidos' }); }
 });
 
 router.post('/', requireScope('write:pedidos'), async (req, res) => {
   try {
-    if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
-      return res.status(400).json({
-        error: 'El pedido debe tener al menos un item'
-      });
-    }
-
+    if (!Array.isArray(req.body.items) || req.body.items.length === 0) return res.status(400).json({ error: 'El pedido debe tener al menos un item' });
     const items = [];
-
     for (const item of req.body.items) {
-      if (!mongoose.Types.ObjectId.isValid(item.productoId)) {
-        return res.status(400).json({ error: 'ID de producto inválido' });
-      }
-
+      if (!mongoose.Types.ObjectId.isValid(item.productoId)) return res.status(400).json({ error: 'ID de producto inválido' });
       const producto = await Producto.findById(item.productoId);
-
-      if (!producto || !producto.activo) {
-        return res.status(400).json({ error: 'Producto inválido' });
-      }
-
-      if (!item.cantidad || item.cantidad < 1) {
-        return res.status(400).json({ error: 'Cantidad inválida' });
-      }
-
-      items.push({
-        productoId: producto._id,
-        nombre: producto.nombre,
-        cantidad: item.cantidad,
-        precioUnitario: producto.precio
-      });
+      if (!producto || !producto.activo) return res.status(400).json({ error: 'Producto inválido' });
+      if (!item.cantidad || item.cantidad < 1) return res.status(400).json({ error: 'Cantidad inválida' });
+      items.push({ productoId: producto._id, nombre: producto.nombre, cantidad: item.cantidad, precioUnitario: producto.precio });
     }
-
-    const total = items.reduce((acum, item) => {
-      return acum + item.cantidad * item.precioUnitario;
-    }, 0);
-
-    const pedido = await Pedido.create({
-      cliente: req.body.cliente,
-      items,
-      total,
-      estado: 'pendiente'
-    });
-
-    res.status(201).json(pedido);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    const total = items.reduce((sum, item) => sum + item.cantidad * item.precioUnitario, 0);
+    res.status(201).json(await Pedido.create({ cliente: req.body.cliente, items, total, estado: 'pendiente', notificacionEstado: 'pendiente' }));
+  } catch (error) { res.status(400).json({ error: error.message }); }
 });
 
 router.post('/:id/confirmar', requireScope('confirm:pedidos'), async (req, res) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: 'ID de pedido inválido' });
-    }
-
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ error: 'ID de pedido inválido' });
     const pedido = await Pedido.findById(req.params.id);
-
-    if (!pedido) {
-      return res.status(404).json({ error: 'Pedido no encontrado' });
-    }
-
-    if (pedido.estado !== 'pendiente') {
-      return res.status(409).json({ error: 'El pedido ya fue confirmado' });
-    }
-
+    if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+    if (pedido.estado !== 'pendiente') return res.status(409).json({ error: 'El pedido ya fue confirmado' });
     for (const item of pedido.items) {
       const producto = await Producto.findById(item.productoId);
-
-      if (!producto || !producto.activo || producto.stock < item.cantidad) {
-        return res.status(409).json({
-          error: `No hay stock suficiente para ${item.nombre}`
-        });
-      }
+      if (!producto || !producto.activo || producto.stock < item.cantidad) return res.status(409).json({ error: `No hay stock suficiente para ${item.nombre}` });
     }
-
-    for (const item of pedido.items) {
-      await Producto.findByIdAndUpdate(item.productoId, {
-        $inc: { stock: -item.cantidad }
-      });
-    }
-
+    for (const item of pedido.items) await Producto.findByIdAndUpdate(item.productoId, { $inc: { stock: -item.cantidad } });
     pedido.estado = 'confirmado';
     pedido.confirmadoEn = new Date();
+    pedido.notificacionEstado = 'pendiente';
     await pedido.save();
-
-    res.json(pedido);
-  } catch (error) {
-    res.status(500).json({ error: 'Error al confirmar pedido' });
-  }
+    const event = { eventId: crypto.randomUUID(), type: 'pedido.confirmado', version: 1, occurredAt: pedido.confirmadoEn.toISOString(), data: { pedidoId: pedido.id } };
+    try {
+      await publishPedidoConfirmado(event);
+      res.json({ pedido, event });
+    } catch (error) {
+      console.error('Pedido confirmado, pero no se pudo publicar el evento:', error.message);
+      res.status(503).json({ error: 'El pedido quedó confirmado, pero no se pudo publicar la notificación. Consultá su estado; no se realizó rollback ni reintento automático.', pedido });
+    }
+  } catch (error) { res.status(500).json({ error: 'Error al confirmar pedido' }); }
 });
 
 module.exports = router;

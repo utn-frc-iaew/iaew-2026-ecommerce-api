@@ -1,5 +1,7 @@
 # iaew-2026-ecommerce-api
 
+> Rama `clase-05-inicio`: punto de partida de la Clase 05, construido con la actividad de la Clase 04 resuelta. Incluye RabbitMQ, publicación de `pedido.confirmado` y worker. Todavía no incluye idempotency keys, retry ni DLQ.
+
 > Rama `clase-03-inicio`: punto de partida para la Clase 03, construido con la actividad resuelta de la Clase 02.
 
 ## Arranque rápido de la API

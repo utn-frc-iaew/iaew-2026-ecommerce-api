@@ -1,13 +1,16 @@
 {
   "name": "iaew-2026-ecommerce-api",
   "version": "1.0.0",
-  "description": "API base de e-commerce para IAEW 2026.",
+  "private": true,
+  "description": "Base de Clase 05: solución de mensajería de la Clase 04.",
   "main": "src/app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "worker": "node src/worker.js"
   },
   "dependencies": {
+    "amqplib": "2.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-oauth2-jwt-bearer": "1.10.0",
