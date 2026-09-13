@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 390" role="img" aria-labelledby="t d">
+  <title id="t">Topología de retry con TTL y DLQ</title>
+  <desc id="d">La cola principal entrega el mensaje al worker. Una falla transitoria pasa a la cola retry y, después del TTL, regresa a la cola principal con el contador incrementado. Una falla permanente o agotada pasa a la DLQ.</desc>
+  <defs>
+    <marker id="cyanArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6 0 12z" fill="#25a8c4"/></marker>
+    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6 0 12z" fill="#ef842f"/></marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#06131d" flood-opacity=".28"/></filter>
+  </defs>
+  <rect width="1100" height="390" rx="26" fill="#0e293c"/>
+
+  <path d="M900 92H1015V22H155V122" fill="none" stroke="#25a8c4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#cyanArrow)"/>
+  <g font-family="Inter,Arial,sans-serif"><rect x="470" y="8" width="205" height="30" rx="15" fill="#163f55" stroke="#34778d"/><text x="572" y="29" text-anchor="middle" font-size="15" font-weight="700" fill="#dff8ff">TTL vencido · vuelve</text></g>
+
+  <g filter="url(#shadow)" font-family="Inter,Arial,sans-serif" text-anchor="middle">
+    <rect x="45" y="135" width="225" height="118" rx="19" fill="#e8f4fa"/><text x="157" y="181" font-size="23" font-weight="800" fill="#10202f">Cola principal</text><text x="157" y="216" font-size="17" fill="#536777">x-retry-count: 0…N</text>
+    <rect x="365" y="135" width="205" height="118" rx="19" fill="#dff2ee"/><text x="467" y="181" font-size="23" font-weight="800" fill="#10202f">Worker</text><text x="467" y="216" font-size="17" fill="#536777">procesa y clasifica</text>
+    <rect x="690" y="42" width="210" height="105" rx="19" fill="#e8f4fa" stroke="#58cbe0" stroke-width="4"/><text x="795" y="85" font-size="23" font-weight="800" fill="#10202f">Cola retry</text><text x="795" y="117" font-size="17" fill="#536777">espera con TTL</text>
+    <rect x="690" y="243" width="210" height="105" rx="19" fill="#fff0db" stroke="#ef842f" stroke-width="4"/><text x="795" y="286" font-size="23" font-weight="800" fill="#10202f">DLQ</text><text x="795" y="318" font-size="17" fill="#536777">aislar e inspeccionar</text>
+  </g>
+
+  <path d="M270 194H345" fill="none" stroke="#25a8c4" stroke-width="6" stroke-linecap="round" marker-end="url(#cyanArrow)"/>
+  <g font-family="Inter,Arial,sans-serif"><rect x="280" y="155" width="65" height="27" rx="13" fill="#163f55"/><text x="312" y="174" text-anchor="middle" font-size="14" fill="#dff8ff">consume</text></g>
+
+  <path d="M570 165C615 150 625 94 670 94" fill="none" stroke="#25a8c4" stroke-width="6" stroke-linecap="round" marker-end="url(#cyanArrow)"/>
+  <g font-family="Inter,Arial,sans-serif"><rect x="568" y="91" width="111" height="46" rx="14" fill="#163f55"/><text x="623" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="#dff8ff">transitoria</text><text x="623" y="128" text-anchor="middle" font-size="13" fill="#b8dae6">quedan intentos</text></g>
+
+  <path d="M570 226C615 241 625 295 670 295" fill="none" stroke="#ef842f" stroke-width="6" stroke-linecap="round" marker-end="url(#orangeArrow)"/>
+  <g font-family="Inter,Arial,sans-serif"><rect x="555" y="269" width="124" height="48" rx="14" fill="#503525"/><text x="617" y="289" text-anchor="middle" font-size="14" font-weight="700" fill="#ffe3c5">permanente</text><text x="617" y="307" text-anchor="middle" font-size="13" fill="#ffd0a3">o agotada</text></g>
+
+  <g font-family="Inter,Arial,sans-serif" font-size="14"><circle cx="955" cy="270" r="6" fill="#25a8c4"/><text x="970" y="275" fill="#d9eef8">camino recuperable</text><circle cx="955" cy="309" r="6" fill="#ef842f"/><text x="970" y="314" fill="#ffd6ad">aislamiento</text></g>
+</svg>

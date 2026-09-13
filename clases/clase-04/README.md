@@ -15,6 +15,7 @@ Confirmar un pedido protegido por Auth0, publicar `pedido.confirmado` en RabbitM
 | [Presentación](presentacion/index.html) | Caso, conceptos, pasos y checkpoints del taller. |
 | [Actividad práctica](actividad-practica.md) | Guía individual paso a paso y entrega. |
 | [Material adicional](material-adicional/material-completo.md) | Desarrollo teórico y referencias. |
+| [Preflight](scripts/preflight.sh) | Diagnóstico automático del entorno antes del taller. |
 
 ## Punto de partida
 
@@ -30,6 +31,6 @@ Repositorio: <https://github.com/utn-frc-iaew/iaew-2026-ecommerce-api/tree/clase
 
 ## Alcance
 
-La implementación obligatoria usa RabbitMQ, un productor y un worker. Webhook, WebSocket y gRPC se comparan mediante microdemostraciones docentes. Outbox, retries y DLQ quedan como conceptos o temas de la Clase 05.
+La implementación obligatoria usa RabbitMQ, un productor y un worker. El docente muestra primero el recorrido completo y luego cada estudiante lo reproduce mediante cuatro checkpoints. Webhook, WebSocket y gRPC se comparan brevemente; sus microdemostraciones quedan como extensión opcional si el tiempo lo permite. Outbox, retries y DLQ quedan como conceptos o temas de la Clase 05.
 
-La entrega es individual. Cada estudiante conserva evidencia del mensaje pendiente, su procesamiento y los controles de seguridad. Para el TPI grupal, propone y justifica una integración adecuada a su dominio.
+La entrega es individual. Durante la clase se exige evidencia de la confirmación `200`, el mensaje pendiente y su procesamiento final. Las regresiones `401`, `403` y `409`, junto con la decisión para el TPI, deben completarse después de la clase para cerrar la entrega. No se debe avanzar con fallas de entorno silenciosas: el preflight y cada checkpoint indican cuándo pedir ayuda.

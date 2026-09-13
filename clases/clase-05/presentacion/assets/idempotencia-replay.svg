@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" role="img" aria-labelledby="t d">
+  <title id="t">Primera confirmación y replay idempotente</title><desc id="d">Dos solicitudes con la misma clave llegan a una API. La primera crea el evento y descuenta stock; la segunda devuelve el mismo evento sin repetir efectos.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L9 3 0 6z" fill="#0084a1"/></marker></defs>
+  <rect width="1000" height="360" rx="24" fill="#eef6f9"/><g font-family="Inter,Arial" text-anchor="middle">
+  <rect x="35" y="42" width="230" height="92" rx="16" fill="#fff" stroke="#0084a1" stroke-width="3"/><text x="150" y="78" font-size="21" font-weight="700" fill="#10202f">1ª solicitud</text><text x="150" y="108" font-size="17" fill="#536777">misma clave K</text>
+  <rect x="35" y="225" width="230" height="92" rx="16" fill="#fff" stroke="#0084a1" stroke-width="3"/><text x="150" y="261" font-size="21" font-weight="700" fill="#10202f">Replay</text><text x="150" y="291" font-size="17" fill="#536777">misma clave K</text>
+  <rect x="365" y="112" width="230" height="136" rx="22" fill="#0e293c"/><text x="480" y="168" font-size="25" font-weight="800" fill="#67d7e7">API</text><text x="480" y="203" font-size="17" fill="#fff">buscar K antes</text><text x="480" y="226" font-size="17" fill="#fff">de aplicar efectos</text>
+  <rect x="700" y="28" width="260" height="126" rx="18" fill="#dff2ee" stroke="#35b779" stroke-width="3"/><text x="830" y="65" font-size="20" font-weight="700" fill="#10202f">Primera vez</text><text x="830" y="94" font-size="17" fill="#10202f">stock −1 · guardar E1</text><text x="830" y="122" font-size="17" fill="#10202f">publicar E1</text>
+  <rect x="700" y="207" width="260" height="126" rx="18" fill="#e6f3fb" stroke="#0084a1" stroke-width="3"/><text x="830" y="244" font-size="20" font-weight="700" fill="#10202f">Clave ya vista</text><text x="830" y="273" font-size="17" fill="#10202f">stock sin cambios</text><text x="830" y="301" font-size="17" fill="#10202f">devolver el mismo E1</text>
+  </g><g fill="none" stroke="#0084a1" stroke-width="4" marker-end="url(#a)"><path d="M265 88H350"/><path d="M265 271H350"/><path d="M595 150C640 150 650 91 685 91"/><path d="M595 212C640 212 650 270 685 270"/></g>
+</svg>

@@ -2,7 +2,7 @@
 
 Integración de Aplicaciones en Entorno Web · UTN FRC · 2026
 
-Este apunte desarrolla el contenido de la [presentación del día](../presentacion/index.html). La [actividad individual](../actividad-practica.md) utiliza el mismo contrato. El objetivo es confirmar un pedido con la seguridad de Clase 03 y procesar después una notificación mediante RabbitMQ y un worker. Las demostraciones de Webhook, WebSocket y gRPC sirven para comparar alternativas; no son implementaciones obligatorias del taller.
+Este apunte desarrolla el contenido de la [presentación del día](../presentacion/index.html). La [actividad individual](../actividad-practica.md) utiliza el mismo contrato. El objetivo es confirmar un pedido con la seguridad de Clase 03 y procesar después una notificación mediante RabbitMQ y un worker. El docente muestra primero el recorrido completo y los estudiantes lo reproducen mediante checkpoints. Webhook, WebSocket y gRPC sirven para comparar alternativas; sus microdemostraciones son opcionales si el tiempo lo permite.
 
 ## 1. El problema del e-commerce
 
@@ -170,6 +170,8 @@ En este laboratorio los mensajes inválidos y los fallos de procesamiento se reg
 
 La API y el worker se ejecutan con Node.js en terminales diferentes. MongoDB sigue en el contenedor `iaew-mongo`. Compose administra solamente RabbitMQ, por lo que no crea otro MongoDB sobre el mismo puerto. Para que el laboratorio sea reproducible en Docker Desktop, el Compose provisto monta `/var/lib/rabbitmq` como `tmpfs`; sus mensajes se pierden si se recrea el contenedor. Es una decisión didáctica para un entorno efímero, no una configuración de producción.
 
+Antes de implementar, el [preflight](../scripts/preflight.sh) comprueba la presencia de las herramientas, el estado de Docker y MongoDB, y los nombres de las variables necesarias sin revelar sus valores. Después de crear `compose.yaml`, el modo `services` valida su configuración y comprueba que RabbitMQ esté en ejecución. El diagnóstico no reemplaza las pruebas HTTP ni garantiza que Auth0 emitirá un token válido; convierte fallas frecuentes del entorno en resultados visibles para pedir ayuda a tiempo.
+
 | Configuración | Uso |
 |---|---|
 | `PORT=3000` | API HTTP local. |
@@ -212,7 +214,7 @@ La observación central debe hacerse con **el worker detenido desde antes de con
 
 Una cola vacía no demuestra por sí sola que se procesó correctamente: el mensaje pudo rechazarse o no haberse publicado. Hay que correlacionar respuesta HTTP, mensaje, log y estado persistido usando los identificadores.
 
-Después se comprueban los rechazos: `401`, `403`, repetición de confirmación (`409`) y stock insuficiente (`409`). Ninguno debe agregar un evento. Para evitar conclusiones equivocadas, observar la variación de la cola sobre un escenario controlado y pedidos identificados, no asumir que todo mensaje presente proviene de la última solicitud.
+El núcleo presencial termina cuando quedan correlacionadas tres evidencias: confirmación `200`, mensaje `Ready` con el worker detenido y estado final `procesada`. Después de la clase se comprueban los rechazos: `401`, `403`, repetición de confirmación (`409`) y stock insuficiente (`409`). Ninguno debe agregar un evento. Para evitar conclusiones equivocadas, observar la variación de la cola sobre un escenario controlado y pedidos identificados, no asumir que todo mensaje presente proviene de la última solicitud.
 
 ## 11. La ventana entre MongoDB y RabbitMQ
 
@@ -233,7 +235,7 @@ La confirmación heredada tiene varias escrituras sobre pedidos y stock. El tall
 
 ## 12. Demostraciones y vínculo con el TPI
 
-La demostración docente de Webhook muestra una petición HTTP saliente con datos sintéticos y la respuesta del receptor. La de WebSocket muestra un mensaje de cambio de estado en una conexión abierta. La lectura del `.proto` de gRPC permite identificar servicio, operación, pedido de entrada y respuesta. Ninguna de las tres reemplaza la práctica del productor y worker.
+Al comenzar el taller, el docente muestra el recorrido RabbitMQ completo antes del trabajo autónomo. Esto permite que cada estudiante conozca el resultado observable antes de diagnosticar su propia implementación. La comparación conceptual entre REST, mensajería, Webhook, WebSocket y gRPC se mantiene; si sobra tiempo, las microdemostraciones opcionales muestran una petición HTTP saliente, una actualización sobre una conexión abierta y la lectura de un contrato `.proto`. Ninguna reemplaza la práctica del productor y worker.
 
 Para el TPI grupal, cada estudiante propone una interacción y la justifica: quién inicia, quién recibe, si necesita respuesta inmediata y qué ocurre si el receptor está detenido. No es necesario incorporar todas las tecnologías. Por ejemplo, una consulta de catálogo puede seguir usando REST; una notificación diferida puede justificar una cola; una pantalla conectada puede necesitar WebSocket.
 
@@ -250,4 +252,4 @@ Antes de cerrar, poder explicar:
 - Qué queda persistido si falla la publicación después de guardar.
 - Qué integración elegir para una interacción concreta del TPI y qué limitación tiene.
 
-La entrega individual es un `.zip` con código, archivos de dependencias, `.env.example`, `compose.yaml` y `evidencias/pruebas-http.md`. Las evidencias contienen el payload, la cola con worker detenido, el procesamiento, la consulta final, los rechazos y la elección justificada. Excluir `.env`, tokens, credenciales reales y `node_modules`. La [actividad](../actividad-practica.md) detalla los pasos A1–A7 y su correspondencia con D01–D20; este apunte no agrega implementaciones obligatorias.
+La entrega individual es un `.zip` con código, archivos de dependencias, `.env.example`, `compose.yaml` y `evidencias/pruebas-http.md`. Durante la clase se reúnen el preflight, el payload, la confirmación `200`, la cola con el worker detenido, el procesamiento, la consulta final y la explicación del límite de consistencia. Después se completan las regresiones HTTP y la elección justificada para el TPI. Excluir `.env`, tokens, credenciales reales y `node_modules`. La [actividad](../actividad-practica.md) detalla los pasos A1–A7 y su correspondencia con D01–D20; este apunte no agrega implementaciones obligatorias.

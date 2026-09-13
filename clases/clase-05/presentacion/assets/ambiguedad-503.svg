@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 390" role="img" aria-labelledby="t d">
+  <title id="t">Ambigüedad después de un error 503</title>
+  <desc id="d">El cliente envía confirmar pedido. La API guarda el pedido y descuenta stock, pero la respuesta se pierde. El cliente recibe 503 y no sabe si debe reintentar.</desc>
+  <defs><marker id="a" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0 0L11 5.5 0 11z" fill="#168ca5"/></marker><marker id="o" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0 0L11 5.5 0 11z" fill="#e0792b"/></marker></defs>
+  <rect width="760" height="390" rx="22" fill="#eef6f9"/>
+  <g font-family="Inter,Arial,sans-serif" text-anchor="middle">
+    <rect x="35" y="35" width="160" height="76" rx="16" fill="#fff" stroke="#168ca5" stroke-width="3"/><text x="115" y="68" font-size="21" font-weight="800" fill="#10202f">Cliente</text><text x="115" y="94" font-size="15" fill="#536777">quiere confirmar</text>
+    <rect x="300" y="35" width="160" height="76" rx="16" fill="#0e293c"/><text x="380" y="79" font-size="23" font-weight="800" fill="#67d7e7">API</text>
+    <rect x="565" y="35" width="160" height="76" rx="16" fill="#dff2ee" stroke="#35b779" stroke-width="3"/><text x="645" y="68" font-size="21" font-weight="800" fill="#10202f">MongoDB</text><text x="645" y="94" font-size="15" fill="#536777">pedido + stock</text>
+    <line x1="115" y1="111" x2="115" y2="342" stroke="#a6bdc9" stroke-width="2" stroke-dasharray="6 7"/><line x1="380" y1="111" x2="380" y2="342" stroke="#a6bdc9" stroke-width="2" stroke-dasharray="6 7"/><line x1="645" y1="111" x2="645" y2="342" stroke="#a6bdc9" stroke-width="2" stroke-dasharray="6 7"/>
+    <text x="247" y="145" font-size="15" fill="#536777">confirmar pedido</text><text x="512" y="202" font-size="15" fill="#536777">guardar y descontar</text>
+    <rect x="555" y="220" width="180" height="48" rx="24" fill="#35b779"/><text x="645" y="251" font-size="17" font-weight="800" fill="#fff">EFECTO REALIZADO ✓</text>
+    <rect x="235" y="282" width="290" height="58" rx="14" fill="#fff0db" stroke="#e0792b" stroke-width="3"/><text x="380" y="306" font-size="17" font-weight="800" fill="#8a4314">respuesta perdida · 503</text><text x="380" y="329" font-size="15" fill="#8a4314">¿ocurrió el efecto?</text>
+  </g>
+  <path d="M195 155H285" fill="none" stroke="#168ca5" stroke-width="5" marker-end="url(#a)"/><path d="M460 212H550" fill="none" stroke="#168ca5" stroke-width="5" marker-end="url(#a)"/><path d="M365 277C330 245 250 245 190 285" fill="none" stroke="#e0792b" stroke-width="5" stroke-dasharray="9 7" marker-end="url(#o)"/>
+</svg>

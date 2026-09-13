@@ -4,11 +4,15 @@
 
 Vas a desacoplar la confirmación de un pedido de su notificación. La API seguirá confirmando el pedido de forma sincrónica y publicará el evento `pedido.confirmado` en RabbitMQ. Un worker separado consumirá el mensaje y registrará la notificación como procesada.
 
-Al terminar, deberás demostrar el flujo con el worker detenido y luego activo. Webhook, WebSocket y gRPC son demostraciones comparativas de la presentación; no tenés que implementarlos.
+Al terminar el trabajo obligatorio en clase, deberás demostrar el flujo con el worker detenido y luego activo. Webhook, WebSocket y gRPC se comparan en la presentación; sus microdemostraciones son opcionales y no tenés que implementarlos.
+
+Antes del trabajo autónomo, el docente muestra una vez el recorrido completo: confirmación `200`, mensaje `Ready`, inicio del worker y estado final `procesada`. Esa demostración fija el resultado esperado; después vas a reproducirlo mediante cuatro checkpoints.
 
 ## Contrato de la actividad
 
 Conservá la seguridad de la Clase 03:
+
+- Audience de Auth0: `https://iaew-pedidos-api`.
 
 - `GET /health` y `GET /productos`: públicos.
 - `POST /productos`: requiere `x-api-key`.
@@ -51,7 +55,15 @@ Si no existe:
 docker run --name iaew-mongo -p 27017:27017 -d mongo:7
 ```
 
-Antes de continuar, `GET /health` debe responder `200`; `/token-info` debe aceptar un token válido; una ruta de pedidos sin token debe responder `401`.
+Descargá el archivo [preflight.sh](scripts/preflight.sh) provisto junto con esta consigna, guardalo en la raíz de tu proyecto y ejecutalo sin compartir el contenido de `.env`:
+
+```bash
+bash preflight.sh base
+```
+
+El script comprueba herramientas, Docker, MongoDB y la presencia de las variables obligatorias, pero no imprime sus valores. Si informa `FALTA`, resolvé ese punto o pedí ayuda antes de avanzar.
+
+**Checkpoint 1 — Base lista:** el preflight termina sin errores, `GET /health` responde `200` y `/token-info` acepta un token válido. Conservá una sola evidencia del preflight; las pruebas sin token y sin scope forman parte de la ampliación posterior.
 
 ## A2 — Levantar RabbitMQ con Compose
 
@@ -86,7 +98,7 @@ services:
 
 El almacenamiento temporal evita problemas de permisos del volumen interno en distintos entornos de Docker y alcanza para este laboratorio. Si se recrea el contenedor, sus colas y mensajes se pierden; no lo uses como configuración de producción.
 
-Agregá a `.env.example`, sin secretos reales:
+Agregá estas variables a `.env.example`, sin secretos reales, y también a tu `.env` local. En este laboratorio ambos archivos usan las mismas credenciales locales de RabbitMQ:
 
 ```text
 RABBIT_URL=amqp://iaew:iaew-local@localhost:5672
@@ -103,6 +115,14 @@ docker compose logs rabbitmq
 ```
 
 Abrí `http://localhost:15672`. Compose es una herramienta del laboratorio: no vamos a contenerizar la API, el worker ni MongoDB.
+
+Volvé a ejecutar el diagnóstico:
+
+```bash
+bash preflight.sh services
+```
+
+**Checkpoint 2 — Broker listo:** Compose es válido, `iaew-rabbitmq` está en ejecución y `RABBIT_URL` está definida en `.env`. La consola de RabbitMQ abre correctamente.
 
 ## A3 — Publicar `pedido.confirmado`
 
@@ -161,6 +181,8 @@ module.exports = {
   publicarPedidoConfirmado
 };
 ```
+
+**Pausa de comprensión:** antes de copiar el siguiente bloque, explicale a un compañero o anotá en una frase por qué `waitForConfirms()` no demuestra que el worker procesó el mensaje.
 
 En `src/routes/pedidos.js`, agregá estos imports:
 
@@ -315,6 +337,8 @@ main().catch((error) => {
 });
 ```
 
+**Checkpoint 3 — Integración construida:** `node --check src/lib/rabbit.js`, `node --check src/worker.js` y `node --check src/routes/pedidos.js` terminan sin errores. Podés señalar dónde se publica, dónde se persiste y dónde se ejecuta el `ack`.
+
 ## A5 — Demostrar el desacople
 
 Ejecutá la API, pero mantené detenido el worker:
@@ -333,7 +357,11 @@ Con datos sintéticos y las credenciales correctas:
 6. En otra terminal, iniciá `npm run worker`.
 7. Consultá otra vez: `notificacionEstado=procesada` y `notificadoEn` debe tener una fecha.
 
-Después verificá que `401`, `403`, una confirmación repetida (`409`) y stock insuficiente (`409`) no generen eventos. Usá un pedido nuevo para cada escenario y compará la cantidad de mensajes con el worker detenido.
+**Checkpoint 4 — Desacople demostrado:** conservá la confirmación `200`, la cola con un mensaje `Ready` y la consulta final con `notificacionEstado=procesada`. Esas tres evidencias son el núcleo obligatorio de la clase.
+
+### Ampliación posterior a la clase
+
+Verificá que `401`, `403`, una confirmación repetida (`409`) y stock insuficiente (`409`) no generen eventos. Usá un pedido nuevo para cada escenario y compará la cantidad de mensajes con el worker detenido. Estas regresiones son obligatorias para completar la entrega, pero no bloquean el cierre del laboratorio presencial.
 
 ## A6 — Explicar el límite
 
@@ -345,7 +373,7 @@ En tus evidencias, respondé en cinco líneas como máximo:
 
 Nombrá el patrón outbox como posible evolución, sin implementarlo. La Clase 05 trabajará retries, duplicados y DLQ.
 
-## A7 — Elegir una integración
+## A7 — Elegir una integración (posterior a la clase)
 
 Elegí una interacción de tu TPI o de otro dominio y justificá uno de estos mecanismos: REST, mensajería, Webhook, WebSocket o gRPC. Indicá quién inicia, quién recibe, si necesita respuesta inmediata y qué ocurre si el receptor está detenido.
 
@@ -355,12 +383,17 @@ Respondé también: ¿qué scope necesitaría un agente de IA para confirmar un 
 
 Creá `evidencias/pruebas-http.md` con:
 
+- salida final del preflight sin valores secretos;
 - identificador del pedido y payload del evento;
 - confirmación `200` con worker detenido;
 - cola con mensaje Ready;
 - log del worker y consulta final;
-- pruebas `401`, `403` y `409`, mostrando que no agregan eventos;
-- explicación de A6 y elección de A7.
+- explicación de A6.
+
+Para completar la entrega después de la clase, agregá:
+
+- pruebas `401`, `403` y `409`, mostrando que no producen eventos;
+- elección y justificación de A7.
 
 Entregá un `.zip` de hasta 50 MB con código, `package.json`, lockfile, `.env.example`, `compose.yaml` y evidencias. Excluí `.env`, tokens, credenciales reales y `node_modules`.
 
@@ -372,6 +405,6 @@ Entregá un `.zip` de hasta 50 MB con código, `package.json`, lockfile, `.env.e
 | Contrato | Nombres y payload coinciden con la presentación. |
 | Desacople | El mensaje espera con worker detenido y se procesa al iniciarlo. |
 | Consumidor | Persiste antes del ack y no repite el efecto de negocio. |
-| Errores | Los rechazos no producen eventos; el fallo de publicación se explica. |
-| Decisión técnica | La alternativa elegida responde a una necesidad concreta. |
+| Errores — posterior | Los rechazos no producen eventos; el fallo de publicación se explica. |
+| Decisión técnica — posterior | La alternativa elegida responde a una necesidad concreta. |
 | Secretos y entrega | Evidencia suficiente, sin secretos ni dependencias instaladas. |

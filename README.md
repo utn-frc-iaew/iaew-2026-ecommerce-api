@@ -21,7 +21,7 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 | Clase 02 | E-commerce integrado - API REST + MongoDB | [Disponible](clases/clase-02/) |
 | Clase 03 | Seguridad aplicada a acciones de negocio | [Disponible](clases/clase-03/) |
 | Clase 04 | Cuando REST request-response no alcanza | [Disponible](clases/clase-04/) |
-| Clase 05 | Resiliencia de integraciones | Pendiente |
+| Clase 05 | Resiliencia de integraciones | [Disponible](clases/clase-05/) |
 | Clase 06 | Observabilidad de integraciones | Pendiente |
 | Clase 07 | Autodocumentación e IA para documentar | Pendiente |
 | Clase 08 | IA aplicada a integraciones y MCP | Pendiente |
@@ -63,6 +63,14 @@ iaew-2026-ecommerce-api/
         index.html
         assets/
     clase-04/
+      README.md
+      actividad-practica.md
+      material-adicional/
+        material-completo.md
+      presentacion/
+        index.html
+        assets/
+    clase-05/
       README.md
       actividad-practica.md
       material-adicional/
