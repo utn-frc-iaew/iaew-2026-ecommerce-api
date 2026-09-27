@@ -1,0 +1,1 @@
+export { collections } from "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/content.config.ts";

@@ -1,0 +1,13 @@
+import { J as openBlock, v as createBaseVNode, x as createElementBlock } from "./vue.runtime.esm-bundler-BqKG0iLx.js";
+//#region node_modules/@scalar/icons/dist/library/icons/interface-hierarchy-flowchart.svg.js
+var _hoisted_1 = {
+	xmlns: "http://www.w3.org/2000/svg",
+	fill: "currentColor",
+	viewBox: "0 0 256 256"
+};
+function render(_ctx, _cache) {
+	return openBlock(), createElementBlock("svg", _hoisted_1, [..._cache[0] || (_cache[0] = [createBaseVNode("path", { d: "M160 112h48a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16h-16a24 24 0 0 0-24 24v32H72v-8a16 16 0 0 0-16-16H24a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16v-8h32v32a24 24 0 0 0 24 24h16v16a16 16 0 0 0 16 16h48a16 16 0 0 0 16-16v-48a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16h-16a8 8 0 0 1-8-8V88a8 8 0 0 1 8-8h16v16a16 16 0 0 0 16 16M56 144H24v-32h32zm104 16h48v48h-48Zm0-112h48v48h-48Z" }, null, -1)])]);
+}
+var interface_hierarchy_flowchart_default = { render };
+//#endregion
+export { interface_hierarchy_flowchart_default as default, render };

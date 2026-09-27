@@ -1,0 +1,84 @@
+{
+  "extends": "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@config": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/eventcatalog.config.js"
+      ],
+      "@eventcatalog": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/utils/eventcatalog-config/catalog.ts"
+      ],
+      "@icons/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/icons/*"
+      ],
+      "@components/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/components/*"
+      ],
+      "@catalog/layouts/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/toolkit/layouts/*"
+      ],
+      "@catalog/utils": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/toolkit/utils/index.ts"
+      ],
+      "@catalog/utils/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/toolkit/utils/*"
+      ],
+      "@types": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/types/index.ts"
+      ],
+      "@utils/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/utils/*"
+      ],
+      "@layouts/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/layouts/*"
+      ],
+      "@enterprise/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/enterprise/*"
+      ],
+      "auth:config": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/auth.config.ts"
+      ],
+      "@stores/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/stores/*"
+      ],
+      "@catalog/styles": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/eventcatalog.styles.css"
+      ],
+      "@catalog/components/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/components/*",
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/federated/components/*"
+      ],
+      "@catalog/snippets/*": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/snippets/*"
+      ],
+      "astro": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/astro/dist/index.d.ts"
+      ],
+      "astro/zod": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/astro/dist/zod.d.ts"
+      ],
+      "astro/loaders": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/astro/dist/content/loaders/index.d.ts"
+      ],
+      "astro/runtime/server/index.js": [
+        "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/astro/dist/runtime/server/index.d.ts"
+      ]
+    },
+    "typeRoots": [
+      "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@types",
+      "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/node_modules/@types",
+      "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/node_modules",
+      "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules"
+    ]
+  },
+  "include": [
+    "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/.astro/types.d.ts",
+    "content.config.ts",
+    "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/components/**/*",
+    "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/**/*"
+  ],
+  "exclude": [
+    "/Users/ruben.romero/Documents/UTN/IAEW_2026/04_REPO_ACTIVIDADES/iaew-2026-ecommerce-api/clases/clase-06/recursos/eventcatalog-base/node_modules/@eventcatalog/core/eventcatalog/src/custom-pages"
+  ]
+}
