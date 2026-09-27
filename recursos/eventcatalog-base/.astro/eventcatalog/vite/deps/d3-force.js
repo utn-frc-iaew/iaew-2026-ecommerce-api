@@ -1,2 +1,0 @@
-import { a as simulation_default, c as center_default, i as manyBody_default, n as x_default, o as link_default, r as radial_default, s as collide_default, t as y_default } from "./src-Bq3c1QK-.js";
-export { center_default as forceCenter, collide_default as forceCollide, link_default as forceLink, manyBody_default as forceManyBody, radial_default as forceRadial, simulation_default as forceSimulation, x_default as forceX, y_default as forceY };
