@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: iaew-mongo-clase-05
+    ports:
+      - "27017:27017"
+    tmpfs:
+      - /data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    container_name: iaew-rabbitmq-clase-05
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER:-iaew}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS:-iaew-local}
+      RUNNING_UNDER_SYSTEMD: "true"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    tmpfs:
+      - /var/lib/rabbitmq:uid=999,gid=999,mode=0770
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
