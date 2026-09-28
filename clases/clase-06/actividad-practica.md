@@ -175,6 +175,10 @@ Punto de control: AJV informa `pedido-confirmado.ejemplo.json valid`.
 
 La rama inicial incluye `recursos/eventcatalog-base`. No tenés que configurar EventCatalog desde cero.
 
+### Paso 1 — Preparar el catálogo
+
+**Objetivo.** Trabajar sobre un proyecto EventCatalog ya configurado, en lugar de perder tiempo creando la herramienta desde cero.
+
 Requisito de la base: Node.js 22.19 o posterior. Comprobalo con `node --version` antes de instalar.
 
 ```bash
@@ -183,13 +187,18 @@ cd eventcatalog-clase-06
 npm ci
 ```
 
+`cp` crea una copia de trabajo, `cd` entra en esa copia y `npm ci` instala exactamente las dependencias definidas por el proyecto.
+
+**Resultado esperado.** Existe una carpeta `eventcatalog-clase-06` con `package.json`, `eventcatalog.config.js`, `services/` y `events/`.
+
+### Paso 2 — Declarar el servicio productor
+
+**Objetivo.** Decirle al catálogo qué servicio publica el evento. No se programa la publicación: se documenta una relación que ya existe en la solución.
+
 Creá:
 
 ```text
 services/PedidosAPI/index.mdx
-events/PedidoConfirmado/index.mdx
-events/PedidoConfirmado/schema.json
-services/WorkerNotificaciones/index.mdx
 ```
 
 Productor:
@@ -206,6 +215,19 @@ sends:
 Confirma pedidos y publica el evento.
 ```
 
+La propiedad `sends` significa “este servicio publica este mensaje”. El `id` y la `version` son la identidad que EventCatalog usará para encontrar el evento.
+
+### Paso 3 — Declarar el evento y su forma
+
+**Objetivo.** Crear la ficha del mensaje y vincularla con el JSON Schema validado en A3. Así el alumno puede consultar qué evento circula y qué estructura debe respetar.
+
+Creá:
+
+```text
+events/PedidoConfirmado/index.mdx
+events/PedidoConfirmado/schema.json
+```
+
 Mensaje:
 
 ```mdx
@@ -216,6 +238,18 @@ version: 1.0.0
 schemaPath: schema.json
 ---
 Confirma que un pedido cambió de estado.
+```
+
+`schemaPath: schema.json` le indica a EventCatalog dónde encontrar la forma del mensaje, relativa a la carpeta del evento. No inventes otro schema: copiá el que ya validaste en A3.
+
+### Paso 4 — Declarar el servicio consumidor
+
+**Objetivo.** Documentar quién depende del evento. Esta relación permite analizar qué servicio puede verse afectado si cambia el mensaje.
+
+Creá:
+
+```text
+services/WorkerNotificaciones/index.mdx
 ```
 
 Consumidor:
@@ -232,14 +266,31 @@ receives:
 Consume el evento de forma idempotente.
 ```
 
-Copiá el esquema de A3 como `events/PedidoConfirmado/schema.json`. Ejecutá:
+La propiedad `receives` significa “este servicio consume este mensaje”. El `id` y la `version` deben coincidir exactamente con los del productor y los del evento.
+
+### Paso 5 — Compilar y recorrer el resultado
+
+**Objetivo.** Comprobar primero que los archivos tienen una estructura que EventCatalog puede interpretar y después observar las relaciones en una interfaz navegable.
+
+Copiá el esquema de A3 como `events/PedidoConfirmado/schema.json` y ejecutá:
 
 ```bash
 npm run build
 npm run dev
 ```
 
-Punto de control: se puede navegar del productor al mensaje y al consumidor. Si no podés abrir el sitio, la compilación correcta y los cuatro archivos sirven como evidencia.
+`npm run build` comprueba que el catálogo puede generarse. `npm run dev` levanta el sitio para explorarlo en el navegador.
+
+**Qué tenés que buscar en la interfaz.** Poder navegar desde `PedidosAPI` hacia `PedidoConfirmado` y desde el evento hacia `WorkerNotificaciones`. El objetivo no es ver una página bonita: es comprobar que la relación productor → evento → consumidor quedó representada.
+
+**Punto de control.** La compilación termina correctamente y el catálogo muestra el flujo completo. Si no podés abrir el sitio, la compilación correcta y estos cuatro archivos sirven como evidencia:
+
+```text
+services/PedidosAPI/index.mdx
+events/PedidoConfirmado/index.mdx
+events/PedidoConfirmado/schema.json
+services/WorkerNotificaciones/index.mdx
+```
 
 ## Recursos guiados, sin entrega adicional
 
