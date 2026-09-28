@@ -76,7 +76,7 @@ router.post('/:id/confirmar', requireScope('confirm:pedidos'), async (req, res) 
       return res.status(200).json({ pedido, evento: pedido.confirmacionEvento, idempotencia: { key, replayed: false } });
     } catch (error) {
       console.error('Pedido confirmado; publicación RabbitMQ fallida:', error.message);
-      return sendError(res, 503, 'El pedido quedo confirmado, pero no se pudo publicar el evento', 'EVENT_PUBLISH_FAILED', true, 'Consultar el pedido antes de decidir un reintento', { pedidoId: pedido.id, eventId: pedido.confirmacionEvento.eventId });
+      return sendError(res, 503, 'El pedido quedó confirmado, pero no se pudo publicar el evento', 'EVENT_PUBLISH_FAILED', true, 'Consultar el pedido antes de decidir un reintento', { pedidoId: pedido.id, eventId: pedido.confirmacionEvento.eventId });
     }
   } catch (error) {
     if (error && error.code === 11000) return sendError(res, 409, 'La clave ya fue usada para otro pedido', 'IDEMPOTENCY_KEY_REUSED', false, 'Generar una nueva clave para esta operación');
