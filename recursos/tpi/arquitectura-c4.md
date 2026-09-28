@@ -5,7 +5,7 @@ flowchart LR
   cliente[Cliente o servicio] -->|HTTPS + OAuth 2.0| api[API Pedidos\nNode.js + Express]
   api -->|Lee y persiste| mongo[(MongoDB)]
   api -->|Publica pedido.confirmado| rabbit[[RabbitMQ]]
-  rabbit -->|Entrega at least once| worker[Worker de notificaciones\nNode.js]
+  rabbit -->|Entrega al menos una vez| worker[Worker de notificaciones\nNode.js]
   worker -->|Actualiza estado| mongo
 ```
 

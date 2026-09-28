@@ -24,4 +24,4 @@ spec:
   lifecycle: experimental
   owner: user:default/guest
   definition:
-    $text: ./docs/openapi.json
+    $text: ../../docs/openapi.json
