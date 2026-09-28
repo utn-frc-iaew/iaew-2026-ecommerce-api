@@ -115,9 +115,11 @@ En contract-first, el equipo acuerda OpenAPI antes de implementar. Facilita mock
 
 El laboratorio adopta un enfoque explícito: escribir un contrato pequeño a partir de código ya existente y compararlo con pruebas. El objetivo es aprender el contenido, no automatizarlo todavía.
 
-## 7. C4: arquitectura con niveles de zoom
+## 7. C4 Model: escribir arquitectura con niveles de zoom
 
-C4 organiza la arquitectura en vistas:
+C4 Model no es solamente una forma de dibujar cajas. Es un vocabulario para escribir y comunicar una arquitectura mediante elementos, responsabilidades y relaciones. Una relación útil puede leerse como una oración: **origen se comunica con destino para lograr un propósito mediante una tecnología o protocolo**.
+
+C4 organiza esa descripción en vistas:
 
 1. **Context:** personas y sistemas externos.
 2. **Container:** aplicaciones, procesos y almacenes principales.
@@ -125,6 +127,16 @@ C4 organiza la arquitectura en vistas:
 4. **Code:** detalle de implementación, usado solo cuando aporta valor.
 
 “Container” en C4 no significa necesariamente contenedor Docker. Una API Node.js, una base de datos y un worker son contenedores arquitectónicos porque ejecutan o almacenan responsabilidades separadas.
+
+El nivel elegido controla qué se puede escribir. Context presenta el sistema como una caja y muestra sus actores y dependencias externas. Container abre esa caja y muestra aplicaciones y almacenes. Component abre un solo contenedor y muestra sus responsabilidades internas. Mezclar esos niveles produce diagramas difíciles de leer y revisar.
+
+Para mantener la arquitectura alineada con el repositorio:
+
+- usar los mismos nombres que aparecen en el código, OpenAPI, eventos y README;
+- dar a cada elemento una responsabilidad concreta;
+- rotular cada relación con propósito y, cuando aporte valor, protocolo;
+- guardar los documentos con nombres sin espacios, por ejemplo `c4-context.md`;
+- revisar el modelo cuando cambia la solución.
 
 La clase analiza una plantilla de la vista Container:
 
@@ -177,7 +189,7 @@ JSON Schema formaliza campos, tipos y restricciones. También es necesario docum
 - deduplicación: `eventId`;
 - compatibilidad: cambios aditivos antes de romper consumidores.
 
-En la Entrega 1 del TPI deben prepararse las vistas Context, Container y Component. La plantilla de esta clase resuelve únicamente el nivel Container del caso de pedidos.
+En la Entrega 1 del TPI deben prepararse las vistas Context, Container y Component. La plantilla de esta clase incluye un ejemplo inicial de cada nivel para el caso de pedidos; cada grupo debe adaptarlos a su dominio y a su implementación real.
 
 ## 10. EventCatalog: navegar productores, consumidores y contratos
 

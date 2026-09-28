@@ -1,4 +1,20 @@
-# Arquitectura — vista C4 de contenedores
+# Arquitectura con C4 Model
+
+C4 permite escribir la arquitectura con un vocabulario consistente: personas, sistemas, contenedores, componentes y relaciones. Cada elemento debe tener nombre, responsabilidad y tecnología cuando corresponda. Cada relación debe indicar propósito o protocolo.
+
+## Context
+
+```mermaid
+flowchart LR
+  cliente[Cliente o servicio externo]
+  sistema[Sistema de pedidos]
+  auth0[Auth0]
+
+  cliente -->|Confirma pedidos por HTTPS| sistema
+  sistema -->|Valida tokens OAuth 2.0| auth0
+```
+
+## Container
 
 ```mermaid
 flowchart LR
@@ -8,6 +24,30 @@ flowchart LR
   rabbit -->|Entrega al menos una vez| worker[Worker de notificaciones\nNode.js]
   worker -->|Actualiza estado| mongo
 ```
+
+## Component
+
+```mermaid
+flowchart LR
+  ruta[Confirmar pedido\nExpress Router]
+  auth[Validación JWT y scope]
+  servicio[Servicio de confirmación]
+  repositorio[Repositorio de pedidos]
+  publicador[Publicador de eventos]
+
+  ruta -->|Autoriza la operación| auth
+  ruta -->|Solicita confirmación| servicio
+  servicio -->|Lee y persiste| repositorio
+  servicio -->|Publica pedido.confirmado| publicador
+```
+
+## Criterios de revisión
+
+- El título declara el nivel y el alcance de la vista.
+- Cada caja representa una responsabilidad del nivel elegido.
+- Cada flecha explica una relación; no es una línea decorativa.
+- Los nombres coinciden con el código, OpenAPI, eventos y README.
+- Context no muestra detalles internos; Container no baja a funciones; Component se limita a un contenedor.
 
 ## Responsabilidades
 

@@ -245,9 +245,11 @@ Punto de control: se puede navegar del productor al mensaje y al consumidor. Si 
 
 ### C4 y ADR para el TPI
 
-**Problemática.** OpenAPI y JSON Schema describen contratos, pero no muestran dónde vive cada responsabilidad ni por qué se tomó una decisión. Sin C4, los límites quedan implícitos; sin ADR, el equipo futuro puede revertir una decisión sin conocer su contexto y sus costos.
+**Problemática.** OpenAPI y JSON Schema describen contratos, pero no muestran dónde vive cada responsabilidad ni por qué se tomó una decisión. Sin una forma consistente de escribir la arquitectura, cada integrante puede dibujar el mismo sistema con significados distintos. C4 Model aporta vocabulario, niveles de zoom y relaciones explícitas; el ADR conserva la razón de una decisión.
 
-Abrí `recursos/tpi/arquitectura-c4.md` y `recursos/tpi/adr-0001-identidad-confirmacion.md`. Identificá qué nombres adaptarías a tu TPI. La plantilla muestra una vista Container y un ADR; la Entrega 1 también exige las vistas Context y Component, además de las decisiones correspondientes a tu solución. No los desarrolles desde cero durante esta práctica.
+Abrí `recursos/tpi/arquitectura-c4.md` y `recursos/tpi/adr-0001-identidad-confirmacion.md`. La plantilla muestra las tres vistas exigidas en la Entrega 1: Context, Container y Component. Leé cada vista como una oración arquitectónica: **elemento A se relaciona con elemento B para cumplir un propósito mediante una tecnología o protocolo**. Identificá qué nombres, responsabilidades y relaciones adaptarías a tu TPI. No desarrolles las vistas completas durante esta práctica.
+
+Para el TPI, guardá los archivos con nombres sin espacios, por ejemplo `docs/c4-context.md`, `docs/c4-container.md` y `docs/c4-component.md`.
 
 ### Backstage — demostración docente
 
