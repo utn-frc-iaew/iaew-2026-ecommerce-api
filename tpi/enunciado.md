@@ -20,7 +20,7 @@ El trabajo no se evalúa solo por tener endpoints funcionando. Se evalúa que el
 
 | Entrega | Fecha | Propósito |
 |---|---|---|
-| Entrega 1 | Lunes 28/09/2026 | Diseño, arquitectura inicial y esqueleto ejecutable. |
+| Entrega 1 | Lunes 05/10/2026 | Diseño, arquitectura inicial y esqueleto ejecutable. |
 | Entrega 2 | Lunes 16/11/2026 | Implementación final, evidencias, demo y defensa. |
 
 ## Alcance mínimo obligatorio
@@ -57,7 +57,9 @@ No se deben subir secretos reales al repositorio. El proyecto debe incluir `.env
 
 ## Entrega 1 - Diseño y esqueleto integrador
 
-**Fecha:** lunes 28/09/2026.
+**Nueva fecha:** lunes 05/10/2026.
+
+> **Reprogramación:** La Entrega 1 se reprograma del 28/09/2026 al lunes 05/10/2026. El 21/09 no hubo clases por el asueto del Día del Estudiante y aún no se trabajó la documentación de APIs. El 28/09 se abordará ese contenido para que puedan aplicarlo antes de entregar. Se mantienen los requisitos del enunciado. Esta entrega no requiere defensa oral.
 
 ### Qué entregar
 

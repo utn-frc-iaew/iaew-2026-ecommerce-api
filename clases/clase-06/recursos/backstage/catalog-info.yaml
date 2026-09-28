@@ -1,0 +1,27 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: iaew-pedidos-api
+  description: API resiliente de pedidos del caso IAEW 2026
+  tags:
+    - nodejs
+    - express
+    - rabbitmq
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:default/guest
+  providesApis:
+    - pedidos-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: pedidos-api
+  description: Contrato HTTP de la API de pedidos
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: user:default/guest
+  definition:
+    $text: ../../docs/openapi.json

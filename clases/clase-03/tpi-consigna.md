@@ -46,7 +46,9 @@ El proyecto final debe incluir:
 
 ## Entrega 1 - Diseño y esqueleto integrador
 
-**Fecha:** lunes 28/09/2026.
+**Nueva fecha:** lunes 05/10/2026.
+
+> **Reprogramación:** La Entrega 1 se reprograma del 28/09/2026 al lunes 05/10/2026. El 21/09 no hubo clases por el asueto del Día del Estudiante y aún no se trabajó la documentación de APIs. El 28/09 se abordará ese contenido para que puedan aplicarlo antes de entregar. Se mantienen los requisitos del enunciado. Esta entrega no requiere defensa oral.
 
 ### Qué entregar
 
