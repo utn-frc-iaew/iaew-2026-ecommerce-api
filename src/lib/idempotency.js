@@ -2,7 +2,7 @@ const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9._:-]{8,128}$/;
 
 function validateIdempotencyKey(value) {
   if (typeof value !== 'string' || value.length === 0) {
-    return { code: 'IDEMPOTENCY_KEY_REQUIRED', error: 'El header Idempotency-Key es obligatorio' };
+    return { code: 'IDEMPOTENCY_KEY_REQUIRED', error: 'El encabezado Idempotency-Key es obligatorio' };
   }
   if (!IDEMPOTENCY_KEY_PATTERN.test(value)) {
     return {
@@ -15,4 +15,3 @@ function validateIdempotencyKey(value) {
 }
 
 module.exports = { IDEMPOTENCY_KEY_PATTERN, validateIdempotencyKey };
-
