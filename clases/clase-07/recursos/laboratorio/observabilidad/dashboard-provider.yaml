@@ -1,0 +1,5 @@
+apiVersion: 1
+providers:
+  - name: IAEW
+    type: file
+    options: {path: /otel-lgtm/grafana/conf/provisioning/dashboards/custom}

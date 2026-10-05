@@ -1,0 +1,107 @@
+name: iaew-clase07
+x-app: &app
+  build: .
+  image: iaew-clase07-app:local
+  init: true
+  environment: &app-env
+    MONGODB_URI: mongodb://mongodb:27017/iaew_clase07
+    RABBIT_URL: amqp://iaew:iaew-local@rabbitmq:5672
+    AUTH0_DOMAIN: ${AUTH0_DOMAIN:-tu-tenant.us.auth0.com}
+    AUTH0_AUDIENCE: https://iaew-pedidos-api
+    INTERNAL_API_KEY: ${INTERNAL_API_KEY:-iaew-clase07-local}
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://lgtm:4318
+    OTEL_TRACES_SAMPLER: always_on
+    MAX_RETRIES: 3
+    RETRY_DELAY_MS: 3000
+  depends_on:
+    mongodb: {condition: service_healthy}
+    rabbitmq: {condition: service_healthy}
+    lgtm: {condition: service_healthy}
+services:
+  mongodb:
+    image: mongo:7.0.21
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  rabbitmq:
+    image: rabbitmq:4.2.0-management
+    environment:
+      RABBITMQ_DEFAULT_USER: iaew
+      RABBITMQ_DEFAULT_PASS: iaew-local
+      RUNNING_UNDER_SYSTEMD: "true"
+    ports: ["127.0.0.1:15677:15672"]
+    tmpfs: ["/var/lib/rabbitmq:uid=999,gid=999,mode=0770"]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  lgtm:
+    image: grafana/otel-lgtm:0.35.0
+    ports: ["127.0.0.1:3007:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      ENABLE_LOGS_GRAFANA: "true"
+    volumes:
+      - lgtm-data:/data
+      - ./observabilidad/prometheus.yaml:/otel-lgtm/prometheus.yaml:ro
+      - ./observabilidad/datasources.yaml:/otel-lgtm/grafana/conf/provisioning/datasources/grafana-datasources.yaml:ro
+      - ./observabilidad/dashboard-provider.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/iaew.yaml:ro
+      - ./observabilidad/dashboard.json:/otel-lgtm/grafana/conf/provisioning/dashboards/custom/iaew.json:ro
+      - ./observabilidad/alerts.yaml:/otel-lgtm/grafana/conf/provisioning/alerting/iaew.yaml:ro
+    healthcheck:
+      test: [CMD-SHELL, "curl -fsS http://localhost:3000/api/health && curl -fsS http://localhost:3200/ready && curl -fsS http://localhost:3100/ready && curl -fsS http://localhost:9090/-/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 15s
+  cadvisor:
+    build: ./observabilidad/cadvisor
+    image: iaew-clase07-cadvisor:0.60.6
+    privileged: true
+    command: [--docker_only=true, --housekeeping_interval=5s, --store_container_labels=true, "--containerd=${CADVISOR_CONTAINERD_SOCKET:-/rootfs/run/containerd/containerd.sock}"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    # Linux nativo. En Docker Desktop el host observado es su VM Linux.
+  api:
+    <<: *app
+    ports: ["127.0.0.1:3008:3000"]
+    environment:
+      <<: *app-env
+      PROPAGATE_TRACE_CONTEXT: ${PROPAGATE_TRACE_CONTEXT:-true}
+      OTEL_SERVICE_NAME: pedidos-api
+      PORT: 3000
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  worker:
+    <<: *app
+    command: [npm, run, worker]
+    environment:
+      <<: *app-env
+      OTEL_SERVICE_NAME: pedidos-worker
+      WORKER_DELAY_MS: ${WORKER_DELAY_MS:-0}
+      SIMULATE_TRANSIENT_FAILURES: ${SIMULATE_TRANSIENT_FAILURES:-0}
+  tools:
+    <<: *app
+    profiles: [tools]
+    environment:
+      <<: *app-env
+      API_URL: http://api:3000
+      ACCESS_TOKEN: ${ACCESS_TOKEN:-}
+    volumes: [./evidencias:/app/evidencias]
+    command: [node, scripts/scenario.js, normal]
+volumes:
+  mongo-data:
+  lgtm-data:

@@ -1,0 +1,19 @@
+# Exclusivo para validación docente, nunca para el camino del alumno con Auth0.
+services:
+  issuer:
+    image: iaew-clase07-app:local
+    command: [node, validation/issuer.js]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:8080/jwks').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+  api:
+    environment:
+      AUTH0_ISSUER_BASE_URL: http://issuer:8080/
+    depends_on:
+      issuer: {condition: service_healthy}
+  tools:
+    depends_on:
+      issuer: {condition: service_healthy}
+    command: [node, validation/scenario-client.js, normal]

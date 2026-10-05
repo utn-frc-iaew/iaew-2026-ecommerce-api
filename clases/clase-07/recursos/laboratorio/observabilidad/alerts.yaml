@@ -1,0 +1,42 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: iaew-worker
+    folder: IAEW
+    interval: 10s
+    rules:
+      - uid: iaew-worker-lento
+        title: Worker lento (promedio de intentos)
+        condition: C
+        for: 30s
+        noDataState: NoData
+        execErrState: Error
+        annotations:
+          summary: El promedio por intento supera 1 segundo durante 30 segundos.
+          description: Revisar trazas del worker, sus logs y recursos. La ventana es de 2 minutos y la evaluación es cada 10 segundos.
+          runbook_url: http://localhost:3007/d/iaew-clase07
+        labels: {service: pedidos-worker, severity: warning}
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            relativeTimeRange: {from: 120, to: 0}
+            model:
+              datasource: {type: prometheus, uid: prometheus}
+              expr: sum(rate(iaew_worker_duration_seconds_sum[2m])) / sum(rate(iaew_worker_duration_seconds_count[2m]))
+              instant: true
+              range: false
+              refId: A
+          - refId: C
+            datasourceUid: __expr__
+            relativeTimeRange: {from: 0, to: 0}
+            model:
+              datasource: {type: __expr__, uid: __expr__}
+              type: threshold
+              expression: A
+              refId: C
+              conditions:
+                - evaluator: {type: gt, params: [1]}
+                  operator: {type: and}
+                  reducer: {type: last, params: []}
+                  type: query
+# Se observa el estado de la regla. No se provisionan contactos externos.

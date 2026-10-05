@@ -1,0 +1,36 @@
+{
+  "name": "iaew-clase-07-observabilidad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Laboratorio individual de trazas, logs, métricas y correlación.",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node --require ./src/telemetry.js src/app.js",
+    "worker": "node --require ./src/telemetry.js src/worker.js",
+    "test": "node --test",
+    "check": "node --check src/app.js && node --check src/worker.js && node --check src/routes/pedidos.js"
+  },
+  "dependencies": {
+    "amqplib": "2.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-oauth2-jwt-bearer": "1.10.0",
+    "mongoose": "^8.9.5",
+    "@opentelemetry/api": "1.9.0",
+    "@opentelemetry/api-logs": "0.222.0",
+    "@opentelemetry/sdk-node": "0.222.0",
+    "@opentelemetry/sdk-logs": "0.222.0",
+    "@opentelemetry/sdk-metrics": "2.11.0",
+    "@opentelemetry/resources": "2.11.0",
+    "@opentelemetry/exporter-trace-otlp-http": "0.222.0",
+    "@opentelemetry/exporter-logs-otlp-http": "0.222.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "0.222.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
