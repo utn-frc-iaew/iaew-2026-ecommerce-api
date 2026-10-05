@@ -16,6 +16,6 @@ La propuesta usa OpenTelemetry y Grafana con Loki, Tempo y Prometheus, empaqueta
 - [Laboratorio autocontenido](recursos/laboratorio/).
 - [Código completo de observabilidad](codigo-observabilidad.md).
 
-La presentación tiene 37 diapositivas. La agenda de presentación y práctica suma 120 minutos. El laboratorio conserva el contrato Auth0 y la resiliencia de la base; la dependencia lenta es simulada. Las alternativas de herramientas de las diapositivas no son requisitos de instalación.
+La presentación tiene 38 diapositivas. La agenda de presentación y práctica suma 120 minutos. El laboratorio conserva el contrato Auth0 y la resiliencia de la base; la dependencia lenta es simulada. Las alternativas de herramientas de las diapositivas no son requisitos de instalación.
 
 La Entrega 1 grupal del TPI vence el 05/10/2026 y no requiere defensa oral. La presentación no modifica sus requisitos.

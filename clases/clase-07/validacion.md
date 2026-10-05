@@ -77,3 +77,7 @@ Nueva diapositiva 29 y notas: 37 diapositivas y 37 notas. Comparación entre rei
 ## Revisión final de consistencia — 05/10/2026
 
 Estado actual: 37 diapositivas y 37 notas; agenda de 120 minutos y actividad de 45 minutos. Actualizados README y guía con liveness/readiness como conceptos y alcance del healthcheck HTTP existente. El worker no tiene healthcheck: estar running no prueba consumo. No se prometen endpoints /live o /ready ni reinicio o retiro de tráfico automáticos por Compose. Los 27 bloques del anexo coinciden con los archivos; enlaces y copia docente verificados.
+
+## Generación de logs y gauge
+
+Estado actual: 38 diapositivas y 38 notas. Nueva diapositiva 13: llamada real al logger, registro abreviado y rutas stdout/OTLP. Gauge aclarado como valor actual que sube o baja. Se conserva la agenda de 120 minutos dentro del bloque de señales; liveness/readiness pasa a la diapositiva 30.

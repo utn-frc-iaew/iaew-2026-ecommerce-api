@@ -168,22 +168,45 @@ Logger estructurado → Contexto activo → Recolección / exportación → Loki
 - La aplicación necesita un logger y una integración que adjunte trace_id y span_id desde el contexto activo; escribir JSON sin esa integración no lo hace automáticamente.
 - Podemos exportar logs por OTLP o recolectar stdout con un agente. El laboratorio envía logs por OTLP a Loki; stdout permite consultarlos con Compose y no se ingiere nuevamente en Loki.
 
-## 13. Medir comportamientos y tendencias
+## 13. ¿Cómo genera logs nuestra aplicación?
+
+**Contenido visible:**
+
+1 · El código registra un hecho log('pedido.processed', {
+  pedido_id: event.data.pedidoId,
+  event_id: event.eventId
+}); Elegimos dónde registrar éxito, falla o reintento. 2 · El logger agrega contexto {
+  "level": "info",
+  "service.name": "pedidos-worker",
+  "event": "pedido.processed",
+  "pedido_id": "P-42",
+  "trace_id": "A", "span_id": "W",
+  "correlation_id": "C"
+} Logger → OTLP → Collector → Loki → Grafana También escribe JSON en stdout para  docker compose logs . El contexto viene del span activo; OpenTelemetry no inventa eventos de negocio. Registro abreviado: también incluye timestamp y event_id. P-42, A, W y C son valores ilustrativos.
+
+**Notas para explicar:**
+
+- A la izquierda vemos la llamada real a log del worker al procesar un pedido. El programador decide qué hechos registrar: éxito, falla, reintento o envío a DLQ. A la derecha vemos el registro abreviado que produce el logger; los identificadores del ejemplo no son valores para copiar.
+- En src/lib/observability.js, log agrega timestamp, nivel, service.name y evento. Obtiene trace_id y span_id del span activo y correlation_id del contexto de aplicación. Sin contexto activo, esos IDs de traza pueden faltar; el logger por sí solo no crea una traza.
+- El registro sigue dos rutas: JSON a stdout para consultarlo con docker compose logs, y un registro OpenTelemetry por OTLP al Collector y Loki. Grafana consulta Loki. No recolectamos stdout nuevamente hacia Loki, para evitar ingestión duplicada.
+- OpenTelemetry aporta contexto y transporte, pero no decide qué significa pedido procesado. Registrar solo texto sin identificadores dificultaría la correlación. Usamos niveles coherentes y evitamos tokens y datos personales innecesarios.
+
+## 14. Medir comportamientos y tendencias
 
 **Contenido visible:**
 
 ![Contador acumulativo, gauge variable e histograma de duración](assets/tipos-metricas.svg)
 
-p95:  tiempo dentro del cual termina aproximadamente el 95 % de los intentos.  Ejemplo:  95 intentos duran 0,1 s y 5 duran 3 s. Promedio: 0,245 s; p95 por rango más próximo: 0,1 s. El 5 % más lento puede quedar fuera del p95.
+Gauge = valor actual:  puede subir o bajar. Ejemplos: memoria usada, conexiones activas o mensajes pendientes (12 → 3). p95:  tiempo dentro del cual termina aproximadamente el 95 % de los intentos.  Ejemplo:  95 intentos duran 0,1 s y 5 duran 3 s. Promedio: 0,245 s; p95 por rango más próximo: 0,1 s. El 5 % más lento puede quedar fuera del p95.
 
 **Notas para explicar:**
 
-- Los gráficos distinguen contador, gauge e histograma: acumulación, valor actual y distribución. Un contador puede reiniciarse con el proceso.
+- Los gráficos distinguen contador, gauge e histograma: acumulación, valor actual y distribución. Gauge se pronuncia aproximadamente «gueich»: muestra cuánto hay ahora y puede subir o bajar, como una cola que pasa de doce mensajes pendientes a tres. Un contador puede reiniciarse con el proceso.
 - En cien intentos, noventa y cinco duran una décima de segundo y cinco duran tres segundos. La media es 0,245 segundos; con el criterio de rango más próximo, el percentil 95 es 0,1 segundos. Ni la media ni p95 describen por sí solos los cinco más lentos.
 - p95 es el valor dentro del cual termina aproximadamente el 95 % de los intentos. En Prometheus lo estimamos con buckets del histograma: puede diferir del percentil calculado sobre datos individuales.
 - Servicio y resultado permiten agrupar. Un pedido o trace_id diferente por etiqueta multiplicaría las series; los recursos se relacionan por servicio y tiempo.
 
-## 14. Servicio y contenedor responden preguntas distintas
+## 15. Servicio y contenedor responden preguntas distintas
 
 **Contenido visible:**
 
@@ -195,7 +218,7 @@ Aplicación / negocio Latencia, solicitudes por segundo, tasa de errores; confir
 - La API respondió 200: ¿demuestra que el worker terminó? No: la confirmación y el procesamiento asíncrono son etapas distintas. Buscamos el log de procesamiento y su estado persistido.
 - ¿Una espera larga exige CPU alta? No: esperar una dependencia puede aumentar la duración con poca actividad de CPU. CPU alta es una pista que exige contraste, no una causa demostrada.
 
-## 15. Instrumentar, recoger, conservar y consultar
+## 16. Instrumentar, recoger, conservar y consultar
 
 **Contenido visible:**
 
@@ -207,7 +230,7 @@ SDK / exporter → OTLP o /metrics → Collector / Prometheus → Panel de Grafa
 - Podemos exportar métricas de aplicación por OTLP al colector o exponer /metrics para que Prometheus las consulte. cAdvisor se recoge por scrape.
 - El intervalo de recolección determina resolución; una subida muy breve puede no quedar representada. En Docker Desktop y WSL verificaremos acceso a recursos y etiquetas antes del práctico.
 
-## 16. Una operación, varias etapas
+## 17. Una operación, varias etapas
 
 **Contenido visible:**
 
@@ -219,7 +242,7 @@ API · confirmar 180 ms Publicar evento 30 ms Worker · procesar 2 800 ms Guarda
 - Una traza reúne spans de una operación y conserva relaciones entre ellos. Un span puede terminar antes que un hijo asíncrono.
 - No sumamos ciegamente duraciones: puede haber solapamientos. La espera de la cola requiere medición o instrumentación explícita; no aparece como un span mágico.
 
-## 17. La traza necesita instrumentación y contexto
+## 18. La traza necesita instrumentación y contexto
 
 **Contenido visible:**
 
@@ -232,7 +255,7 @@ Instrumentar API → Propagar contexto → Instrumentar worker → Exportar a Te
 - Si no instrumentamos una consulta MongoDB o la espera en cola, no veremos una barra propia para ellas. La ausencia de span no demuestra ausencia de actividad o demora.
 - El laboratorio conserva todas las trazas con poco tráfico. En producción el muestreo y la retención también condicionan qué podemos investigar.
 
-## 18. Sin un vínculo, tres pantallas son tres historias
+## 19. Sin un vínculo, tres pantallas son tres historias
 
 **Contenido visible:**
 
@@ -246,7 +269,7 @@ Logs ↔ traza: identificadores. Recursos ↔ operación: servicio y ventana tem
 - El vínculo exacto logs-traza usa trace_id y, cuando corresponde, span_id. El vínculo con recursos usa identidad del servicio o contenedor y tiempo.
 - La correlación reduce el espacio de búsqueda, pero no prueba causalidad por sí sola. Necesitamos contrastar hipótesis y reproducir cuando sea posible.
 
-## 19. Cuatro identificadores, cuatro responsabilidades
+## 20. Cuatro identificadores, cuatro responsabilidades
 
 **Contenido visible:**
 
@@ -258,7 +281,7 @@ Identificador Para qué sirve pedido_id Identifica la entidad de negocio; puede 
 - Podemos usar trace_id para correlación operativa, pero correlation_id puede tener otro alcance. Hay que declarar esa decisión y conservarla al cruzar servicios.
 - Una clave idempotente agrupa intentos de una operación según nuestro contrato; no determina el parent span ni constituye una traza.
 
-## 20. El contexto debe cruzar RabbitMQ
+## 21. El contexto debe cruzar RabbitMQ
 
 **Contenido visible:**
 
@@ -273,7 +296,7 @@ El SDK crea los IDs de traza y span. La aplicación crea y transporta la correla
 - Al desactivar la propagación, el worker inicia otra traza B. Conservamos deliberadamente C: podemos buscar sus logs, pero no reconstruir una traza continua por copiar ese identificador.
 - traceparent transporta versión, trace_id, padre y flags; no transporta todos los logs. Este caso usa parent-child; lotes y otros patrones pueden requerir span links.
 
-## 21. De una traza a sus logs y recursos
+## 22. De una traza a sus logs y recursos
 
 **Contenido visible:**
 
@@ -288,7 +311,7 @@ Los recursos son agregados: no representan el consumo exclusivo del pedido P-42.
 - trace_id se guarda como campo o metadato adecuado del log, no como etiqueta indexada de alta cardinalidad. El dashboard de recursos usa servicio/contenedor y tiempo, no un trace_id por serie.
 - Los relojes deben estar razonablemente sincronizados. Las métricas de contenedores son agregadas y no representan el consumo exclusivo de ese pedido.
 
-## 22. Cada herramienta resuelve una parte
+## 23. Cada herramienta resuelve una parte
 
 **Contenido visible:**
 
@@ -300,7 +323,7 @@ Necesidad Herramienta Por qué Generar y transportar telemetría OpenTelemetry +
 - Prometheus surgió para monitoreo mediante series temporales; Grafana aporta visualización; Loki y Tempo completan logs y trazas del ecosistema Grafana.
 - Las consultas tienen lenguajes distintos porque los datos tienen modelos diferentes. No exigiremos dominar los tres lenguajes en esta introducción.
 
-## 23. El objetivo no depende de una marca
+## 24. El objetivo no depende de una marca
 
 **Contenido visible:**
 
@@ -312,7 +335,7 @@ Opción Cuándo elegirla Qué exige Grafana + Loki + Tempo + Prometheus Explorar
 - Jaeger se centra en trazas; Kibana es una interfaz que necesita backend e ingestión; una plataforma administrada reduce operación local pero mantiene la necesidad de instrumentación.
 - Elegimos por el objetivo pedagógico y por la posibilidad de preparar un entorno reproducible. No por una comparación de rendimiento que no hemos medido.
 
-## 24. Un entorno preparado para aprender
+## 25. Un entorno preparado para aprender
 
 **Contenido visible:**
 
@@ -327,7 +350,7 @@ docker compose up -d --build --wait --wait-timeout 300
 - El comando construye imágenes y levanta los seis servicios. tools corre bajo demanda para generar tráfico, también en un contenedor. No necesitamos Node.js en el host.
 - Auth0 es externo y requiere un token real para el alumno. El navegador abre Grafana en localhost:3007 y la API está publicada en localhost:3008. LGTM es un empaquetado para desarrollo y clase.
 
-## 25. Primero encontrar la etapa lenta
+## 26. Primero encontrar la etapa lenta
 
 **Contenido visible:**
 
@@ -341,7 +364,7 @@ Datos ilustrativos. Hipótesis: dependencia lenta. Verificar sus tiempos antes d
 - La traza localiza la demora y el log agrega el fallo concreto. La CPU sin un pico relevante debilita una hipótesis de saturación local, pero no descarta todos los problemas de recursos.
 - Para confirmar necesitamos observar la dependencia, su timeout y otras operaciones. Un TimeoutError puede ser un síntoma y no la causa raíz.
 
-## 26. Del síntoma a una explicación comprobable
+## 27. Del síntoma a una explicación comprobable
 
 **Contenido visible:**
 
@@ -353,7 +376,7 @@ Síntoma El pedido tarda en completar su procesamiento. Alcance Las métricas mu
 - Comparar un antes y después ayuda a verificar una corrección. Conviene cambiar una variable por vez en la demostración.
 - ¿Qué pasaría si esta investigación la hace un agente de IA? Necesita contexto y evidencia verificable; una correlación no autoriza por sí sola una acción automática.
 
-## 27. Si nadie mira, el fallo pasa inadvertido
+## 28. Si nadie mira, el fallo pasa inadvertido
 
 **Contenido visible:**
 
@@ -367,7 +390,7 @@ Solución: observar continuamente disponibilidad, comportamiento y resultado de 
 - La métrica up de Prometheus refleja si el scrape tuvo éxito, no si el flujo de pedidos completó su trabajo. Un contenedor activo tampoco basta.
 - Un monitor define qué comprueba, cada cuánto y qué resultado espera. La sonda verifica el endpoint; las métricas instrumentadas verifican el flujo y su impacto. Un dashboard por sí solo no evalúa una condición ni notifica.
 
-## 28. ¿Cómo comprobamos que el servicio funciona?
+## 29. ¿Cómo comprobamos que el servicio funciona?
 
 **Contenido visible:**
 
@@ -381,7 +404,7 @@ Desde afuera Blackbox Exporter: sondas HTTP, TCP y DNS. Para probar el negocio c
 - Blackbox Exporter comprueba conectividad o respuestas configuradas; un HTTP 200 de health no prueba un flujo de negocio completo. Una prueba sintética debe comprobar un resultado esperado y evitar efectos no controlados.
 - Para observar acumulación de mensajes necesitamos métricas del broker, no solo CPU. El laboratorio incluye cAdvisor y métricas de aplicación. Blackbox y las métricas del broker son opciones conceptuales; no se instalan en esta actividad.
 
-## 29. Liveness y readiness: dos decisiones
+## 30. Liveness y readiness: dos decisiones
 
 **Contenido visible:**
 
@@ -396,7 +419,7 @@ Laboratorio:  /health  solo comprueba respuesta HTTP. No prueba DB, broker ni el
 - Usamos readiness durante inicialización o cuando una dependencia crítica impide atender el contrato. Si MongoDB cae, el proceso puede seguir vivo y la instancia dejar de estar lista. Elegimos las dependencias según las operaciones que debe servir; comprobar todas indiscriminadamente puede retirar toda la capacidad.
 - En Kubernetes, tras los umbrales configurados, liveness reinicia el contenedor y readiness lo retira de los endpoints de los Services; cuando se recupera vuelve a entrar. Startup probe protege arranques lentos antes de habilitar esas sondas. La API de nuestro Compose tiene un healthcheck: /health responde si el servidor HTTP atiende, no verifica la conectividad actual de DB o broker. depends_on con service_healthy ordena el arranque; unhealthy por sí solo no reinicia ni retira tráfico.
 
-## 30. Detectar no alcanza: hay que avisar y actuar
+## 31. Detectar no alcanza: hay que avisar y actuar
 
 **Contenido visible:**
 
@@ -411,7 +434,7 @@ Regla del práctico:  Worker lento (promedio de intentos) . No hay notificacione
 - El ejemplo supone datos disponibles y evaluaciones puntuales. La ingestión y la frecuencia de evaluación condicionan el momento observado. Los dos minutos no son el tiempo que debemos esperar para disparar.
 - El laboratorio permite observar el estado. Firing no implica que alguien recibió un aviso: hacen falta política, contacto y responsable. El siguiente gráfico diferencia estados y falta de datos.
 
-## 31. Pendiente no significa notificada
+## 32. Pendiente no significa notificada
 
 **Contenido visible:**
 
@@ -425,7 +448,7 @@ No Data:  faltan datos.  Error:  falla la evaluación. Definir su tratamiento; n
 - Una condición sostenida filtra picos breves. Las políticas de agrupación, silencios y puntos de contacto deciden cuándo y dónde llega una notificación.
 - Sin datos podemos haber perdido recolección; si se desconecta cAdvisor no interpretamos memoria cero. Debemos configurar explícitamente el tratamiento.
 
-## 32. Alertar por impacto; usar recursos como contexto
+## 33. Alertar por impacto; usar recursos como contexto
 
 **Contenido visible:**
 
@@ -437,7 +460,7 @@ Síntoma accionable Demora sostenida, errores técnicos o pedidos que no complet
 - Más alertas no implica mejor observabilidad: el ruido hace que se ignoren. Establecemos severidad y evitamos duplicados.
 - Un runbook es una guía breve de respuesta: abrir dashboard, buscar trazas y logs, verificar dependencia y escalar al responsable.
 
-## 33. Dos rutas para evaluar y notificar
+## 34. Dos rutas para evaluar y notificar
 
 **Contenido visible:**
 
@@ -451,7 +474,7 @@ Alternativa:  reglas en Prometheus → Alertmanager → contacto. Alertmanager a
 - Grafana Alerting permite reglas y notificaciones sobre fuentes compatibles. Un contacto es el destino, como correo o webhook; la política decide qué alertas van a ese destino y cómo agruparlas.
 - En la otra ruta Prometheus evalúa las reglas y Alertmanager gestiona sus notificaciones. No necesitamos ambas rutas duplicando la misma alerta. En la clase podemos mostrar el estado sin enviar comunicaciones externas.
 
-## 34. Cuando el fallo cruza servicios y afecta al negocio
+## 35. Cuando el fallo cruza servicios y afecta al negocio
 
 **Contenido visible:**
 
@@ -466,7 +489,7 @@ Caso:  pico de pedidos; la API responde, pero aumenta el tiempo hasta completar 
 - Después de corregir verificamos reducción del p95, recuperación del procesamiento y menos errores. La observabilidad completa es especialmente valiosa si hay varios servicios, asincronía o fallos intermitentes; su cobertura depende de instrumentación y retención.
 - Los otros ejemplos usan el mismo método: comparar versiones tras un despliegue, observar llamadas externas y reconstruir intentos con identidad de negocio y contexto. No conserva automáticamente todas las trazas ni reemplaza una auditoría transaccional.
 
-## 35. Así se construye un diagnóstico con evidencia
+## 36. Así se construye un diagnóstico con evidencia
 
 **Contenido visible:**
 
@@ -479,7 +502,7 @@ Señal Ejemplo guiado del escenario lento Traza API responde; dependencia.simula
 - Una espera no implica CPU alta. Si el alumno observa CPU baja, eso es compatible con la espera; debe mostrar CPU y memoria del período antes de afirmar qué ocurrió en su equipo.
 - La evidencia individual contiene capturas propias, IDs, período, estado de la alerta y comparación con propagación desactivada. Distinguimos observación, hipótesis y comprobación; la actividad no cambia Entrega 1 del TPI.
 
-## 36. ¿Podemos explicar qué pasó?
+## 37. ¿Podemos explicar qué pasó?
 
 **Contenido visible:**
 
@@ -491,7 +514,7 @@ Traza ¿Dónde se demoró la operación? Logs ¿Qué registró esa etapa? Métri
 - Preguntar: si eliminamos los headers de contexto del mensaje, ¿qué se rompe? Esperamos perder continuidad entre productor y consumidor y navegación confiable entre sus señales.
 - Preguntar: si vemos CPU alta y una traza lenta, ¿demostramos causalidad? No; necesitamos más evidencia y contraste.
 
-## 37. Para profundizar y preparar el entorno
+## 38. Para profundizar y preparar el entorno
 
 **Contenido visible:**
 
