@@ -5,6 +5,7 @@ Fecha: lunes 05/10/2026. Duración prevista: 120 minutos.
 ## Presentación
 
 - [Presentación HTML](presentacion/index.html)
+- [Material adicional](presentacion/guion-docente.md) — conceptos, explicaciones y ejemplos para estudiar.
 
 Recorrido: problemática de sistemas distribuidos; propósito de la observabilidad; repaso de Docker y Compose; logs, métricas y trazas; requisitos de instrumentación; correlación y propagación del contexto por RabbitMQ; herramientas; lectura de un incidente; monitores, liveness/readiness y alertas.
 
