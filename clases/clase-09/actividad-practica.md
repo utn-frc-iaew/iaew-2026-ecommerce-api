@@ -186,13 +186,15 @@ docker compose up -d
 curl -s http://localhost:8080/pedidos
 ```
 
-Tras `down` y `up` el pedido creado **sigue existiendo**. Dejá el entorno corriendo hasta la Parte E, donde se borra junto con su volumen. Si la API tarda en responder, esperá unos segundos y repetí `curl`; si falla, mirá `docker compose logs api mongodb`. Si 8080 está ocupado, usá `API_PORT=8081 docker compose up -d` y cambiá el puerto en los `curl`; no detengas procesos que no identifiques.
+Tras `down` y `up` el pedido creado **sigue existiendo**. Dejá el entorno corriendo hasta la Parte E, donde se borra junto con su volumen. Si la API tarda en responder, esperá unos segundos y repetí `curl`; si falla, mirá `docker compose logs api mongodb`. Si 8080 está ocupado, usá `API_PORT=8081 docker compose up -d` y reemplazá 8080 por 8081 en todos los `curl` de esta parte; no detengas procesos que no identifiques.
 
 Guardá salida de tests, `compose ps`, respuestas, resultado de la persistencia y del lint. **Todavía no hay nada en AWS.**
 
 **Checkpoint B:** la API y su base funcionan en local con Compose y los datos sobreviven a recrear los contenedores; la plantilla pasa revisión estática, que no comprueba permisos ni despliegue cloud.
 
 ## 5. Parte C · Crear la base y después desplegar la API · 15 minutos
+
+**Cómo usar el tiempo:** C tiene dos esperas de CloudFormation (base y aplicación) y una subida de imagen. Lanzá `./scripts/crear-infra.sh` apenas termines B, y mientras corre completá la parte A; durante la espera del stack de aplicación, leé las preguntas de D y de la entrega.
 
 ### C.1. Creá toda la infraestructura base
 
@@ -272,7 +274,7 @@ aws cloudformation describe-stack-events --stack-name iaew-clase-09-base --max-i
 aws cloudformation describe-stack-events --stack-name iaew-clase-09 --max-items 10
 ```
 
-Si la tarea se detiene y vuelve a iniciarse, revisá **ECS → Tasks → Stopped** y los logs: un error al descargar `mongo:7.0.21` (límite de Docker Hub) o la falta de memoria suelen verse ahí. Consultá solo los stacks que ya hayas intentado crear. Guardá el primer error y resolvelo con el docente. Un stack en `ROLLBACK_COMPLETE` de creación inicial requiere borrado antes de reintentar. Si la base ya está importada por la aplicación, no puede borrarse primero: el orden correcto está en E.
+Si la tarea se detiene y vuelve a iniciarse por un error de descarga de `mongo:7.0.21` (límite de Docker Hub), esperá unos minutos: ECS reintenta solo. Si persiste, avisá al docente con el mensaje de la tarea. Para otros casos, revisá **ECS → Tasks → Stopped** y los logs: un error al descargar `mongo:7.0.21` (límite de Docker Hub) o la falta de memoria suelen verse ahí. Consultá solo los stacks que ya hayas intentado crear. Guardá el primer error y resolvelo con el docente. Un stack en `ROLLBACK_COMPLETE` de creación inicial requiere borrado antes de reintentar. Si la base ya está importada por la aplicación, no puede borrarse primero: el orden correcto está en E.
 
 **Checkpoint C:** primero acreditaste infraestructura sin tareas; después imagen publicada y API + MongoDB funcionando como dos contenedores sobre esa misma base. Guardá evidencia de ambos estados.
 
@@ -293,6 +295,8 @@ for i in 1 2 3 4 5 6 7 8 9 10; do
   printf '\n'
 done
 ```
+
+Cada línea tiene la forma `{"version":...,"instancia":"..."}  "id":"P-1001" "id":"P-1002" ...` (ejemplo de formato, no un resultado observado).
 
 Esperás `UPDATE_COMPLETE` y, al estabilizarse, dos destinos `healthy`. Consultá de nuevo si todavía hay tareas en transición. En cada línea vas a ver la `instancia` que respondió y los ids de pedidos que tiene su MongoDB. Buscá dos valores distintos de `instancia`; no hace falta que alternen en orden. Diez solicitudes no garantizan ver ambas: si no ocurre, repetí el bucle y guardá lo observado, sin inventar resultados.
 
@@ -338,7 +342,10 @@ Subí a Moodle una nota de hasta una página de síntesis, con tabla y evidencia
 3. Salidas de B: tests, `compose ps`, HTTP local (incluido el `POST`), persistencia tras `down`/`up` y lint.
 4. Inventario y estado de la base sin tareas; después estado/eventos de la aplicación, URL pública, destinos saludables, HTTP de C/D y los logs `api` y `mongodb`. Registrá la cantidad de tareas y los valores de instancia y pedidos realmente observados.
 5. Respuestas de D, confirmación de limpieza y cualquier pendiente/error.
-5. Respuestas de D, confirmación de limpieza y cualquier pendiente/error.
+6. Respuestas breves (2–3 líneas cada una) a estas preguntas:
+   - ¿Qué cambia entre Compose y ECS para que la API encuentre MongoDB, y por qué?
+   - ¿Qué diferencia hay entre plantilla, stack y export?
+   - ¿Por qué al escalar a 2 tareas el pedido nuevo aparece en una sola y qué harías en producción?
 
 No entregues credenciales ni un segundo informe de «laboratorio». Las evidencias deben provenir de tus ejecuciones; distinguí siempre resultado observado, resultado esperado y parte no ejecutada.
 
