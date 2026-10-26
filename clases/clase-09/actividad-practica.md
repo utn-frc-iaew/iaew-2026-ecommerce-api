@@ -1,6 +1,6 @@
 # Actividad práctica individual · Clase 09 · De Docker Compose local a ECS en AWS
 
-**Duración en clase:** 45 minutos, con preparación previa. **Modalidad:** individual. **Entrega:** una nota con evidencias en Moodle.
+**Duración en clase:** 45 minutos, con preparación previa. **Modalidad:** individual. **Entrega:** un `.zip` con evidencias en Moodle.
 
 Esta es la única actividad de Clase 09. La carpeta `recursos/laboratorio/` contiene los archivos que vas a usar en estos mismos pasos; no es otro ejercicio. Seguí esta guía de principio a fin.
 
@@ -335,19 +335,45 @@ La confirmación esperada es `Limpieza verificada: stacks iaew-clase-09 y iaew-c
 
 ## 8. Una sola entrega
 
-Subí a Moodle una nota de hasta una página de síntesis, con tabla y evidencias anexas. No entregues un segundo informe de infraestructura: es la primera etapa de esta misma actividad. Incluí:
+Subí a Moodle **un único archivo `.zip`** llamado `apellido-nombre-clase09.zip`. No hace falta incluir todo el proyecto: solo lo que me permita comprobar que ejecutaste la actividad. Estructura mínima:
 
-1. **Qué levantaste:** la API con MongoDB en Compose, la infraestructura base propia y los dos contenedores desplegados después. Diferenciá los dos stacks, la imagen y las tareas.
-2. Tabla y respuestas de A.
-3. Salidas de B: tests, `compose ps`, HTTP local (incluido el `POST`), persistencia tras `down`/`up` y lint.
-4. Inventario y estado de la base sin tareas; después estado/eventos de la aplicación, URL pública, destinos saludables, HTTP de C/D y los logs `api` y `mongodb`. Registrá la cantidad de tareas y los valores de instancia y pedidos realmente observados.
-5. Respuestas de D, confirmación de limpieza y cualquier pendiente/error.
-6. Respuestas breves (2–3 líneas cada una) a estas preguntas:
-   - ¿Qué cambia entre Compose y ECS para que la API encuentre MongoDB, y por qué?
-   - ¿Qué diferencia hay entre plantilla, stack y export?
-   - ¿Por qué al escalar a 2 tareas el pedido nuevo aparece en una sola y qué harías en producción?
+```text
+apellido-nombre-clase09.zip
+├── informe.md                 (o informe.pdf; máximo una página)
+└── evidencias/
+    ├── 01-local.txt           salida de B
+    ├── 02-base.txt            salida de C.1
+    ├── 03-aplicacion.txt      salida de C.2 y C.3
+    ├── 04-escalado.txt        salida de D
+    ├── 05-limpieza.txt        salida de E
+    └── capturas/              2 a 4 imágenes de la consola (opcionales como texto, obligatorias si no tenés la salida)
+```
 
-No entregues credenciales ni un segundo informe de «laboratorio». Las evidencias deben provenir de tus ejecuciones; distinguí siempre resultado observado, resultado esperado y parte no ejecutada.
+**Qué debe contener cada archivo**
+
+| Archivo | Contenido mínimo |
+|---|---|
+| `informe.md` | Tus respuestas de A (tabla y preguntas); las 3 respuestas breves de abajo; qué parte no pudiste ejecutar y por qué. |
+| `01-local.txt` | `npm test`, `docker compose ps`, `curl` a `/health`, `/pedidos` y el `POST /pedidos`, el `curl /pedidos` posterior a `down`/`up` (con el pedido que creaste) y el resultado de `cfn-lint`. |
+| `02-base.txt` | Estado `CREATE_COMPLETE` de `iaew-clase-09-base`, la tabla de recursos (17), `taskArns: []` y destinos vacíos. |
+| `03-aplicacion.txt` | URI de la imagen publicada, estado de `iaew-clase-09`, destino `healthy`, y los `curl` a `/health`, `/version`, `/pedidos`, `/pedidos/P-9999` y `POST /pedidos` contra la URL del ALB. |
+| `04-escalado.txt` | Estado `UPDATE_COMPLETE`, dos destinos `healthy` y la salida del bucle de `/version` y `/pedidos`, tal como salió. |
+| `05-limpieza.txt` | `docker compose down -v` y `limpiar.sh` terminando, y la comprobación de que los dos stacks ya no existen. |
+| `capturas/` | Consola de CloudFormation con ambos stacks, ECS con la tarea y sus dos contenedores, y CloudWatch con los streams `api` y `mongodb`. |
+
+**Cómo guardar la salida sin esfuerzo:** agregá `2>&1 | tee -a evidencias/01-local.txt` al final de cada comando (creá antes la carpeta `evidencias`), o copiá y pegá la terminal en el archivo.
+
+**Respuestas breves para `informe.md` (2–3 líneas cada una):**
+
+1. ¿Qué cambia entre Compose y ECS para que la API encuentre MongoDB, y por qué?
+2. ¿Qué diferencia hay entre plantilla, stack y export?
+3. ¿Por qué al escalar a 2 tareas el pedido nuevo aparece en una sola y qué harías en producción?
+
+**Código:** no lo incluyas si no lo modificaste. Si cambiaste archivos (plantillas, scripts, `compose.yaml`), agregá una carpeta `cambios/` solo con esos archivos.
+
+**No incluyas:** `node_modules`, `.venv`, credenciales, `~/.aws`, ni el contenido de `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` o `AWS_SESSION_TOKEN`. Revisá las capturas y las salidas antes de comprimir: si aparece un secreto, ocultalo.
+
+Las evidencias deben provenir de tus ejecuciones. En `informe.md` distinguí siempre lo observado, lo esperado y lo no ejecutado.
 
 ### Criterios de revisión
 
