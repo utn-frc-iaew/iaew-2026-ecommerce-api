@@ -13,18 +13,18 @@ La carpeta `recursos/laboratorio/` contiene los archivos de esta actividad; no e
 ## Antes de clase
 
 - Docker, Node.js 20+, Python 3 (para `cfn-lint`) y AWS CLI v2 instalados.
-- Solo para la ruta cloud: Learner Lab iniciado y credenciales temporales cargadas (`aws sts get-caller-identity`). No subirlas a Git.
+- Learner Lab iniciado y credenciales temporales cargadas (`aws sts get-caller-identity`). No subirlas a Git.
 - Región `us-east-1`.
 
 ## Alcance
 
-- Obligatorio: partes A, B y E; C y D si hay Learner Lab.
+- Obligatorio: partes A–E completas con Learner Lab disponible para todos.
 - Fuera de alcance: despliegue de MongoDB, RabbitMQ y Auth0.
 - Es un laboratorio autocontenido: no requiere la rama de inicio de otra clase.
 
 ## Preparación, cierre y validación
 
-Preparar cfn-lint e imagen local antes de clase según la actividad. La API usa datos ficticios y no despliega el sistema previo. Sin AWS, cerrar el contenedor local y declarar que no se crearon recursos cloud. Con AWS, verificar borrado de stack y ECR. La nota admite tabla y evidencias anexas.
+Preparar cfn-lint e imagen local antes de clase según la actividad. La API usa datos ficticios y no despliega el sistema previo. Todos completan el despliegue en Learner Lab y verifican el borrado del contenedor local, stack y ECR. La nota admite tabla y evidencias anexas.
 
 El despliegue real en Learner Lab sigue pendiente de ensayo; las pruebas locales no lo acreditan.
 

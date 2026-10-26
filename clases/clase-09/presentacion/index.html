@@ -66,8 +66,8 @@ const slides=[
   {
     "block": "0–10 min · el punto de partida",
     "title": "La ruta de hoy",
-    "body": "<table><tr><th>Bloque</th><th>Minutos</th></tr><tr><td>Recuperar Compose y plantear el problema</td><td>10</td></tr><tr><td>Nube y modelos de servicio</td><td>15</td></tr><tr><td>Elegir camino y traducir Compose a AWS</td><td>20</td></tr><tr><td>IaC, CloudFormation y demo</td><td>15</td></tr><tr><td>Práctica individual A–E</td><td>45</td></tr><tr><td>Verificación de cierre y conclusiones</td><td>15</td></tr></table><div class=\"call\">Resultado: una API ficticia de solo lectura publicada por ALB, si el Learner Lab está disponible.</div>",
-    "notes": "Recorramos la tabla: son 120 minutos. La práctica dura 45 y requiere imagen y linter preparados. Primero entenderemos decisiones; después leeremos el código que las implementa. La alternativa sin AWS conserva validación local y explicación del despliegue.",
+    "body": "<table><tr><th>Bloque</th><th>Minutos</th></tr><tr><td>Recuperar Compose y plantear el problema</td><td>10</td></tr><tr><td>Nube y modelos de servicio</td><td>15</td></tr><tr><td>Traducir Compose a ECS/Fargate</td><td>20</td></tr><tr><td>IaC, CloudFormation y demo</td><td>15</td></tr><tr><td>Práctica individual A–E</td><td>45</td></tr><tr><td>Verificación de cierre y conclusiones</td><td>15</td></tr></table><div class=\"call\">Resultado: una API ficticia de solo lectura publicada por ALB.</div>",
+    "notes": "Recorramos la tabla: son 120 minutos. La práctica dura 45 y requiere imagen y linter preparados. Primero entenderemos decisiones; después leeremos el código que las implementa. Todos cuentan con Learner Lab. Las partes A–E son obligatorias, incluido desplegar, escalar y limpiar en AWS.",
     "theme": ""
   },
   {
@@ -206,7 +206,7 @@ const slides=[
   {
     "block": "45–60 min · IaC y demostración",
     "title": "Cambios, estados y límites del entorno",
-    "body": "<div class=\"grid\"><article><h3>Despliegue y actualización</h3><p>CloudFormation calcula un change set. Leer eventos y distinguir CREATE_COMPLETE de UPDATE_COMPLETE.</p></article><article><h3>Fallas</h3><p>Una creación puede quedar en ROLLBACK_COMPLETE; una actualización puede revertirse. Leer la causa antes de reintentar.</p></article><article><h3>Learner Lab</h3><p>Credenciales temporales, servicios permitidos y presupuesto acotado. Confirmar límites y región us-east-1 en el curso.</p></article><article><h3>Plan alternativo</h3><p>Sin AWS: pruebas locales y explicación de C/D. Si falla AWS: guardar el estado real y priorizar la limpieza.</p></article></div>",
+    "body": "<div class=\"grid\"><article><h3>Despliegue y actualización</h3><p>CloudFormation calcula un change set. Leer eventos y distinguir CREATE_COMPLETE de UPDATE_COMPLETE.</p></article><article><h3>Fallas</h3><p>Una creación puede quedar en ROLLBACK_COMPLETE; una actualización puede revertirse. Leer la causa antes de reintentar.</p></article><article><h3>Learner Lab</h3><p>Credenciales temporales, servicios permitidos y presupuesto acotado. Confirmar límites y región us-east-1 en el curso.</p></article><article><h3>Recorrido obligatorio</h3><p>Learner Lab disponible para todos. Validar localmente, desplegar, escalar y limpiar en AWS.</p></article></div>",
     "notes": "Las tarjetas conectan el ciclo de vida con condiciones reales del laboratorio. Ante ROLLBACK_COMPLETE de creación inicial hay que borrar el stack antes de volver a crearlo. No asumir duración fija de sesión ni permisos universales: confirmar el curso. Los scripts usan la región indicada y las llamadas manuales requieren las variables de preparación.",
     "theme": ""
   },
@@ -214,20 +214,20 @@ const slides=[
     "block": "45–60 min · IaC y demostración",
     "title": "Demo: de la imagen a una respuesta HTTP",
     "body": "<pre>./scripts/publicar-imagen.sh 1.0.0\n# Copiar la URI impresa, sin el prefijo ImageUri=\nexport IMAGE_URI=&quot;URI_COMPLETA_DE_LA_IMAGEN&quot;\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot;\n# Con ApiUrl del Output:\ncurl http://DNS_DEL_ALB/health\ncurl http://DNS_DEL_ALB/version</pre><div class=\"call\">Observar construcción/publicación, eventos del stack, destinos healthy y respuesta de la API.</div>",
-    "notes": "El bloque resume los comandos reales de la actividad desde recursos/laboratorio. El docente debe tener un ensayo previo y evidencia de respaldo; el despliegue no está acreditado en esta preparación. Se puede iniciar el despliegue al comienzo de este bloque mientras se explica la plantilla. Sin evidencia AWS previa, mostrar la ejecución local y declarar qué falta, sin simular salidas.",
+    "notes": "El bloque resume los comandos reales desde recursos/laboratorio. El Learner Lab está disponible para todos y el docente debe ensayar el despliegue antes de clase. Iniciar la creación al comienzo del bloque mientras se explica la plantilla. Seguir los eventos, comprobar destinos saludables y consultar la URL pública: estas evidencias no se reemplazan por una explicación escrita.",
     "theme": ""
   },
   {
     "block": "60–105 min · práctica individual",
     "title": "Una actividad, una guía, una entrega",
-    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar y desplegar; o explicación sin AWS</td><td>15</td></tr><tr><td>D</td><td>Dos tareas e instancia; o explicación sin AWS</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Seguí <code>actividad-practica.md</code>; <code>recursos/laboratorio/</code> contiene sus archivos. No es otra actividad.</div>",
-    "notes": "La tabla A–E es el único recorrido práctico. La actividad y el laboratorio nombraban antes dos entradas del índice, pero son el mismo trabajo. La guía ahora integra preparación, inventario, comandos, resultados esperados y fallas frecuentes. Los recursos son los archivos de esa guía; no hay otro ejercicio ni otra entrega. Mantener 45 minutos con preparación previa y usar el cierre para verificar recursos y evidencia.",
+    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar en ECR y desplegar en AWS</td><td>15</td></tr><tr><td>D</td><td>Escalar a dos tareas y comprobar instancias</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Seguí <code>actividad-practica.md</code>; <code>recursos/laboratorio/</code> contiene sus archivos. No es otra actividad.</div>",
+    "notes": "La tabla A–E es el único recorrido práctico y todas sus partes son obligatorias. La guía integra preparación, inventario, comandos, resultados y diagnóstico de errores. Los archivos de recursos pertenecen a esta misma actividad. Mantener 45 minutos con preparación previa y usar el cierre para verificar recursos y evidencia.",
     "theme": ""
   },
   {
     "block": "60–105 min · práctica individual",
     "title": "B y D: dos comprobaciones distintas",
-    "body": "<pre># B: desde recursos/laboratorio, imagen preparada\nnpm test\ndocker run --rm -d --name iaew-clase-09-local -p 8080:8080 iaew-api:local\ncurl http://localhost:8080/health\n.venv/bin/cfn-lint plantillas/ecs-fargate-alb.yaml\n\n# D: solo con AWS y la IMAGE_URI guardada\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot; iaew-clase-09 2</pre><div class=\"call\">Esperar dos destinos healthy y consultar /version varias veces. Registrar dos instancias solo si se observaron.</div>",
+    "body": "<pre># B: desde recursos/laboratorio, imagen preparada\nnpm test\ndocker run --rm -d --name iaew-clase-09-local -p 8080:8080 iaew-api:local\ncurl http://localhost:8080/health\n.venv/bin/cfn-lint plantillas/ecs-fargate-alb.yaml\n\n# D: en AWS, con la IMAGE_URI guardada\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot; iaew-clase-09 2</pre><div class=\"call\">Esperar dos destinos healthy y consultar /version varias veces. Registrar dos instancias solo si se observaron.</div>",
     "notes": "Los comandos separan comprobación local y cambio de infraestructura. El script detecta VPC y subredes y pasa DesiredCount=2. No necesitamos rellenar esos parámetros a mano. Aumentar cantidad es escalado manual. Mientras esperamos podemos completar la explicación de qué cambiaría en el sistema real.",
     "theme": ""
   },
@@ -241,8 +241,8 @@ const slides=[
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Cerrar el ambiente también es operar",
-    "body": "<pre># Ambas rutas: detiene y elimina el contenedor con --rm\ndocker stop iaew-clase-09-local\ndocker ps -a --filter name=iaew-clase-09-local\n\n# Si se crearon recursos AWS, incluso si falló el stack:\n./scripts/limpiar.sh</pre><div class=\"call\">Comprobar stack y ECR ausentes. Si falla el borrado, informar el error y resolverlo con el docente.</div>",
-    "notes": "El primer bloque cierra el entorno local; el segundo aplica solo si se crearon recursos AWS. El repositorio iaew-api debe ser exclusivo de esta práctica porque el script borra sus imágenes. El bloque final verifica el cierre iniciado en E. Sin AWS declarar explícitamente que no se crearon recursos cloud.",
+    "body": "<pre># Detener y eliminar el contenedor local con --rm\ndocker stop iaew-clase-09-local\ndocker ps -a --filter name=iaew-clase-09-local\n\n# Eliminar stack y ECR de la actividad:\n./scripts/limpiar.sh</pre><div class=\"call\">Comprobar stack y ECR ausentes. Si falla el borrado, informar el error y resolverlo con el docente.</div>",
+    "notes": "El primer bloque cierra el contenedor local y el segundo elimina el stack y ECR de la actividad. El repositorio iaew-api debe ser exclusivo porque se borran sus imágenes. El bloque final verifica el cierre iniciado en E. Si un comando falla, leer la causa y resolverla con el docente, sin declarar un borrado no verificado.",
     "theme": ""
   },
   {

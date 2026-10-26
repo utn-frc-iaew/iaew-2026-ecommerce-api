@@ -101,12 +101,11 @@ docker build --platform linux/amd64 -t iaew-api:local .
 
 Esperá que la instalación y el build terminen sin errores. Se fuerza `linux/amd64` para coincidir con la arquitectura de las tareas de esta plantilla, también en Apple Silicon. Estas operaciones se preparan **antes** de los 45 minutos. No publiques `.venv`, credenciales ni archivos temporales en Git.
 
-### 2.3. Elegí la ruta según tu Learner Lab
+### 2.3. Prepará tu Learner Lab
 
-- **Con Learner Lab disponible:** hacé A–E, incluida la publicación en AWS.
-- **Sin Learner Lab disponible:** hacé A, B y el cierre local de E; en C y D completá las explicaciones indicadas. No ejecutes comandos AWS ni inventes capturas de recursos.
+Todos los estudiantes cuentan con Learner Lab. La actividad completa A–E incluye publicación, despliegue, escalado y limpieza en AWS. Las pruebas locales de B son la validación previa de esa misma actividad.
 
-Para la ruta cloud, verificá AWS CLI v2:
+Verificá AWS CLI v2 y configurá región y paginación:
 
 ```bash
 aws --version
@@ -133,11 +132,11 @@ aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" Name=default-for
   --query 'Subnets[].{Subred:SubnetId,Zona:AvailabilityZone}' --output table
 ```
 
-Necesitás una VPC por defecto (`vpc-...`, no `None`) y subredes por defecto en al menos dos zonas distintas. Si faltan, consultá al docente y usá la ruta local; no intentes crear una red distinta siguiendo estos scripts.
+Necesitás una VPC por defecto (`vpc-...`, no `None`) y subredes por defecto en al menos dos zonas distintas. Si faltan, resolvé la configuración con el docente antes de desplegar; no crees una red distinta siguiendo estos scripts.
 
 Los nombres `iaew-clase-09` e `iaew-api` deben estar reservados para vos en tu cuenta de laboratorio. Si varios alumnos comparten cuenta, consulten al docente antes de ejecutar: los nombres colisionan y la limpieza borra el repositorio con sus imágenes. La actividad presupone cuentas aisladas por estudiante.
 
-**Antes de empezar:** imagen construida, linter instalado y ruta elegida. Si vas a usar AWS, también identidad y red verificadas.
+**Antes de empezar:** imagen construida, linter instalado y Learner Lab iniciado, con identidad y red verificadas.
 
 ## 3. Parte A · Leer qué se va a crear · 8 minutos
 
@@ -176,8 +175,6 @@ Guardá salida de tests, respuestas y resultado del lint. **Todavía no hay una 
 ## 5. Parte C · Publicar, crear infraestructura y verificar · 15 minutos
 
 ### C.1. Publicá la imagen
-
-Solo con AWS disponible:
 
 ```bash
 ./scripts/publicar-imagen.sh 1.0.0
@@ -244,7 +241,6 @@ Guardá estado del stack, tabla de destinos y respuestas HTTP. Podés ver el log
 
 **Checkpoint C:** una imagen en ECR, nueve recursos del stack creados y una tarea que responde desde la URL pública. Los tres son resultados distintos.
 
-**Sin Learner Lab:** explicá qué hace C.1–C.4 y qué evidencia real esperarías en cada paso. Incluí el dibujo cliente → ALB → tarea, con puertos, y separá ECR del camino HTTP. No ejecutes este bloque.
 
 ## 6. Parte D · Pasar de una tarea a dos · 7 minutos
 
@@ -268,13 +264,12 @@ Respondé: ¿qué cambió en infraestructura?, ¿qué identifica `instancia`?, �
 
 **Checkpoint D:** hiciste escalado **manual**, no autoscaling. Los datos siguen siendo constantes del código; no comprobaste persistencia ni recuperación de una base.
 
-**Sin Learner Lab:** explicá el cambio de DesiredCount y dibujá el ALB enviando solicitudes a dos tareas. Indicá qué observarías en destinos y `/version`.
 
 ## 7. Parte E · Cerrar el entorno y reunir evidencias · 8 minutos
 
 Guardá primero las evidencias; la URL dejará de servir cuando borres el balanceador.
 
-En ambas rutas, si el contenedor de B sigue corriendo:
+Detené el contenedor de B si sigue corriendo:
 
 ```bash
 docker stop iaew-clase-09-local
@@ -283,7 +278,7 @@ docker ps -a --filter name=iaew-clase-09-local
 
 Como se creó con `--rm`, debe desaparecer después de detenerse. Si todavía aparece durante la eliminación, esperá unos segundos y repetí la consulta. Si ya estaba detenido/eliminado, verificá la ausencia en lugar de repetir `stop`.
 
-Si llegaste a publicar imagen o crear recursos cloud, aunque el despliegue haya fallado:
+Eliminá los recursos de AWS. Este paso también corresponde si el despliegue falló después de publicar la imagen:
 
 ```bash
 ./scripts/limpiar.sh
@@ -293,18 +288,17 @@ El script elimina el stack, espera su borrado y elimina `iaew-api` con sus imág
 
 La confirmación esperada es `Limpieza verificada: stack iaew-clase-09 y repositorio iaew-api ausentes.` Si aparece un error, conservá el mensaje y resolvelo con el docente; no declares limpieza exitosa. Un stack en `DELETE_COMPLETE` puede seguir visible en el historial de CloudFormation: lo importante es el estado eliminado y que los recursos creados ya no estén activos. Cerrar la pestaña de AWS no equivale a borrarlos.
 
-Sin AWS, registrá: «No se crearon recursos cloud; contenedor local detenido y eliminado».
 
-**Si se agota el tiempo de C/D:** guardá el estado real, escribí qué faltó comprobar y pasá a E. Si aún hay una operación de creación/actualización en curso, pedí al docente que supervise su finalización y el borrado; no abandones recursos suponiendo que terminaron de borrarse. Los últimos 15 minutos de clase permiten verificar el cierre y completar la nota, sin repetir E.
+**Ante una demora o error:** guardá el estado real y resolvé la causa con el docente para completar el recorrido en AWS. Si aún hay una operación de creación/actualización en curso, esperá su finalización antes de iniciar el borrado; no abandones recursos suponiendo que se eliminaron. Los últimos 15 minutos de clase permiten verificar el cierre y completar la nota, sin repetir E.
 
 ## 8. Una sola entrega
 
 Subí a Moodle una nota de hasta una página de síntesis, con tabla y evidencias anexas. Incluí:
 
-1. **Qué levantaste:** API ficticia, imagen ECR, infraestructura del stack y cantidad de tareas; o qué no ejecutaste si no hubo AWS.
+1. **Qué levantaste:** API ficticia, imagen ECR, infraestructura del stack y cantidad de tareas.
 2. Tabla y respuestas de A.
 3. Salidas de B: tests, HTTP local y lint.
-4. Con AWS: estado/eventos, URL, destinos y HTTP de C/D; dos instancias solo si se observaron. Sin AWS: las explicaciones y diagramas indicados.
+4. Estado/eventos del stack, URL pública, destinos saludables y respuestas HTTP de C/D. Registrá la cantidad de tareas y los valores de instancia realmente observados.
 5. Respuestas de D, confirmación de limpieza y cualquier pendiente/error.
 
 No entregues credenciales ni un segundo informe de «laboratorio». Las evidencias deben provenir de tus ejecuciones; distinguí siempre resultado observado, resultado esperado y parte no ejecutada.
@@ -314,10 +308,10 @@ No entregues credenciales ni un segundo informe de «laboratorio». Las evidenci
 - Explicás qué se creó, qué se reutilizó y qué quedó fuera.
 - Relacionás cada recurso con el recorrido de una solicitud.
 - Justificás red, roles y estado de la API.
-- Aportás evidencia consistente con tu ruta, sin presentar lint o un dibujo como despliegue real.
+- Aportás evidencia de las ejecuciones local y cloud, distinguiendo lint, creación de recursos y funcionamiento HTTP.
 - Cerrás el entorno o informás el error y los recursos pendientes para resolverlos.
 
-Una falla del Learner Lab no invalida la entrega si documentás lo ocurrido y completás la explicación. El despliegue cloud del **TPI grupal** sigue siendo opcional con bono y no cambia su consigna.
+Si queda un bloqueo de ejecución, registralo y resolvelo con el docente: una explicación escrita no reemplaza el despliegue requerido. El despliegue cloud del **TPI grupal** sigue siendo opcional con bono y no cambia su consigna.
 
 ### Referencias de los comandos
 
