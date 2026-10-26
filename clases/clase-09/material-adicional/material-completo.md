@@ -12,11 +12,11 @@ Son modelos de responsabilidad, no etapas de migración. ECS con Fargate ejecuta
 
 Una región ubica recursos geográficamente y contiene zonas de disponibilidad. Escalar modifica capacidad; la elasticidad ajusta capacidad a demanda. Ninguna de las dos aparece automáticamente por usar nube: debe diseñarse y configurarse. El ejercicio cambia cantidad de tareas manualmente.
 
-### Desde Compose: dos caminos posibles
+### Desde Compose a un administrador de contenedores
 
 El Compose real de Clase 08 contiene API, worker, MongoDB y RabbitMQ. Publica la API en loopback y usa un volumen para MongoDB; el host MCP se inicia aparte. Compose ya aporta una descripción reproducible de los servicios locales. La demanda nueva es preparar un entorno remoto y controlar acceso, operación y costos.
 
-Un camino es crear una VM, instalar Docker y ejecutar Compose. Conservamos el modelo conocido y administramos el sistema operativo, el runtime y la recuperación. Otro es publicar imágenes y usar ejecución administrada de contenedores, como haremos hoy. Esta elección cambia responsabilidades; no convierte automáticamente el archivo Compose a CloudFormation.
+El recorrido de esta clase lleva las imágenes y decisiones de Compose directamente a un administrador de contenedores: Amazon ECS con ejecución Fargate. ECS organiza tareas y servicios, mantiene la cantidad deseada y se integra con el balanceador. Fargate aporta capacidad de ejecución sin administrar las máquinas subyacentes. Adaptamos red, permisos y persistencia al entorno cloud; no convertimos automáticamente el archivo Compose a CloudFormation.
 
 | Necesidad local | Decisión del laboratorio AWS |
 |---|---|

@@ -94,7 +94,7 @@ const slides=[
   {
     "block": "10–25 min · entender la nube",
     "title": "Aplicar los modelos a nuestro caso",
-    "body": "<div class=\"grid\"><article><h3>IaaS: una VM con Docker</h3><p>Podemos instalar Docker y ejecutar Compose. Elegimos y mantenemos sistema operativo, runtime y almacenamiento.</p></article><article><h3>PaaS: desplegar la API</h3><p>Entregamos código o artefactos a una plataforma; operamos dentro de sus opciones y restricciones.</p></article><article><h3>SaaS: consumir software</h3><p>Usamos, por ejemplo, una aplicación de correo. No desplegamos nuestro backend dentro de ella.</p></article><article><h3>Hoy: contenedores administrados</h3><p>Usaremos Amazon ECS (Elastic Container Service) con Fargate. AWS administra la capacidad de ejecución; definimos imagen, recursos, red y permisos.</p></article></div>",
+    "body": "<div class=\"grid\"><article><h3>IaaS: capacidad de infraestructura</h3><p>Contratamos máquinas virtuales, red y discos. Administramos el sistema operativo y el software instalado.</p></article><article><h3>PaaS: desplegar la API</h3><p>Entregamos código o artefactos a una plataforma; operamos dentro de sus opciones y restricciones.</p></article><article><h3>SaaS: consumir software</h3><p>Usamos, por ejemplo, una aplicación de correo. No desplegamos nuestro backend dentro de ella.</p></article><article><h3>Hoy: contenedores administrados</h3><p>Usaremos Amazon ECS (Elastic Container Service) con Fargate. AWS administra la capacidad de ejecución; definimos imagen, recursos, red y permisos.</p></article></div>",
     "notes": "Las tarjetas llevan los modelos al problema. Fargate es ejecución administrada de contenedores, sin gestionar las máquinas que la sostienen; no lo vamos a etiquetar como SaaS ni a equiparar todos los servicios administrados con un único modelo. La pregunta útil es qué delegamos y qué debemos configurar.",
     "theme": ""
   },
@@ -107,16 +107,16 @@ const slides=[
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "Camino 1: ejecutar Compose en una VM",
-    "body": "<div class=\"flow\"><b>Crear VM</b><i>→</i><b>Instalar Docker</b><i>→</i><b>Copiar configuración</b><i>→</i><b>docker compose up</b></div><div class=\"grid\"><article><h3>Qué conservamos</h3><p>Servicios, imágenes y gran parte del esquema de ejecución conocido.</p></article><article><h3>Qué se agrega</h3><p>Parches del SO, acceso remoto, firewall, discos, backups, monitoreo y recuperación.</p></article></div><div class=\"call\">Es un camino válido de IaaS; ejecutar Compose en una VM no crea por sí solo alta disponibilidad.</div>",
-    "notes": "La secuencia propone el traslado más cercano al modelo local. Es importante verlo antes de introducir más servicios: podríamos ejecutar Compose en una VM. A cambio, nos hacemos cargo de esa máquina y de sus fallas. Hoy elegimos otro camino para practicar infraestructura declarativa y ejecución administrada.",
+    "title": "De Compose a un administrador de contenedores",
+    "body": "<div class=\"flow\"><b>Servicios e imágenes conocidos</b><i>→</i><b>Estado deseado</b><i>→</i><b>Contenedores administrados</b></div><div class=\"grid\"><article><h3>Punto de partida</h3><p>Compose describe procesos, imágenes, configuración y conexiones de nuestro entorno local.</p></article><article><h3>Necesidad en la nube</h3><p>Programar la ejecución, mantener la cantidad deseada, reemplazar tareas y conectar destinos saludables.</p></article></div><div class=\"call\">Llevamos las imágenes y decisiones de servicio a ECS; adaptamos red, permisos y persistencia al entorno cloud.</div>",
+    "notes": "La secuencia parte de los servicios que ya reconocemos y agrega administración de su ejecución remota. No trasladamos el archivo Compose como una traducción automática: usamos sus decisiones para definir tareas, servicios y conexiones en AWS. El administrador mantiene el estado deseado, por ejemplo una tarea activa, y reemplaza tareas cuando corresponde. La siguiente diapositiva distingue quién coordina y quién aporta la ejecución.",
     "theme": ""
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "Camino 2: ejecutar contenedores administrados",
-    "body": "<div class=\"flow\"><b>Imagen publicada</b><i>→</i><b>Definición de tarea</b><i>→</i><b>Servicio ECS / Fargate</b></div><table><tr><th>Decisión</th><th>VM + Compose</th><th>ECS con Fargate</th></tr><tr><td>Máquinas y runtime</td><td>Los administra el equipo</td><td>Capacidad de ejecución administrada</td></tr><tr><td>Aplicación y configuración</td><td>Las define el equipo</td><td>Las define el equipo</td></tr><tr><td>Red y acceso</td><td>Configurar VM y firewall</td><td>Configurar subredes, grupos y ALB</td></tr><tr><td>Persistencia</td><td>Diseñar discos y backups</td><td>Diseñar servicios o almacenamiento externo</td></tr></table>",
-    "notes": "La tabla compara responsabilidades, no ganadores universales. ECS organiza tareas y servicios; Fargate ejecuta los contenedores sin que administremos instancias EC2. Seguimos eligiendo CPU, memoria, imagen y permisos. No subimos el compose.yaml esperando una traducción automática.",
+    "title": "ECS administra; Fargate ejecuta",
+    "body": "<div class=\"flow\"><b>Imagen en ECR</b><i>→</i><b>TaskDefinition</b><i>→</i><b>Service ECS + Fargate</b></div><table><tr><th>Pieza</th><th>Responsabilidad en nuestra actividad</th></tr><tr><td>TaskDefinition</td><td>Define imagen, CPU/memoria, puerto, configuración, logs y roles.</td></tr><tr><td>Service de ECS</td><td>Mantiene DesiredCount y registra las tareas en el TargetGroup.</td></tr><tr><td>Fargate</td><td>Ejecuta los contenedores sin administrar las máquinas subyacentes.</td></tr><tr><td>Equipo</td><td>Define código, imagen, recursos, red, permisos y estado externo.</td></tr></table>",
+    "notes": "En la fila superior vemos la imagen publicada, la definición de ejecución y el servicio. La tabla separa responsabilidades: ECS es el administrador de tareas y servicios; Fargate aporta la ejecución sin que gestionemos instancias EC2. Una definición de tarea no mantiene por sí sola la cantidad deseada: lo hace el servicio. Seguimos siendo responsables por nuestra configuración y dependencias. Ahora concretaremos qué API y recursos vamos a levantar.",
     "theme": ""
   },
   {
