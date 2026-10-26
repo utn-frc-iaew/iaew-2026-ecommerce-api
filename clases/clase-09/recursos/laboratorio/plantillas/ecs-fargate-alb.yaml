@@ -1,120 +1,49 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: IAEW 2026 Clase 09 - API stateless en ECS Fargate detras de un ALB (AWS Academy Learner Lab)
-
+Description: IAEW Clase 09 - contenedores sobre la infraestructura base creada por el alumno
 Parameters:
+  BaseStackName:
+    Type: String
+    Default: iaew-clase-09-base
   ImageUri:
     Type: String
-    Description: URI completa de la imagen en ECR, por ejemplo 123456789012.dkr.ecr.us-east-1.amazonaws.com/iaew-api:1.0.0
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC por defecto del laboratorio
-  SubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: Al menos dos subredes publicas en zonas de disponibilidad distintas
   DesiredCount:
     Type: Number
     Default: 1
     MinValue: 1
     MaxValue: 2
-    Description: Tareas simultaneas; en el Learner Lab conviene no superar 2
-
 Resources:
-  AlbSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Entrada HTTP publica hacia el ALB
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-
-  TaskSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Solo el ALB puede llegar a las tareas
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          SourceSecurityGroupId: !Ref AlbSecurityGroup
-
-  LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /ecs/${AWS::StackName}
-      RetentionInDays: 1
-
-  Cluster:
-    Type: AWS::ECS::Cluster
-
-  LoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Scheme: internet-facing
-      Subnets: !Ref SubnetIds
-      SecurityGroups:
-        - !Ref AlbSecurityGroup
-
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      VpcId: !Ref VpcId
-      Port: 8080
-      Protocol: HTTP
-      TargetType: ip
-      HealthCheckPath: /health
-      HealthCheckIntervalSeconds: 15
-      HealthyThresholdCount: 2
-      TargetGroupAttributes:
-        - Key: deregistration_delay.timeout_seconds
-          Value: "10"
-
-  Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref LoadBalancer
-      Port: 80
-      Protocol: HTTP
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup
-
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Sub ${AWS::StackName}-api
-      RequiresCompatibilities:
-        - FARGATE
+      RequiresCompatibilities: [FARGATE]
       NetworkMode: awsvpc
       Cpu: "256"
       Memory: "512"
-      ExecutionRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
-      TaskRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      # Permiso provisto por el Learner Lab; no es una dependencia de red.
+      ExecutionRoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
+      # La API no llama servicios AWS: no se asigna TaskRoleArn.
       ContainerDefinitions:
         - Name: api
           Image: !Ref ImageUri
           Essential: true
-          PortMappings:
-            - ContainerPort: 8080
-          Environment:
-            - Name: APP_VERSION
-              Value: "1.0.0"
+          PortMappings: [{ContainerPort: 8080}]
+          Environment: [{Name: APP_VERSION, Value: "1.0.0"}]
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Ref LogGroup
+              awslogs-group:
+                Fn::ImportValue: !Sub ${BaseStackName}-LogGroupName
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: api
-
   Service:
     Type: AWS::ECS::Service
-    DependsOn: Listener
     Properties:
-      Cluster: !Ref Cluster
+      Cluster:
+        Fn::ImportValue: !Sub ${BaseStackName}-ClusterArn
       LaunchType: FARGATE
       DesiredCount: !Ref DesiredCount
       TaskDefinition: !Ref TaskDefinition
@@ -122,19 +51,17 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
-          Subnets: !Ref SubnetIds
+          Subnets:
+            Fn::Split:
+              - ','
+              - Fn::ImportValue: !Sub ${BaseStackName}-SubnetIds
           SecurityGroups:
-            - !Ref TaskSecurityGroup
+            - Fn::ImportValue: !Sub ${BaseStackName}-TaskSecurityGroupId
       LoadBalancers:
         - ContainerName: api
           ContainerPort: 8080
-          TargetGroupArn: !Ref TargetGroup
-
+          TargetGroupArn:
+            Fn::ImportValue: !Sub ${BaseStackName}-TargetGroupArn
 Outputs:
-  ApiUrl:
-    Description: URL publica de la API
-    Value: !Sub http://${LoadBalancer.DNSName}
-  ClusterName:
-    Value: !Ref Cluster
   ServiceName:
     Value: !GetAtt Service.Name

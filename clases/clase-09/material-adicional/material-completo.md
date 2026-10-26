@@ -42,49 +42,64 @@ Crear recursos manualmente es lento, difícil de auditar y poco reproducible. Ia
 - **Rollback:** si un recurso falla, se restaura el estado previo.
 - **Funciones intrínsecas:** `!Ref` (referencia), `!GetAtt` (atributo) y `!Sub` (sustitución). Definen dependencias y su orden de creación.
 
-## 3. Arquitectura de la práctica
+## 3. Infraestructura autocontenida y despliegue en dos etapas
 
-```
-Cliente → ALB (:80) → Servicio ECS Fargate (:8080) → contenedor desde ECR
-                         └─ logs en CloudWatch Logs
-```
-
-| Recurso | Necesidad que cubre |
-|---|---|
-| ECR | Almacenar la imagen del contenedor |
-| ECS Cluster / Task Definition / Service | Ejecutar y mantener el número deseado de tareas |
-| Fargate | Ejecutar contenedores sin administrar servidores |
-| ALB + Listener + Target Group | Exponer la API, repartir tráfico y comprobar `/health` |
-| Security Groups | Solo el ALB recibe tráfico público; las tareas solo aceptan al ALB |
-| CloudWatch Log Group | Conservar la salida de la aplicación |
-| `LabRole` | Permisos de ejecución y de tarea ya provistos en el Learner Lab |
-
-### Red y permisos de punta a punta
-
-La **VPC** es la red virtual. Las **subredes** son segmentos de esa red; aquí se usan dos subredes públicas por defecto en zonas distintas. El laboratorio necesita esa VPC disponible. El script no crea una red nueva.
+El alumno crea primero una base propia con `infra-base.yaml` y después ejecuta `ecs-fargate-alb.yaml`. Las credenciales y `LabRole` son permisos de la cuenta educativa; no se aprovisionan roles IAM propios. Toda la infraestructura de red y ejecución del ejercicio queda declarada en los archivos.
 
 ```text
-Cliente → ALB:80 → Listener → TargetGroup → tarea:8080
-          AlbSecurityGroup              TaskSecurityGroup
+Stack base: iaew-clase-09-base
+  VPC 10.90.0.0/16
+    ├─ subred pública A 10.90.1.0/24
+    ├─ subred pública B 10.90.2.0/24 (otra zona)
+    └─ tabla + ruta 0.0.0.0/0 → Internet Gateway conectado a la VPC
+  Security groups + ALB/Listener/TargetGroup + ECR + cluster + logs
+
+Stack de aplicación: iaew-clase-09
+  TaskDefinition + Service → tareas Fargate en las subredes de la base
 ```
 
-Un security group filtra tráfico. `AlbSecurityGroup` admite HTTP público; `TaskSecurityGroup` admite el puerto 8080 solo desde el grupo del ALB. Aunque las tareas reciben IP pública para acceder al registro y a logs, no se abre su puerto directamente a Internet. La API contiene datos ficticios y se publica por HTTP solo durante la práctica.
+### Red y conectividad creadas por el alumno
 
-Los nueve recursos de la plantilla cumplen funciones distintas:
+La VPC es la red virtual propia del ejercicio; las subredes dividen su espacio de direcciones y se ubican en dos zonas. No se usa una VPC por defecto. El Internet Gateway se conecta a la VPC; la ruta `0.0.0.0/0` y las asociaciones de tabla permiten el camino a Internet desde ambas subredes.
 
-| Recurso | Función y consecuencia de su ausencia |
+Las tareas reciben IP pública para descargar desde ECR y enviar logs sin NAT Gateway. Eso no abre el puerto de aplicación al público: `TaskSecurityGroup` admite 8080 solo desde `AlbSecurityGroup`. El ALB admite HTTP público en 80 y deriva al TargetGroup, que comprueba `/health`.
+
+```text
+Artefacto: Docker → ECR → descarga por Fargate
+HTTP: cliente → ALB:80 → Listener/TargetGroup → tarea:8080
+Logs: stdout de la aplicación → CloudWatch Logs
+```
+
+### Inventario de los dos stacks
+
+| Grupo | Recursos base y función |
 |---|---|
-| AlbSecurityGroup | Permite entrada HTTP al ALB; sin reglas de entrada el cliente no llega. |
-| TaskSecurityGroup | Permite ALB → tarea; sin esa entrada falla el health check. |
-| LogGroup | Recibe logs; la configuración de la tarea depende de él. |
-| Cluster | Agrupa la ejecución ECS; el servicio lo referencia. |
-| LoadBalancer | Da un punto de entrada y distribuye solicitudes. |
-| TargetGroup | Registra destinos y comprueba `/health`; el listener lo necesita. |
-| Listener | Escucha en 80 y deriva al target group; sin él no hay ruta HTTP. |
-| TaskDefinition | Define imagen, recursos, puerto y permisos de cada tarea. |
-| Service | Mantiene DesiredCount tareas y las registra en el target group. |
+| Red | Vpc define direcciones; InternetGateway habilita conexión externa; InternetGatewayAttachment lo conecta. |
+| Subredes | PublicSubnetA y PublicSubnetB ubican tareas y ALB en dos zonas distintas. |
+| Enrutamiento | PublicRouteTable, InternetRoute y dos asociaciones habilitan el camino hacia Internet. |
+| Acceso | AlbSecurityGroup filtra entrada pública; TaskSecurityGroup filtra ALB → API. |
+| Entrada HTTP | LoadBalancer, Listener y TargetGroup reciben, derivan y comprueban salud. |
+| Plataforma | Cluster agrupa tareas, Repository almacena imagen y LogGroup recibe logs. |
 
-El **execution role** permite al servicio ECS descargar la imagen y enviar logs. El **task role** son las credenciales que recibiría el código de la aplicación para llamar servicios AWS. Aquí ambos referencian `LabRole` por el entorno educativo; la aplicación no necesita llamar APIs AWS. En producción se diseñan permisos separados y mínimos. `LabRole`, VPC y subredes ya existen; ECR lo crea un script fuera del stack y por eso necesita borrado explícito.
+Son **17 recursos de base**. La aplicación declara otros **dos**: TaskDefinition describe imagen, CPU/memoria, puerto, logs y permiso de ejecución; Service mantiene DesiredCount y registra tareas en el TargetGroup. Las tareas creadas por ECS no son recursos adicionales escritos en la plantilla.
+
+### Outputs, exports e imports
+
+La base exporta cluster, subredes, grupo de seguridad de tareas, grupo de destinos, logs y URL. La aplicación usa `Fn::ImportValue` para resolver esos valores. Así se ejecuta sobre la infraestructura que construyó el alumno, sin copiar IDs manualmente. Mientras una aplicación importe los exports, CloudFormation impide borrar la base o cambiar esos valores exportados. El orden de eliminación es aplicación → base.
+
+### Permisos de plataforma y código
+
+El execution role permite a ECS descargar imagen y enviar logs; aquí referencia `LabRole` provisto por el Learner Lab. El task role daría al código permisos para llamar servicios AWS, pero esta API no los necesita y no se configura `TaskRoleArn`. Los roles vinculados al servicio de ECS son gestionados por AWS según los permisos de la cuenta: el docente debe comprobar esa habilitación en el ensayo. No se confunden esos permisos con la red que el alumno crea íntegramente.
+
+### Comprobar antes de desplegar contenedores
+
+Con la base en CREATE_COMPLETE, el inventario debe mostrar 17 recursos; el cluster no tiene tareas y el TargetGroup no tiene destinos. ECR existe vacío. El ALB puede devolver 503 porque aún no hay aplicación: no es evidencia de un contenedor defectuoso.
+
+Después de publicar y desplegar la aplicación, deben aparecer tarea y destino healthy, y la URL debe responder JSON. Estas comprobaciones distinguen infraestructura creada de software ejecutándose. Al escalar manualmente a dos tareas no se vuelve a crear la red.
+
+### Limpieza completa
+
+Primero se elimina el stack de aplicación y después la base. ECR pertenece ahora a la base y usa `EmptyOnDelete: true`, por lo que elimina sus imágenes al borrar el repositorio. También se eliminan VPC, gateway, subredes, rutas, ALB, reglas, cluster y logs. No se usa Retain en estas plantillas. La cuenta y LabRole quedan en el Learner Lab.
 
 ## 4. Por qué la API es stateless
 
@@ -105,7 +120,8 @@ Estos valores pueden variar por curso; verificar en la consola.
 | Nivel | Qué demuestra | Qué no demuestra |
 |---|---|---|
 | `cfn-lint` | Sintaxis y reglas de la plantilla | Que el despliegue funcione |
-| Stack `CREATE_COMPLETE` | Los recursos se crearon | Que la aplicación responda |
+| Base `CREATE_COMPLETE`, sin tareas | Infraestructura del ejercicio creada | Que la API esté desplegada |
+| Aplicación `CREATE_COMPLETE` | Tarea y servicio creados | Que responda correctamente por HTTP |
 | Respuesta HTTP de `/health` y `/version` | El servicio atiende por el ALB | Seguridad, carga ni disponibilidad sostenida |
 
 ## 7. Errores frecuentes
@@ -114,7 +130,8 @@ Estos valores pueden variar por curso; verificar en la consola.
 - Subredes de una sola zona: el ALB requiere al menos dos.
 - Stack en `ROLLBACK_COMPLETE`: debe eliminarse antes de volver a crearlo.
 - Credenciales vencidas tras reiniciar el lab.
-- Dejar el ALB activo al terminar.
+- Intentar borrar la base antes de la aplicación que importa sus salidas.
+- Dejar el ALB, la red o el repositorio activos al terminar.
 
 ## 8. Relación con el TPI
 
@@ -133,3 +150,11 @@ El despliegue en nube es opcional y otorga bono. No reemplaza los requisitos de 
 - [AWS: CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
 
 Consultadas el 26/10/2026; las restricciones del Learner Lab se confirman en el curso concreto.
+
+### Fuentes de infraestructura
+
+- [AWS: unión de gateway a VPC](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-vpcgatewayattachment.html).
+- [AWS: red de tareas Fargate](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-networking.html).
+- [AWS: Fn::ImportValue y dependencias entre stacks](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/intrinsic-function-reference-importvalue.html).
+- [AWS: repositorio ECR y EmptyOnDelete](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ecr-repository.html).
+- [AWS: roles de ejecución y tarea](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/security-iam-roles.html).

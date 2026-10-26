@@ -121,16 +121,16 @@ const slides=[
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "Qué vamos a levantar en AWS",
-    "body": "<p>Desde tu equipo: solicitudes HTTP a una URL pública.</p><div class=\"cloud-boundary\"><h3>AWS · us-east-1 · ambiente de la actividad</h3><div class=\"flow\"><b>ALB público :80</b><i>→</i><b>API Node.js :8080<br>1 tarea Fargate → 2 en D</b></div><div class=\"grid\"><article><h3>Artefacto y operación</h3><p>Imagen en ECR (<code>iaew-api:1.0.0</code>), reglas de red y logs en CloudWatch.</p></article><article><h3>Qué responde la API</h3><p><code>/health</code>, <code>/version</code>, <code>/pedidos</code> y <code>/pedidos/P-1001</code>: JSON con datos fijos.</p></article></div></div><div class=\"call\">Sin base, broker, worker, Auth0 ni MCP. ECR está fuera del stack; la VPC, subredes y LabRole ya existen.</div>",
-    "notes": "En el recuadro vemos el destino de la actividad: una API Node.js ejecutada en una tarea Fargate y accesible por el ALB. El cliente está fuera de AWS: la flecha indica su entrada al balanceador; no es un recurso que creemos. La imagen vive en ECR, fuera del stack, y ECS la descarga para iniciar la tarea. CloudWatch recibe logs. Las cuatro rutas devuelven JSON, no una pantalla web. En D mantenemos dos tareas de la misma API. No desplegamos los componentes de la integración previa ni migramos sus pedidos: estos datos están fijos en el código. La guía única muestra qué comprobar en cada paso.",
+    "title": "Primero infraestructura; después contenedores",
+    "body": "<div class=\"flow\"><b>Crear base propia</b><i>→</i><b>Verificar sin tareas</b><i>→</i><b>Publicar imagen</b><i>→</i><b>Desplegar API</b></div><div class=\"grid\"><article><h3>Etapa 1 · iaew-clase-09-base</h3><p>VPC, subredes, gateway/rutas, seguridad, ALB, ECR, cluster y logs: 17 recursos. Todavía no hay contenedores.</p></article><article><h3>Etapa 2 · iaew-clase-09</h3><p>TaskDefinition + Service: 2 recursos que usan la base. Ejecutan la API Node.js en 1 tarea; después en 2.</p></article></div><div class=\"call\">La API responde JSON ficticio. Toda la red la crea el alumno; la cuenta y LabRole son provistos por Learner Lab.</div>",
+    "notes": "La secuencia distingue construir el lugar donde ejecutar de ejecutar la aplicación. En la primera tarjeta tenemos infraestructura creada desde nuestros archivos y todavía ninguna tarea. En la segunda se usa esa base para lanzar la imagen. La VPC ya no es la red por defecto. La cuenta y el permiso LabRole son requisitos de la plataforma educativa, no una red preparada por el docente. El recorte sigue siendo una API de datos constantes, sin MongoDB, broker, worker, Auth0 ni MCP.",
     "theme": ""
   },
   {
     "block": "25–45 min · del entorno local a AWS",
     "title": "Traducir Compose: imagen y ejecución",
-    "body": "<table><tr><th>Lo conocido</th><th>Necesidad remota</th><th>Pieza de hoy</th></tr><tr><td>build / Dockerfile</td><td>Construir una imagen transportable</td><td>docker build: linux/amd64</td></tr><tr><td>Imagen en la máquina</td><td>Almacenar y descargar el artefacto</td><td>ECR: Elastic Container Registry</td></tr><tr><td>command / environment</td><td>Definir proceso y configuración</td><td>TaskDefinition de ECS</td></tr><tr><td>Servicio en ejecución</td><td>Mantener la cantidad deseada</td><td>Service + ejecución Fargate</td></tr></table><div class=\"call\">La imagen es el artefacto; la infraestructura define dónde y bajo qué condiciones se ejecuta.</div>",
-    "notes": "Recorramos cada fila desde lo conocido. Construir no es publicar y publicar no es ejecutar. ECR contiene la imagen, no recibe tráfico de los usuarios. La definición de tarea describe el contenedor; el servicio mantiene su cantidad. La imagen actual escucha en 8080, no en el 3000 del proyecto anterior.",
+    "body": "<table><tr><th>Lo conocido</th><th>Necesidad remota</th><th>Pieza de hoy</th></tr><tr><td>build / Dockerfile</td><td>Construir una imagen transportable</td><td>docker build: linux/amd64</td></tr><tr><td>Imagen en la máquina</td><td>Almacenar y descargar el artefacto</td><td>ECR: registro creado por la base</td></tr><tr><td>command / environment</td><td>Definir proceso y configuración</td><td>TaskDefinition de ECS</td></tr><tr><td>Servicio en ejecución</td><td>Mantener la cantidad deseada</td><td>Service + ejecución Fargate</td></tr></table><div class=\"call\">La imagen es el artefacto; la infraestructura define dónde y bajo qué condiciones se ejecuta.</div>",
+    "notes": "La tabla traduce construcción y ejecución. Primero creamos el registro ECR con la plantilla base; después el script publica la imagen allí. Publicar no crea el registro ni ejecuta la API. La aplicación define TaskDefinition y Service sobre el cluster creado en la etapa base. El puerto del contenedor sigue siendo 8080.",
     "theme": ""
   },
   {
@@ -149,16 +149,16 @@ const slides=[
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "La red que habilita ese camino",
-    "body": "<div class=\"grid\"><article><h3>VPC y subredes</h3><p>Usamos la red virtual por defecto y dos subredes públicas en zonas distintas. El script las consulta; no las crea.</p></article><article><h3>Reglas de entrada</h3><p>AlbSecurityGroup permite TCP 80 público. TaskSecurityGroup permite TCP 8080 desde el grupo del ALB.</p></article></div><div class=\"flow\"><b>Internet</b><i>→</i><b>ALB · puerto 80</b><i>→</i><b>API · puerto 8080</b></div><div class=\"call\">Las tareas reciben IP pública para conectividad saliente; su puerto de aplicación solo acepta al ALB.</div>",
-    "notes": "En el diagrama el tráfico entra por el balanceador. Las tarjetas explican el contexto de red y las reglas. Los grupos de seguridad filtran tráfico y las subredes ubican recursos. El laboratorio usa HTTP y datos ficticios durante una sesión breve; un despliegue real necesita diseñar HTTPS e identidad.",
+    "title": "Crear la red completa del ejercicio",
+    "body": "<div class=\"flow\"><b>Subredes propias</b><i>→</i><b>Tabla: ruta 0.0.0.0/0</b><i>→</i><b>Internet Gateway</b><i>→</i><b>Internet</b></div><div class=\"grid\"><article><h3>VPC propia · 10.90.0.0/16</h3><p>Subred A: 10.90.1.0/24. Subred B: 10.90.2.0/24 en otra zona. Gateway, tabla y asociaciones creados por la plantilla.</p></article><article><h3>Entrada y salida</h3><p>ALB admite HTTP :80. Las tareas admiten :8080 desde el ALB y usan IP pública para descargar imagen y enviar logs.</p></article></div><div class=\"call\">No se busca la VPC por defecto ni se copian IDs manualmente. La red y sus dependencias se eliminan con la base.</div>",
+    "notes": "En la fila superior vemos componentes de conectividad, no un recorrido HTTP entre servicios: el gateway se adjunta a la VPC y la ruta apunta a él. Las asociaciones conectan la tabla con ambas subredes. Las tareas necesitan esa salida para ECR y logs. La segunda tarjeta distingue salida a Internet de entrada pública: su grupo de seguridad sigue aceptando solo al ALB. No necesitamos NAT Gateway para este diseño didáctico.",
     "theme": ""
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "Permisos: dos funciones, un rol del lab",
-    "body": "<table><tr><th>Referencia de la plantilla</th><th>Para qué sirve</th></tr><tr><td>ExecutionRoleArn</td><td>ECS descarga la imagen y envía logs</td></tr><tr><td>TaskRoleArn</td><td>Permisos del código para llamar APIs AWS</td></tr></table><div class=\"grid\"><article><h3>Restricción educativa</h3><p>Ambas referencias usan el LabRole existente. No creamos roles IAM propios.</p></article><article><h3>Responsabilidad del equipo</h3><p>La API de hoy no necesita llamar APIs AWS. En producción separaríamos funciones y permisos mínimos.</p></article></div>",
-    "notes": "La tabla muestra dos funciones que pueden compartir un rol en este entorno. El rol de ejecución lo usa la infraestructura de ejecución; el rol de tarea está disponible para la aplicación. Reutilizar LabRole es una restricción del curso, no una recomendación general de permisos. Debemos confirmar que el rol y los servicios estén habilitados.",
+    "title": "Permisos del lab y permisos de la API",
+    "body": "<table><tr><th>Función</th><th>Decisión de esta actividad</th></tr><tr><td>ExecutionRoleArn</td><td>LabRole permite a ECS descargar imagen y enviar logs.</td></tr><tr><td>TaskRoleArn</td><td>No se asigna: el código no llama APIs AWS.</td></tr><tr><td>Cuenta y credenciales</td><td>Son provistas por Learner Lab; no se crean con CloudFormation.</td></tr></table><div class=\"call\">Infraestructura de red y ejecución creada por el alumno. Los permisos de cuenta son una condición de la plataforma.</div>",
+    "notes": "La tabla separa la infraestructura que construimos de los permisos que habilitan operarla. El rol de ejecución lo usa ECS; no es una credencial de negocio de la API. Como el código solo lee constantes, no le asignamos task role. El docente debe confirmar permisos y roles vinculados al servicio ECS en el ensayo del Learner Lab; no afirmamos haberlos probado con lint.",
     "theme": ""
   },
   {
@@ -170,37 +170,37 @@ const slides=[
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "¿Quién crea toda esta infraestructura?",
-    "body": "<div class=\"grid\"><article><h3>Necesidad</h3><p>Crear ALB, reglas, logs y tareas a mano exige coordinar dependencias y repetir decisiones.</p></article><article><h3>Infraestructura como código · IaC</h3><p>Describimos los recursos en archivos versionados: permiten revisar, reproducir y controlar cambios.</p></article></div><div class=\"flow\"><b>Plantilla YAML</b><i>→</i><b>CloudFormation</b><i>→</i><b>Stack de recursos</b></div>",
-    "notes": "Las tarjetas presentan el problema y el concepto antes de la herramienta. IaC es la práctica; CloudFormation es la herramienta AWS usada hoy. Un stack agrupa los recursos de una plantilla. Versionar el archivo no garantiza que todo cambio sea seguro: hay que revisar efectos y comprobar el resultado.",
+    "title": "Dos stacks para aprender el orden",
+    "body": "<div class=\"flow\"><b>infra-base.yaml</b><i>→</i><b>Outputs + Exports</b><i>→</i><b>Fn::ImportValue</b><i>→</i><b>Aplicación</b></div><div class=\"grid\"><article><h3>Base</h3><p>Crea red y plataforma antes de que exista la imagen publicada. Su cluster puede estar vacío.</p></article><article><h3>Aplicación</h3><p>Importa subredes, cluster, seguridad, destinos y logs. Define cómo ejecutar el contenedor.</p></article></div><div class=\"call\">IaC es la práctica; CloudFormation aprovisiona. Limpiar en orden inverso: aplicación → base.</div>",
+    "notes": "La fila muestra el contrato entre plantillas. Cada stack agrupa su conjunto de recursos; los exports permiten que la aplicación use los valores reales de su base. No copiamos IDs ni dependemos de red preexistente. CloudFormation impide borrar exports en uso: es una dependencia real y explica por qué la limpieza elimina primero la aplicación.",
     "theme": ""
   },
   {
     "block": "45–60 min · IaC y demostración",
     "title": "Las herramientas de la actividad",
-    "body": "<table><tr><th>Herramienta</th><th>Trabajo concreto</th></tr><tr><td>Docker</td><td>Construye y prueba la imagen</td></tr><tr><td>AWS CLI</td><td>Invoca servicios con credenciales temporales</td></tr><tr><td>cfn-lint</td><td>Revisa la plantilla localmente</td></tr><tr><td>CloudFormation</td><td>Crea y actualiza los recursos del stack</td></tr><tr><td>ECS + Fargate</td><td>Mantienen y ejecutan las tareas</td></tr></table><div class=\"call\">Los scripts coordinan comandos. La plantilla declara infraestructura. La API atiende solicitudes.</div>",
+    "body": "<table><tr><th>Herramienta</th><th>Trabajo concreto</th></tr><tr><td>Docker</td><td>Construye y prueba la imagen</td></tr><tr><td>AWS CLI</td><td>Invoca servicios con credenciales temporales</td></tr><tr><td>cfn-lint</td><td>Revisa la plantilla localmente</td></tr><tr><td>CloudFormation</td><td>Crea primero base y después aplicación</td></tr><tr><td>ECS + Fargate</td><td>Mantienen y ejecutan las tareas</td></tr></table><div class=\"call\">Los scripts coordinan comandos. La plantilla declara infraestructura. La API atiende solicitudes.</div>",
     "notes": "La tabla responde qué usaremos para levantar la infraestructura. El script desplegar llama AWS CLI y esta solicita a CloudFormation el despliegue. cfn-lint no crea recursos. ECS y Fargate se encargan de operar las tareas declaradas, no de construir la imagen.",
     "theme": ""
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "Leer la plantilla: entradas y resultado",
-    "body": "<pre>Parameters:\n  ImageUri: { Type: String }\n  DesiredCount: { Type: Number, Default: 1 }\n# ... Resources: recursos y referencias ...\nOutputs:\n  ApiUrl:\n    Value: !Sub http://${LoadBalancer.DNSName}</pre><div class=\"call\">Entradas reales: imagen, VPC, subredes y cantidad de tareas. Salida: URL del ALB.</div>",
-    "notes": "El fragmento omite bloques y no es una plantilla ejecutable completa. Parameters permite variar valores sin editar todos los recursos. !Sub construye la URL con el DNS del ALB; !Ref y !GetAtt conectan valores y atributos entre recursos. La URL sirve mientras exista este balanceador; no prometemos conservarla al recrear el stack.",
+    "title": "La base crea recursos y exporta valores",
+    "body": "<pre>Resources:\n  Vpc:\n    Type: AWS::EC2::VPC\n    Properties: { CidrBlock: 10.90.0.0/16 }\n  # ... subredes, gateway, rutas y plataforma ...\nOutputs:\n  ClusterArn:\n    Value: !GetAtt Cluster.Arn\n    Export: { Name: !Sub &quot;${AWS::StackName}-ClusterArn&quot; }</pre><div class=\"call\">infra-base.yaml: 17 recursos. Sus Outputs permiten inspeccionar y conectar la infraestructura creada.</div>",
+    "notes": "El extracto muestra una VPC creada, no un parámetro recibido. La plantilla completa agrega DNS y todos los recursos de conectividad. El Output devuelve el ARN del cluster y lo exporta con un nombre asociado al stack. El código es un extracto para leer, no una plantilla completa para ejecutar.",
     "theme": ""
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "Leer la plantilla: ejecución de la API",
-    "body": "<pre>TaskDefinition:\n  Type: AWS::ECS::TaskDefinition\n  Properties:\n    RequiresCompatibilities: [FARGATE]\n    NetworkMode: awsvpc\n    Cpu: &quot;256&quot;\n    Memory: &quot;512&quot;\n    # ContainerDefinitions: imagen, puerto 8080 y logs</pre><div class=\"call\">El Service referencia esta definición y aplica DesiredCount. Leer el archivo completo para ver red y ALB.</div>",
-    "notes": "El bloque relaciona configuración conocida con el contrato de ECS: capacidad, red e imagen. El extracto omite roles y definición del contenedor; están en el archivo completo. La definición por sí sola no mantiene tareas: esa responsabilidad está en Service. No necesitamos memorizar todos los atributos, sino explicar su propósito.",
+    "title": "La aplicación usa la base que creaste",
+    "body": "<pre>Parameters:\n  BaseStackName: { Type: String }\n  ImageUri: { Type: String }\nResources:\n  # TaskDefinition configura la imagen y logs\n  Service:\n    Type: AWS::ECS::Service\n    Properties:\n      Cluster:\n        Fn::ImportValue: !Sub ${BaseStackName}-ClusterArn\n      # ... DesiredCount, red y TargetGroup ...</pre><div class=\"call\">ecs-fargate-alb.yaml: TaskDefinition + Service. La red no se vuelve a crear al desplegar o escalar.</div>",
+    "notes": "En el bloque vemos una referencia al export de la diapositiva anterior. La aplicación importa también subredes, grupo de seguridad, grupo de destinos y logs. Dos recursos declarados bastan para mantener tareas sobre la base. La imagen se indica como parámetro y debe haber sido publicada antes.",
     "theme": ""
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "Qué crea cada paso de la actividad",
-    "body": "<table><tr><th>Paso</th><th>Resultado en AWS</th></tr><tr><td>Publicar imagen</td><td>ECR <code>iaew-api</code> con imagen <code>1.0.0</code>; fuera del stack.</td></tr><tr><td>Desplegar stack</td><td>2 security groups + ALB + Listener + TargetGroup.</td></tr><tr><td>Mismo stack</td><td>Cluster + TaskDefinition + Service + LogGroup: 9 recursos en total.</td></tr><tr><td>Ejecutar servicio</td><td>ECS mantiene 1 tarea Fargate; en D mantiene 2. Las tareas se crean desde el servicio.</td></tr><tr><td>Reutilizar</td><td>VPC, subredes y LabRole existentes; no se crean ni borran.</td></tr></table><div class=\"call\">CloudFormation levanta la infraestructura declarada; el código de la API se distribuye dentro de la imagen.</div>",
-    "notes": "Leamos la tabla en el orden real. Publicar crea o reutiliza ECR y sube la imagen. Desplegar crea los nueve recursos del stack; aquí los agrupamos para ver su función. El servicio ECS inicia tareas según DesiredCount: no hay otro recurso Task en Resources. VPC, subredes y LabRole se reutilizan. Esto explica también la limpieza: borrar el stack elimina sus recursos, pero ECR requiere borrado separado. La API tiene datos constantes, de modo que desplegar esta infraestructura no ha creado una base de pedidos.",
+    "title": "Qué crea cada etapa: 17 + 2 recursos",
+    "body": "<table><tr><th>Etapa</th><th>Recursos declarados</th></tr><tr><td>Base · red (9)</td><td>VPC, gateway, unión a VPC, 2 subredes, tabla, ruta y 2 asociaciones.</td></tr><tr><td>Base · acceso (2)</td><td>AlbSecurityGroup y TaskSecurityGroup.</td></tr><tr><td>Base · HTTP (3)</td><td>LoadBalancer, Listener y TargetGroup.</td></tr><tr><td>Base · plataforma (3)</td><td>Cluster, Repository y LogGroup.</td></tr><tr><td>Aplicación (2)</td><td>TaskDefinition y Service; ECS inicia 1→2 tareas.</td></tr></table><div class=\"call\">Antes de contenedores: 17 recursos, ECR vacío, cluster sin tareas y TargetGroup sin destinos.</div>",
+    "notes": "La tabla deja explícita la cuenta: nueve de red más dos de acceso, tres HTTP y tres de plataforma suman diecisiete. No confundamos nueve recursos de red con el inventario anterior de una plantilla. La aplicación agrega dos. El alumno verifica la base vacía antes de continuar: el ALB puede responder 503 porque aún no hay destinos, no porque haya fallado un contenedor.",
     "theme": ""
   },
   {
@@ -212,57 +212,57 @@ const slides=[
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "Demo: de la imagen a una respuesta HTTP",
-    "body": "<pre>./scripts/publicar-imagen.sh 1.0.0\n# Copiar la URI impresa, sin el prefijo ImageUri=\nexport IMAGE_URI=&quot;URI_COMPLETA_DE_LA_IMAGEN&quot;\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot;\n# Con ApiUrl del Output:\ncurl http://DNS_DEL_ALB/health\ncurl http://DNS_DEL_ALB/version</pre><div class=\"call\">Observar construcción/publicación, eventos del stack, destinos healthy y respuesta de la API.</div>",
-    "notes": "El bloque resume los comandos reales desde recursos/laboratorio. El Learner Lab está disponible para todos y el docente debe ensayar el despliegue antes de clase. Iniciar la creación al comienzo del bloque mientras se explica la plantilla. Seguir los eventos, comprobar destinos saludables y consultar la URL pública: estas evidencias no se reemplazan por una explicación escrita.",
+    "title": "Demo: construir y después desplegar",
+    "body": "<pre>./scripts/crear-infra.sh\n# Verificar base CREATE_COMPLETE, sin tareas ni destinos\n./scripts/publicar-imagen.sh 1.0.0\nexport IMAGE_URI=&quot;URI_COMPLETA_IMPRESA_POR_EL_SCRIPT&quot;\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot;\n# Ahora verificar tarea, destino healthy y HTTP público\ncurl http://DNS_DEL_ALB/health</pre><div class=\"call\">Base primero → imagen en su ECR → aplicación que importa la base. Guardar evidencia antes y después.</div>",
+    "notes": "El script nuevo crea toda la infraestructura base. Mientras CloudFormation trabaja podemos leer red, exports y dependencias. Después verificamos que no hay tareas, publicamos en ECR y desplegamos la aplicación. Es la misma actividad, no otra guía. El ensayo real de dos stacks y sus tiempos sigue pendiente; la demo debe prepararse con Learner Lab.",
     "theme": ""
   },
   {
     "block": "60–105 min · práctica individual",
     "title": "Una actividad, una guía, una entrega",
-    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar en ECR y desplegar en AWS</td><td>15</td></tr><tr><td>D</td><td>Escalar a dos tareas y comprobar instancias</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Seguí <code>actividad-practica.md</code>; <code>recursos/laboratorio/</code> contiene sus archivos. No es otra actividad.</div>",
-    "notes": "La tabla A–E es el único recorrido práctico y todas sus partes son obligatorias. La guía integra preparación, inventario, comandos, resultados y diagnóstico de errores. Los archivos de recursos pertenecen a esta misma actividad. Mantener 45 minutos con preparación previa y usar el cierre para verificar recursos y evidencia.",
+    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Leer grupos de recursos, red y exports/imports</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Crear base → publicar imagen → desplegar API</td><td>15</td></tr><tr><td>D</td><td>Escalar a dos tareas y comprobar instancias</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Seguí <code>actividad-practica.md</code>; <code>recursos/laboratorio/</code> contiene sus archivos. No es otra actividad.</div>",
+    "notes": "A–E es el único recorrido obligatorio. A lee ambas plantillas, B valida localmente, C crea la base y demuestra que aún no hay contenedores antes de publicar y desplegar. D escala y E elimina aplicación y base. La espera de dos stacks requiere ensayo cronometrado; no convertimos el resultado previsto en una ejecución comprobada.",
     "theme": ""
   },
   {
     "block": "60–105 min · práctica individual",
     "title": "B y D: dos comprobaciones distintas",
-    "body": "<pre># B: desde recursos/laboratorio, imagen preparada\nnpm test\ndocker run --rm -d --name iaew-clase-09-local -p 8080:8080 iaew-api:local\ncurl http://localhost:8080/health\n.venv/bin/cfn-lint plantillas/ecs-fargate-alb.yaml\n\n# D: en AWS, con la IMAGE_URI guardada\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot; iaew-clase-09 2</pre><div class=\"call\">Esperar dos destinos healthy y consultar /version varias veces. Registrar dos instancias solo si se observaron.</div>",
-    "notes": "Los comandos separan comprobación local y cambio de infraestructura. El script detecta VPC y subredes y pasa DesiredCount=2. No necesitamos rellenar esos parámetros a mano. Aumentar cantidad es escalado manual. Mientras esperamos podemos completar la explicación de qué cambiaría en el sistema real.",
+    "body": "<pre># B: desde recursos/laboratorio, imagen preparada\nnpm test\ndocker run --rm -d --name iaew-clase-09-local -p 8080:8080 iaew-api:local\ncurl http://localhost:8080/health\n.venv/bin/cfn-lint plantillas/infra-base.yaml \\\n  plantillas/ecs-fargate-alb.yaml\n\n# D: en AWS, con la IMAGE_URI guardada\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot; iaew-clase-09 2</pre><div class=\"call\">Esperar dos destinos healthy y consultar /version varias veces. Registrar dos instancias solo si se observaron.</div>",
+    "notes": "La validación ahora incluye las dos plantillas. El comando de escala mantiene el stack base y actualiza DesiredCount en la aplicación. No detecta una VPC por defecto ni requiere IDs manuales: los resuelven los imports. Esperar dos destinos saludables y registrar respuestas reales de version.",
     "theme": ""
   },
   {
     "block": "105–120 min · comprobar y cerrar",
-    "title": "Qué demuestra cada evidencia",
-    "body": "<table><tr><th>Evidencia</th><th>Conclusión válida</th><th>Límite</th></tr><tr><td>Tests y curl local</td><td>La API responde localmente</td><td>No comprueba AWS</td></tr><tr><td>cfn-lint</td><td>La plantilla pasa reglas estáticas</td><td>No comprueba permisos</td></tr><tr><td>Stack completo</td><td>Terminó la operación de recursos</td><td>No reemplaza probar HTTP</td></tr><tr><td>healthy + HTTP público</td><td>El camino ALB → API funciona</td><td>No acredita seguridad o carga</td></tr><tr><td>Dos valores de instancia</td><td>Atendieron tareas distintas</td><td>No prueba persistencia</td></tr></table>",
-    "notes": "Leamos cada fila relacionando evidencia y conclusión. El objetivo es evitar saltos: lint no equivale a despliegue, ni un health check equivale a seguridad integral. Entregar también lo no ejecutado y por qué. No usar capturas de ejemplo como evidencia propia.",
+    "title": "Evidencias de las dos etapas",
+    "body": "<table><tr><th>Evidencia</th><th>Qué acredita</th></tr><tr><td>Tests, curl local y lint</td><td>API local y revisión estática de ambas plantillas.</td></tr><tr><td>Base completa + sin tareas/destinos</td><td>Red y plataforma creadas antes de los contenedores.</td></tr><tr><td>Imagen en el ECR de la base</td><td>Artefacto publicado; todavía no implica ejecución.</td></tr><tr><td>Aplicación completa + healthy + HTTP</td><td>Contenedor atendiendo sobre la base creada.</td></tr><tr><td>Dos destinos e instancias</td><td>Escalado manual; no prueba persistencia.</td></tr></table>",
+    "notes": "Cada fila responde una pregunta diferente. Antes del despliegue registramos una base existente pero vacía de tareas. Después publicamos y verificamos ejecución. Mantener la distinción entre las consultas reales y sus resultados esperados; lint y fixtures no prueban permisos en Learner Lab.",
     "theme": ""
   },
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Cerrar el ambiente también es operar",
-    "body": "<pre># Detener y eliminar el contenedor local con --rm\ndocker stop iaew-clase-09-local\ndocker ps -a --filter name=iaew-clase-09-local\n\n# Eliminar stack y ECR de la actividad:\n./scripts/limpiar.sh</pre><div class=\"call\">Comprobar stack y ECR ausentes. Si falla el borrado, informar el error y resolverlo con el docente.</div>",
-    "notes": "El primer bloque cierra el contenedor local y el segundo elimina el stack y ECR de la actividad. El repositorio iaew-api debe ser exclusivo porque se borran sus imágenes. El bloque final verifica el cierre iniciado en E. Si un comando falla, leer la causa y resolverla con el docente, sin declarar un borrado no verificado.",
+    "body": "<pre>docker stop iaew-clase-09-local\ndocker ps -a --filter name=iaew-clase-09-local\n\n./scripts/limpiar.sh\n# Elimina y espera aplicación; después elimina y espera base</pre><div class=\"call\">La base incluye red propia, ALB, ECR con imágenes, cluster y logs. Se conserva LabRole del Learner Lab.</div>",
+    "notes": "El comando local elimina el contenedor creado con rm. El script elimina primero el stack de aplicación y espera su borrado; luego elimina el stack base con su VPC, gateway, subredes, rutas, ALB, reglas, ECR, cluster y logs. ECR configura EmptyOnDelete para borrar también imágenes. Una aplicación con imports bloquea borrar su base. Si falla, resolver y verificar, no dar por eliminados los recursos.",
     "theme": ""
   },
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Qué entregar y qué llevar al TPI",
-    "body": "<div class=\"grid\"><article><h3>Entrega individual</h3><p>Una sola nota: qué levantaste, tabla, evidencias anexas y cierre. Declarar qué no se ejecutó.</p></article><article><h3>TPI grupal</h3><p>Cloud sigue siendo opcional con bono. Documentar qué se desplegó y cómo se conectan las dependencias que quedaron fuera.</p></article></div><div class=\"call\">Para el sistema completo: resolver persistencia, broker/worker, secretos, identidad, HTTPS, observabilidad y recuperación.</div>",
-    "notes": "Las tarjetas distinguen actividad y TPI. La API mínima permite practicar el camino de infraestructura, pero no satisface por sí sola la integración completa. La síntesis explica decisiones y los anexos contienen evidencia. No agregamos requisitos al TPI ni damos por migrados sus datos.",
+    "body": "<div class=\"grid\"><article><h3>Entrega individual</h3><p>Una sola nota: base sin tareas, aplicación ejecutándose, tabla y cierre. Declarar qué no se ejecutó.</p></article><article><h3>TPI grupal</h3><p>Cloud sigue siendo opcional con bono. Documentar qué se desplegó y cómo se conectan las dependencias que quedaron fuera.</p></article></div><div class=\"call\">Para el sistema completo: resolver persistencia, broker/worker, secretos, identidad, HTTPS, observabilidad y recuperación.</div>",
+    "notes": "La entrega es una sola nota con anexos: distingue la infraestructura base creada sin contenedores del despliegue posterior de la API. Incluye inventarios, eventos de ambos stacks, HTTP, escalado y eliminación completa. En el TPI cloud conserva su carácter opcional; la actividad de clase exige todo el recorrido en Learner Lab.",
     "theme": ""
   },
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Volver a la pregunta inicial",
-    "body": "<div class=\"flow\"><b>Compose local</b><i>→</i><b>Decisiones cloud</b><i>→</i><b>Infraestructura declarada</b><i>→</i><b>Servicio verificable</b></div><div class=\"grid\"><article><h3>Preguntas de salida</h3><p>¿Qué aporta CloudFormation que no resolvía Compose local? ¿Qué debemos seguir administrando con Fargate?</p></article><article><h3>Próximo paso · 02/11</h3><p>Testing de integración y contratos: probar comportamiento, errores y compatibilidad del sistema.</p></article></div><div class=\"call\">Si un agente desplegara por nosotros, ¿quién limitaría permisos, costo y alcance del cambio?</div>",
-    "notes": "La secuencia resume el recorrido y no una conversión automática. Respuestas esperadas: CloudFormation aprovisiona recursos AWS y dependencias; con Fargate conservamos código, imagen, configuración, red y permisos. Un agente que invoca herramientas también necesita controles de infraestructura; una instrucción al modelo no es autorización. Recordar: 09/11 sin clase y Entrega 2 el 16/11.",
+    "body": "<div class=\"flow\"><b>Compose local</b><i>→</i><b>Decisiones cloud</b><i>→</i><b>Base propia → aplicación</b><i>→</i><b>Servicio verificable</b></div><div class=\"grid\"><article><h3>Preguntas de salida</h3><p>¿Qué aporta CloudFormation que no resolvía Compose local? ¿Qué debemos seguir administrando con Fargate?</p></article><article><h3>Próximo paso · 02/11</h3><p>Testing de integración y contratos: probar comportamiento, errores y compatibilidad del sistema.</p></article></div><div class=\"call\">Si un agente desplegara por nosotros, ¿quién limitaría permisos, costo y alcance del cambio?</div>",
+    "notes": "La secuencia vuelve a Compose y lleva sus decisiones a un administrador de contenedores. El alumno construye la base y después la aplicación. CloudFormation crea recursos y conecta sus salidas; ECS mantiene tareas y Fargate ejecuta. La siguiente clase prueba contratos y comportamiento. Mantener la distinción entre permisos de cuenta e infraestructura del ejercicio.",
     "theme": "dark"
   },
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Referencias para continuar",
-    "body": "<ul><li><a href=\"https://aws.amazon.com/types-of-cloud-computing/\">AWS: modelos de servicio cloud</a></li><li><a href=\"https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html\">AWS: ECS con Fargate</a></li><li><a href=\"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html\">AWS: CloudFormation</a></li><li>Compose de Clase 08 y plantilla ecs-fargate-alb.yaml de esta actividad.</li></ul><div class=\"call\">Fuentes consultadas el 26/10/2026. Confirmar restricciones del Learner Lab del curso.</div>",
+    "body": "<ul><li><a href=\"https://aws.amazon.com/types-of-cloud-computing/\">AWS: modelos de servicio cloud</a></li><li><a href=\"https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html\">AWS: ECS con Fargate</a></li><li><a href=\"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html\">AWS: CloudFormation</a></li><li>Compose de Clase 08 y plantillas infra-base.yaml y ecs-fargate-alb.yaml de esta actividad.</li></ul><div class=\"call\">Fuentes consultadas el 26/10/2026. Confirmar restricciones del Learner Lab del curso.</div>",
     "notes": "Esta diapositiva es de consulta, no agrega un bloque de explicación. Las fuentes oficiales respaldan los modelos y las herramientas; los archivos de clase definen los comandos y límites concretos de nuestra práctica.",
     "theme": ""
   }
