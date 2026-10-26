@@ -1,0 +1,14 @@
+{
+  "name": "iaew-clase-09-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API stateless mínima para practicar despliegue en AWS Academy Learner Lab.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

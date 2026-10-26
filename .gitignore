@@ -1,7 +1,11 @@
 node_modules/
+.venv/
 .env
 .DS_Store
 npm-debug.log*
 
 # La resolución docente se conserva fuera del repositorio público.
 /clases/clase-08/recursos/laboratorio/solucion-docente/
+
+# La guía docente de la Clase 09 no se publica.
+/clases/clase-09/guia-docente.md
