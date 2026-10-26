@@ -1,11 +1,14 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: IAEW Clase 09 - contenedores sobre la infraestructura base creada por el alumno
+Description: IAEW Clase 09 - API y MongoDB como contenedores de una misma tarea, sobre la infraestructura base del alumno
 Parameters:
   BaseStackName:
     Type: String
     Default: iaew-clase-09-base
   ImageUri:
     Type: String
+  MongoImage:
+    Type: String
+    Default: mongo:7.0.21
   DesiredCount:
     Type: Number
     Default: 1
@@ -18,8 +21,8 @@ Resources:
       Family: !Sub ${AWS::StackName}-api
       RequiresCompatibilities: [FARGATE]
       NetworkMode: awsvpc
-      Cpu: "256"
-      Memory: "512"
+      Cpu: "512"
+      Memory: "1024"
       RuntimePlatform:
         CpuArchitecture: X86_64
         OperatingSystemFamily: LINUX
@@ -27,11 +30,31 @@ Resources:
       ExecutionRoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
       # La API no llama servicios AWS: no se asigna TaskRoleArn.
       ContainerDefinitions:
+        # MongoDB comparte red con la API: se alcanza por localhost. Sin volumen, los datos duran lo que la tarea.
+        - Name: mongodb
+          Image: !Ref MongoImage
+          Essential: true
+          HealthCheck:
+            Command: [CMD-SHELL, "mongosh --quiet --eval \"db.adminCommand('ping').ok\" || exit 1"]
+            Interval: 10
+            Timeout: 5
+            Retries: 6
+            StartPeriod: 20
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Fn::ImportValue: !Sub ${BaseStackName}-LogGroupName
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: mongodb
         - Name: api
           Image: !Ref ImageUri
           Essential: true
+          DependsOn: [{ContainerName: mongodb, Condition: HEALTHY}]
           PortMappings: [{ContainerPort: 8080}]
-          Environment: [{Name: APP_VERSION, Value: "1.0.0"}]
+          Environment:
+            - {Name: APP_VERSION, Value: "1.0.0"}
+            - {Name: MONGODB_URI, Value: "mongodb://localhost:27017/iaew_clase09"}
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -47,7 +70,7 @@ Resources:
       LaunchType: FARGATE
       DesiredCount: !Ref DesiredCount
       TaskDefinition: !Ref TaskDefinition
-      HealthCheckGracePeriodSeconds: 30
+      HealthCheckGracePeriodSeconds: 90
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED

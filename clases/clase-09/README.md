@@ -1,6 +1,6 @@
 # Clase 09 — Cloud e IaC con AWS Academy
 
-La clase lleva una API stateless a la nube con infraestructura como código: CloudFormation, ECS Fargate y un Application Load Balancer, usando `LabRole` y respetando los límites del AWS Academy Learner Lab. La práctica es obligatoria; desplegar el TPI en la nube es opcional, suma bono y no cambia la consigna.
+La clase lleva una API de pedidos con MongoDB a la nube con infraestructura como código: primero se ejecuta localmente con Docker Compose y luego se despliega en ECS Fargate (contenedores de API y de base de datos en una misma tarea) detrás de un Application Load Balancer, con CloudFormation, `LabRole` y respetando los límites del AWS Academy Learner Lab. La práctica es obligatoria; desplegar el TPI en la nube es opcional, suma bono y no cambia la consigna.
 
 ## Orden de lectura
 
@@ -12,19 +12,19 @@ La carpeta `recursos/laboratorio/` contiene los archivos de esta actividad; no e
 
 ## Antes de clase
 
-- Docker, Node.js 20+, Python 3 (para `cfn-lint`) y AWS CLI v2 instalados.
+- Docker con Compose v2, Node.js 20+, Python 3 (para `cfn-lint`) y AWS CLI v2 instalados.
 - Learner Lab iniciado y credenciales temporales cargadas (`aws sts get-caller-identity`). No subirlas a Git.
 - Región `us-east-1`.
 
 ## Alcance
 
 - Obligatorio: partes A–E completas con Learner Lab disponible para todos.
-- Fuera de alcance: despliegue de MongoDB, RabbitMQ y Auth0.
+- Fuera de alcance: base gestionada (Atlas, DocumentDB), RabbitMQ y Auth0. En ECS, MongoDB corre como segundo contenedor de la tarea, sin autenticación ni volumen, solo para aprender.
 - Es un laboratorio autocontenido: no requiere la rama de inicio de otra clase.
 
 ## Preparación, cierre y validación
 
-Preparar cfn-lint e imagen local antes de clase según la actividad. La API usa datos ficticios y no despliega el sistema previo. Todos completan el despliegue en Learner Lab y verifican el borrado del contenedor local y de los dos stacks, con su red y ECR. La nota admite tabla y evidencias anexas.
+Preparar cfn-lint y las imágenes (`docker compose build`, `docker pull mongo:7.0.21`) antes de clase según la actividad. La API usa datos de ejemplo en su propia MongoDB y no despliega el sistema previo. Todos completan el despliegue en Learner Lab y verifican el borrado de Compose (con su volumen) y de los dos stacks, con su red y ECR. La nota admite tabla y evidencias anexas.
 
 El despliegue real en Learner Lab sigue pendiente de ensayo; las pruebas locales no lo acreditan.
 

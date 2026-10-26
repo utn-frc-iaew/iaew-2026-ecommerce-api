@@ -2,11 +2,14 @@
   "name": "iaew-clase-09-cloud",
   "version": "1.0.0",
   "private": true,
-  "description": "API stateless mínima para practicar despliegue en AWS Academy Learner Lab.",
+  "description": "API de pedidos con MongoDB para practicar Compose local y despliegue en AWS Academy Learner Lab.",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "test": "node --test"
+  },
+  "dependencies": {
+    "mongodb": "^6.18.0"
   },
   "engines": {
     "node": ">=20"

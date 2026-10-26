@@ -21,12 +21,12 @@ El recorrido de esta clase lleva las imágenes y decisiones de Compose directame
 | Necesidad local | Decisión del laboratorio AWS |
 |---|---|
 | build / imagen | Docker construye; ECR almacena el artefacto |
-| command / environment | TaskDefinition declara proceso y configuración |
+| command / environment | TaskDefinition declara procesos y configuración (`MONGODB_URI` cambia de `mongodb` a `localhost`) |
 | servicio corriendo | Service mantiene tareas ejecutadas con Fargate |
 | ports | ALB recibe en 80 y deriva a la API en 8080 |
-| red y acceso | VPC, subredes y security groups |
-| healthcheck | TargetGroup comprueba /health; no es el mismo control que el del contenedor |
-| volumen de datos | Persistencia externa por diseñar; la API ficticia de hoy no escribe datos |
+| red y acceso | VPC, subredes y security groups; 27017 no se publica |
+| healthcheck | TargetGroup comprueba /health; Mongo tiene su healthcheck propio y la API espera con DependsOn |
+| volumen de datos | Compose usa `mongo-data`; en ECS no hay volumen y los datos se pierden con la tarea |
 
 El camino del artefacto es Docker → ECR → tarea. El camino HTTP es cliente → ALB → tarea: las solicitudes no pasan por ECR. Para migrar la integración completa faltaría resolver base, broker, worker, secretos, identidad, HTTPS y recuperación. La práctica despliega un recorte de solo lectura, con el mismo dominio de pedidos.
 
@@ -101,9 +101,9 @@ Después de publicar y desplegar la aplicación, deben aparecer tarea y destino 
 
 Primero se elimina el stack de aplicación y después la base. ECR pertenece ahora a la base y usa `EmptyOnDelete: true`, por lo que elimina sus imágenes al borrar el repositorio. También se eliminan VPC, gateway, subredes, rutas, ALB, reglas, cluster y logs. No se usa Retain en estas plantillas. La cuenta y LabRole quedan en el Learner Lab.
 
-## 4. Por qué la API es stateless
+## 4. Estado: API sin estado y base de datos
 
-Una tarea Fargate es efímera: puede reiniciarse o reemplazarse. Una API sin estado local responde igual desde cualquier instancia, por lo que se puede escalar. Los datos viven en servicios externos (base de datos, broker). Esta API concreta devuelve datos fijos y no guarda cambios: no despliega ni consulta los datos de las clases anteriores. Hoy se despliega solo la API; MongoDB y RabbitMQ requerirían servicios administrados o almacenamiento persistente.
+Una tarea Fargate es efímera: puede reiniciarse o reemplazarse. Una API sin estado local responde igual desde cualquier instancia, por lo que se puede escalar; los datos deben vivir en una base. En local, Compose conserva los datos de MongoDB en el volumen `mongo-data`. En ECS, la plantilla corre MongoDB como segundo contenedor de la misma tarea (API y base se hablan por `localhost`), sin volumen ni autenticación: sirve para aprender, pero los datos se pierden cuando se reemplaza la tarea y, al escalar a dos tareas, cada una tiene su propia base y los pedidos creados divergen. En producción se usaría un servicio gestionado (Atlas o DocumentDB) o almacenamiento persistente compartido; RabbitMQ y el resto del sistema quedan fuera de esta actividad.
 
 ## 5. Límites del AWS Academy Learner Lab
 

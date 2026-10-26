@@ -1,0 +1,23 @@
+name: iaew-clase09
+# Mismo par de contenedores que después se despliega en ECS: API + MongoDB.
+services:
+  mongodb:
+    image: mongo:7.0.21
+    volumes: [mongo-data:/data/db]
+    healthcheck:
+      test: [CMD, mongosh, --quiet, --eval, "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  api:
+    build: .
+    image: iaew-api:local
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/iaew_clase09
+      PORT: 8080
+    ports: ["127.0.0.1:${API_PORT:-8080}:8080"]
+    depends_on:
+      mongodb: {condition: service_healthy}
+    restart: on-failure
+volumes:
+  mongo-data:
