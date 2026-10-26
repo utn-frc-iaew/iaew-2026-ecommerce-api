@@ -4,7 +4,7 @@ La clase lleva una API stateless a la nube con infraestructura como código: Clo
 
 ## Orden de lectura
 
-1. [Presentación](presentacion/index.html) y [notas del orador](presentacion/presenter.html).
+1. [Presentación](presentacion/index.html).
 2. [Material adicional](material-adicional/material-completo.md): nube, IaC, arquitectura, límites del lab y errores frecuentes.
 3. [Actividad práctica individual](actividad-practica.md), de 45 minutos (partes A–E).
 4. [Laboratorio](recursos/laboratorio/README.md): API, Dockerfile, plantilla y scripts.
@@ -20,3 +20,13 @@ La clase lleva una API stateless a la nube con infraestructura como código: Clo
 - Obligatorio: partes A, B y E; C y D si hay Learner Lab.
 - Fuera de alcance: despliegue de MongoDB, RabbitMQ y Auth0.
 - Es un laboratorio autocontenido: no requiere la rama de inicio de otra clase.
+
+## Preparación, cierre y validación
+
+Preparar cfn-lint e imagen local antes de clase según la actividad. La API usa datos ficticios y no despliega el sistema previo. Sin AWS, cerrar el contenedor local y declarar que no se crearon recursos cloud. Con AWS, verificar borrado de stack y ECR. La nota admite tabla y evidencias anexas.
+
+El despliegue real en Learner Lab sigue pendiente de ensayo; las pruebas locales no lo acreditan.
+
+## Recorrido de la presentación
+
+32 diapositivas: Compose real de Clase 08 → nube e IaaS/PaaS/SaaS → VM o ECS/Fargate → imagen, red, roles y estado → IaC con CloudFormation → actividad A–E. La agenda suma 120 minutos.

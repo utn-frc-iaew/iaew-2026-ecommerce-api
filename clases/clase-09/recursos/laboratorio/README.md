@@ -28,3 +28,7 @@ Requiere credenciales del Learner Lab en la terminal y región `us-east-1`. Las 
 - No subir credenciales a Git.
 - El ALB queda abierto a Internet en el puerto 80 durante la práctica: es una API de datos ficticios; eliminar el stack al terminar.
 - Las tareas usan `LabRole` por restricción del Learner Lab; en un entorno real se aplicaría mínimo privilegio.
+
+## Preparación y cierre
+
+Seguir la preparación previa de la actividad: instalar cfn-lint y construir la imagen antes de clase. La ruta local termina deteniendo y eliminando el contenedor; solo ejecutar limpieza AWS si se crearon recursos. La nota admite tabla y evidencias anexas. El escalado usa `./scripts/desplegar.sh "$IMAGE_URI" iaew-clase-09 2`.

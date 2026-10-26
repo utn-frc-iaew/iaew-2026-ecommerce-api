@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Clase 09 de IAEW 2026: Cloud e IaC con AWS Academy.">
 <title>Clase 09 · Cloud e IaC con AWS Academy · IAEW 2026</title>
@@ -17,7 +18,7 @@
 h1,h2,h3,p{margin-top:0}h1{font-size:clamp(34px,5.2vw,68px);line-height:1.03;margin-bottom:1rem}h2{font-size:clamp(28px,3.8vw,50px);line-height:1.06;margin-bottom:1.1rem}h3{font-size:clamp(16px,1.7vw,22px);margin-bottom:.4rem}
 p,li,td,th{font-size:clamp(14px,1.5vw,20px);line-height:1.4}.subtitle{font-size:clamp(20px,2.3vw,30px);max-width:980px;color:#d9eef8}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
-article{padding:15px 18px;background:#e6eef3;border:1px solid #cfdee7;border-radius:12px;min-width:0}.dark article{background:#16374b;border-color:#375467}article p{margin-bottom:0}
+article{padding:15px 18px;background:#e6eef3;border:1px solid #cfdee7;border-radius:12px;min-width:0}.dark .call{color:#122b3d}.dark .flow b{color:#122b3d}a{color:#00687f}.dark a{color:#67d7e7}.dark article{background:#16374b;border-color:#375467}article p{margin-bottom:0}
 .flow{display:flex;align-items:stretch;gap:9px;margin:10px 0 16px}.flow b{flex:1;display:grid;place-items:center;background:#dfebf1;border:1px solid #bed2dc;padding:14px 8px;border-radius:10px;text-align:center;font-size:clamp(13px,1.45vw,19px)}.flow i{align-self:center;font-style:normal;color:var(--cyan);font-weight:800}
 .call{margin-top:14px;padding:12px 16px;background:#daf0e9;border-left:5px solid #28a978;border-radius:0 8px 8px 0;font-size:clamp(14px,1.4vw,19px)}.warn{background:#fff1d6;border-left-color:#cc9b3b}
 .tag{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #67d7e7;border-radius:99px;color:#67d7e7;font-weight:700;font-size:14px}
@@ -41,22 +42,230 @@ button{border:1px solid #446076;background:#143247;color:#fff;border-radius:6px;
 </nav>
 <script>
 const slides=[
-{theme:"dark",block:"0–12 min · continuidad",title:"Cloud e IaC<br>con AWS Academy",body:'<p class="subtitle">De una API que funciona en nuestra máquina a un servicio reproducible en un entorno con permisos y tiempo limitados.</p><div class="tag">CLASE 09 · 26/10/2026 · IAEW 2026</div>',notes:"Bienvenida. Hoy salimos de la máquina local. La historia sigue siendo la misma API de pedidos: lo que cambia es dónde corre y cómo lo describimos. Anticipar: la práctica es individual y el despliegue en nube es parte del bono opcional del TPI, no un requisito obligatorio."},
-{block:"0–12 min · continuidad",title:"Qué dejamos funcionando",body:'<div class="flow"><b>Cliente</b><i>→</i><b>API</b><i>→</i><b>Broker</b><i>→</i><b>Worker</b></div><div class="grid"><article><h3>Evidencia que ya tenemos</h3><p>Seguridad con Auth0, resiliencia, contratos, observabilidad y un asistente con MCP, todo corriendo con Docker Compose en la máquina de cada uno.</p></article><article><h3>Qué límite aparece</h3><p>Nadie más puede usar ese sistema. Si la máquina se apaga o se reinstala, el entorno se pierde.</p></article></div>',notes:"Recuperar lo que funciona: API, mensajería, seguridad, observabilidad. Pedir un ejemplo concreto de algo que solo anda en su laptop. Introducir el límite: el sistema depende de la máquina y de pasos manuales."},
-{block:"0–12 min · continuidad",title:"Tres preguntas abiertas",body:'<div class="grid three"><article><h3>¿Dónde corre?</h3><p>Otro equipo debería poder acceder por una URL estable.</p></article><article><h3>¿Cómo se reproduce?</h3><p>Si hay que recordar 15 pasos manuales, el entorno no es confiable.</p></article><article><h3>¿Qué lo limita?</h3><p>Permisos, costos y tiempo existen incluso en un laboratorio educativo.</p></article></div><div class="call">Puente: infraestructura descrita como código, ejecutada sobre una nube con restricciones reales.</div>',notes:"Formular las tres preguntas y dejar que respondan antes de avanzar. El puente es la noción de Infraestructura como Código (IaC) y el contexto AWS Academy Learner Lab."},
-{block:"0–12 min · continuidad",title:"Objetivo y ruta de 120 minutos",body:'<table><tr><th>Bloque</th><th>Min</th></tr><tr><td>Continuidad, necesidad y objetivo</td><td>12</td></tr><tr><td>Cloud, IaC y CloudFormation</td><td>20</td></tr><tr><td>Fargate, ALB, ECR y límites del Learner Lab</td><td>15</td></tr><tr><td>Demostración guiada</td><td>15</td></tr><tr><td>Práctica individual</td><td>45</td></tr><tr><td>Evidencias y limpieza</td><td>8</td></tr><tr><td>Cierre y puente a testing</td><td>5</td></tr></table><div class="call">12 + 20 + 15 + 15 + 45 + 8 + 5 = 120 minutos.</div>',notes:"Mostrar la agenda. Objetivo funcional: leer, validar y desplegar una plantilla que publique la API detrás de un balanceador, y justificar qué recurso cumple qué función. Aclarar que si el Learner Lab no está disponible hay una ruta local que cubre el mínimo obligatorio."},
-{block:"12–32 min · cloud e IaC",title:"Qué es usar la nube",body:'<div class="grid"><article><h3>Qué resuelve</h3><p>Capacidad bajo demanda: servidores, redes y balanceadores que se crean con una llamada API en minutos.</p></article><article><h3>Qué no resuelve</h3><p>No elimina el diseño: sigue haciendo falta decidir red, permisos, configuración y observabilidad.</p></article></div><div class="call warn">Pago por uso: un recurso olvidado sigue consumiendo crédito aunque nadie lo use.</div>',notes:"Definir nube como recursos programables bajo demanda. Remarcar costo y responsabilidad: la nube cambia quién administra el hardware, no la necesidad de diseñar. En el laboratorio el crédito es limitado, lo que vuelve concreta la limpieza."},
-{block:"12–32 min · cloud e IaC",title:"Infraestructura como código",body:'<div class="grid"><article><h3>Problema</h3><p>Crear recursos con clics es lento, no deja registro y no se puede repetir con certeza.</p></article><article><h3>Idea</h3><p>Un archivo declarativo describe el estado deseado; la herramienta lo crea, lo actualiza o lo elimina.</p></article></div><div class="flow" style="margin-top:16px"><b>Plantilla en Git</b><i>→</i><b>Stack</b><i>→</i><b>Recursos reales</b></div><p>Beneficios: repetible, revisable, versionable y fácil de eliminar completo.</p>',notes:"Contrastar creación manual vs declarativa. Un stack es la unidad que CloudFormation crea y destruye junta. Eliminar el stack elimina todo lo que declaró: esa propiedad es clave para la limpieza."},
-{compact:true,block:"12–32 min · cloud e IaC",title:"Anatomía de una plantilla CloudFormation",body:'<pre>Parameters:   # lo que cambia entre entornos\n  ImageUri: { Type: String }\nResources:    # lo que se crea\n  LoadBalancer:\n    Type: AWS::ElasticLoadBalancingV2::LoadBalancer\n  Service:\n    Type: AWS::ECS::Service\n    Properties:\n      TaskDefinition: !Ref TaskDefinition   # dependencia\nOutputs:      # lo que se informa al terminar\n  ApiUrl: { Value: !Sub "http://${LoadBalancer.DNSName}" }</pre><div class="grid three"><article><h3>Parameters</h3><p>Valores externos: imagen, VPC, subredes.</p></article><article><h3>Resources</h3><p>Recursos y cómo se referencian (<code>!Ref</code>, <code>!GetAtt</code>).</p></article><article><h3>Outputs</h3><p>Datos que necesitamos para usar el resultado.</p></article></div>',notes:"Recorrer las tres secciones. Mostrar que !Ref arma el grafo de dependencias: CloudFormation decide el orden de creación. Los Outputs evitan buscar la URL en la consola."},
-{block:"12–32 min · cloud e IaC",title:"Cómo se actualiza: change sets y estados",body:'<div class="flow"><b>Cambio en la plantilla</b><i>→</i><b>Change set</b><i>→</i><b>Update</b><i>→</i><b>UPDATE_COMPLETE</b></div><div class="grid"><article><h3>Si falla</h3><p>El stack hace rollback al estado anterior (<code>ROLLBACK_COMPLETE</code> o <code>UPDATE_ROLLBACK_COMPLETE</code>).</p></article><article><h3>Cómo diagnosticar</h3><p>Eventos del stack: indican qué recurso falló y por qué.</p></article></div><div class="call">Aprender a leer eventos de falla es una habilidad central; un error inicial es esperable.</div>',notes:"Explicar que deploy crea un change set y lo ejecuta. Si un recurso falla, el stack vuelve atrás. El ejercicio incluye leer eventos del stack. Un stack en ROLLBACK_COMPLETE tras creación inicial debe eliminarse antes de reintentar."},
-{block:"32–47 min · servicios y límites",title:"Del contenedor al servicio público",body:'<div class="flow"><b>Imagen en ECR</b><i>→</i><b>Task definition</b><i>→</i><b>Servicio Fargate</b><i>→</i><b>ALB</b><i>→</i><b>Internet</b></div><div class="grid"><article><h3>ECR</h3><p>Registro privado de imágenes Docker.</p></article><article><h3>Fargate</h3><p>Ejecuta contenedores sin administrar servidores.</p></article><article><h3>ALB</h3><p>Reparte tráfico y chequea <code>/health</code>.</p></article><article><h3>Task definition</h3><p>Imagen, CPU/memoria, puerto, logs y rol.</p></article></div>',notes:"Recorrer la cadena desde la imagen hasta el usuario. Cada pieza resuelve una necesidad: dónde vive la imagen, cómo se ejecuta, cómo se expone, cómo se sabe que está sana. Esta es la misma API sin estado que ya conocen, simplificada."},
-{block:"32–47 min · servicios y límites",title:"Por qué la API debe ser stateless",body:'<div class="grid"><article><h3>Stateless</h3><p>Cualquier instancia responde igual; el estado vive en bases o servicios externos.</p></article><article><h3>Consecuencia</h3><p>Fargate puede reemplazar, escalar o reiniciar tareas sin perder datos.</p></article></div><div class="call warn">Por eso hoy desplegamos solo la API. MongoDB y RabbitMQ requieren servicios administrados o almacenamiento persistente; no son parte del alcance de hoy.</div>',notes:"Justificar la elección de alcance: una tarea de Fargate es efímera. La base y el broker necesitan servicios gestionados y excederían el Learner Lab y el tiempo. La API de práctica devuelve datos fijos: no representa el sistema completo."},
-{block:"32–47 min · servicios y límites",title:"Límites del Learner Lab",body:'<table><tr><th>Límite</th><th>Consecuencia en la práctica</th></tr><tr><td>Sesión de ~4 h (se reinicia con Start Lab)</td><td>Los recursos pueden detenerse; no es producción</td></tr><tr><td>Crédito limitado</td><td>Eliminar todo al terminar; no dejar ALB activos</td></tr><tr><td>Rol <code>LabRole</code> ya existente</td><td>No se crean roles IAM; se reutiliza <code>LabRole</code></td></tr><tr><td>Servicios y regiones restringidos</td><td>Trabajar en <code>us-east-1</code> y probar antes</td></tr><tr><td>Credenciales temporales</td><td>Renovarlas al reiniciar el lab; nunca subirlas a Git</td></tr></table>',notes:"Estos límites son del AWS Academy Learner Lab y pueden variar según el curso; verificar en la consola antes de clase. Lo importante: restricciones de permisos, tiempo y costo son condiciones reales del trabajo en cloud. Las credenciales temporales no se versionan."},
-{block:"47–62 min · demostración",title:"Demostración guiada",body:'<div class="steps"><table><tr><th>Paso</th><th>Qué se muestra</th></tr><tr><td>1</td><td><code>npm test</code> y <code>docker build</code> local</td></tr><tr><td>2</td><td><code>cfn-lint</code> sobre la plantilla</td></tr><tr><td>3</td><td><code>publicar-imagen.sh</code> → ECR</td></tr><tr><td>4</td><td><code>desplegar.sh</code> → stack, eventos y Output</td></tr><tr><td>5</td><td><code>curl</code> a <code>/health</code> y <code>/version</code></td></tr></table></div><div class="call warn">La demo requiere el Learner Lab del docente iniciado antes de clase. Si falla, se muestra la evidencia previa y se continúa con la ruta local.</div>',notes:"Demostración por el docente: el alumno observa, aún no construye. Tener el lab iniciado y una captura previa de respaldo. Mientras el stack se crea (varios minutos), explicar los eventos. Si el lab no está disponible, declararlo y no simular."},
-{block:"47–62 min · demostración",title:"Qué miramos al verificar",body:'<div class="grid three"><article><h3>Estado del stack</h3><p><code>CREATE_COMPLETE</code> y recursos creados.</p></article><article><h3>Salud del ALB</h3><p>Destinos en estado <code>healthy</code>.</p></article><article><h3>Respuesta real</h3><p><code>/version</code> devuelve la instancia que atendió.</p></article></div><div class="call">Una plantilla válida no prueba que el servicio funcione; la prueba es la respuesta HTTP desde la URL del Output.</div>',notes:"Separar tres niveles de evidencia: lint (sintaxis), stack (creación) y HTTP (funcionamiento). Cada uno responde una pregunta distinta."},
-{block:"62–107 min · práctica individual",title:"Práctica individual (45 min)",body:'<table><tr><th>Parte</th><th>Tarea</th><th>Nivel</th></tr><tr><td>A</td><td>Tabla recurso → necesidad que cubre</td><td>Obligatoria</td></tr><tr><td>B</td><td><code>npm test</code>, imagen local y <code>cfn-lint</code></td><td>Obligatoria</td></tr><tr><td>C</td><td>Publicar imagen y desplegar el stack; verificar URL</td><td>Obligatoria si hay lab; si no, ruta local</td></tr><tr><td>D</td><td>Cambiar <code>DesiredCount</code> a 2 y observar <code>/version</code></td><td>Obligatoria si hay lab</td></tr><tr><td>E</td><td>Limpiar y evidenciar</td><td>Obligatoria</td></tr></table><p>Entregable: nota breve con evidencias y decisiones. Consigna en <code>actividad-practica.md</code>.</p>',notes:"Presentar el alcance obligatorio. Cada parte tiene respaldo: A en diapositivas de anatomía y cadena de servicios; B en la demo; C y D en demo y límites; E en límites del lab. Quien no tenga lab completa A, B, E y una explicación escrita de C y D."},
-{block:"107–115 min · evidencias y limpieza",title:"Evidencias y limpieza",body:'<div class="grid"><article><h3>Qué entregar</h3><ul><li>Tabla de recursos y justificación</li><li>Salida de tests y lint</li><li>Eventos del stack y respuesta de <code>/version</code></li><li>Confirmación de borrado</li></ul></article><article><h3>Cómo limpiar</h3><p><code>./scripts/limpiar.sh</code> elimina el stack y el repositorio ECR. Verificar que no queden stacks ni balanceadores.</p></article></div><div class="call warn">Distinguir lo observado de lo supuesto: si no pudieron ejecutar algo, escríbanlo.</div>',notes:"Pedir evidencia verificable, no solo capturas de la consola. La limpieza es parte del trabajo: dejar recursos activos consume crédito. Registrar qué no se pudo ejecutar."},
-{theme:"dark",block:"115–120 min · cierre",title:"Cierre y puente a testing",body:'<div class="grid"><article><h3>Idea para llevarse</h3><p>Infraestructura reproducible, permisos mínimos y limpieza forman parte del diseño de una integración.</p></article><article><h3>Próxima clase · 02/11</h3><p>Testing de integración y contratos: cómo comprobar que lo que desplegamos funciona de punta a punta.</p></article></div><div class="call">El despliegue cloud es opcional y suma bono en el TPI; no reemplaza los requisitos de la consigna.</div>',notes:"Recuperar la idea central y avanzar a testing: ya tenemos una URL; falta probar contratos, errores y casos borde de forma sistemática. Recordar que 09/11 es feriado y la Entrega 2 del TPI es el 16/11."}
+  {
+    "block": "0–10 min · el punto de partida",
+    "title": "De Docker Compose<br>a la nube",
+    "body": "<p class=\"subtitle\">Nuestra API ya funciona localmente. ¿Cómo la hacemos accesible y reproducible fuera de nuestra computadora?</p><div class=\"tag\">CLASE 09 · 26/10/2026 · Integración de Aplicaciones en Entorno Web</div>",
+    "notes": "El título marca el recorrido de hoy: partimos de servicios que ya sabemos ejecutar y vamos a decidir dónde alojarlos y cómo crear su infraestructura. Al terminar podremos explicar y verificar el camino desde una imagen hasta una URL pública.",
+    "theme": "dark"
+  },
+  {
+    "block": "0–10 min · el punto de partida",
+    "title": "Lo que dejamos funcionando",
+    "body": "<div class=\"flow\"><b>API de pedidos</b><i>→</i><b>RabbitMQ</b><i>→</i><b>Worker</b><i>→</i><b>MongoDB</b></div><div class=\"grid\"><article><h3>Evidencia local</h3><p>Consultamos la API, procesamos pedidos y observamos resultados. En Clase 08 sumamos un host y herramientas MCP.</p></article><article><h3>Herramienta conocida</h3><p>Compose describe los servicios locales. El host conversacional se inicia aparte; no todo el sistema es un contenedor.</p></article></div>",
+    "notes": "En el diagrama vemos el flujo de integración que venimos construyendo. La API recibe, el broker desacopla, el worker procesa y MongoDB persiste. Recuperemos una evidencia: ¿qué respuesta o cambio de estado vimos? El asistente de Clase 08 consume esta integración; hoy cambiaremos dónde ejecutamos una parte del backend.",
+    "theme": ""
+  },
+  {
+    "block": "0–10 min · el punto de partida",
+    "title": "Una nueva demanda del mismo sistema",
+    "body": "<div class=\"grid\"><article><h3>Pedido del equipo</h3><p>“Necesitamos mostrar la API desde otra computadora, aunque la laptop del desarrollador esté apagada”.</p></article><article><h3>Preguntas que aparecen</h3><p>¿Qué máquina la ejecuta? ¿Cómo llega el tráfico? ¿Dónde quedan los datos? ¿Quién mantiene el entorno?</p></article></div><div class=\"call\">Compose ya aporta reproducibilidad local. Ahora necesitamos aprovisionamiento y operación remotos.</div>",
+    "notes": "Las dos tarjetas separan la demanda de las decisiones. Compartir localhost no alcanza: localhost pertenece a quien hace la solicitud. Pregunta: si copiamos el compose.yaml a otra máquina, ¿ya tenemos red, permisos y una URL pública? Respuesta esperada: todavía hay que preparar ese entorno.",
+    "theme": ""
+  },
+  {
+    "block": "0–10 min · el punto de partida",
+    "title": "La ruta de hoy",
+    "body": "<table><tr><th>Bloque</th><th>Minutos</th></tr><tr><td>Recuperar Compose y plantear el problema</td><td>10</td></tr><tr><td>Nube y modelos de servicio</td><td>15</td></tr><tr><td>Elegir camino y traducir Compose a AWS</td><td>20</td></tr><tr><td>IaC, CloudFormation y demo</td><td>15</td></tr><tr><td>Práctica individual A–E</td><td>45</td></tr><tr><td>Verificación de cierre y conclusiones</td><td>15</td></tr></table><div class=\"call\">Resultado: una API ficticia de solo lectura publicada por ALB, si el Learner Lab está disponible.</div>",
+    "notes": "Recorramos la tabla: son 120 minutos. La práctica dura 45 y requiere imagen y linter preparados. Primero entenderemos decisiones; después leeremos el código que las implementa. La alternativa sin AWS conserva validación local y explicación del despliegue.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · entender la nube",
+    "title": "¿Qué significa usar la nube?",
+    "body": "<div class=\"flow\"><b>Necesidad de capacidad</b><i>→</i><b>API del proveedor</b><i>→</i><b>Recurso disponible</b></div><div class=\"grid\"><article><h3>Recursos bajo demanda</h3><p>Cómputo, red y almacenamiento que solicitamos sin comprar y montar hardware propio.</p></article><article><h3>Uso medido</h3><p>La capacidad tiene costo y límites. Debemos elegir tamaño, controlar uso y liberar recursos.</p></article></div>",
+    "notes": "La secuencia muestra la idea central: solicitamos recursos programables al proveedor. Una máquina virtual es un ejemplo, no la definición completa de nube. La capacidad puede ajustarse a la necesidad; eso no significa que nuestra aplicación escale automáticamente ni que operar sea gratis.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · entender la nube",
+    "title": "Ubicación, capacidad y responsabilidades",
+    "body": "<div class=\"grid\"><article><h3>Región y zona</h3><p>Una región es un área geográfica; contiene zonas de disponibilidad separadas. Elegimos dónde viven los recursos.</p></article><article><h3>Escalabilidad y elasticidad</h3><p>Escalar es aumentar o reducir capacidad. Elasticidad es ajustarla a la demanda; requiere configuración y controles.</p></article><article><h3>Disponibilidad</h3><p>Dos tareas pueden reducir dependencia de un proceso. Persistencia, red y dependencias también deben diseñarse.</p></article><article><h3>Responsabilidad compartida</h3><p>El proveedor opera las capas contratadas; nosotros conservamos responsabilidad por datos, código y configuración.</p></article></div>",
+    "notes": "Las cuatro tarjetas responden dónde, cuánto, con qué continuidad y bajo qué responsabilidad. En el laboratorio elegimos una región y subredes de dos zonas para el balanceador. No confundamos esa configuración con una garantía de disponibilidad de todo el sistema.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · entender la nube",
+    "title": "IaaS, PaaS y SaaS: ¿quién administra qué?",
+    "body": "<table><tr><th>Modelo</th><th>Qué recibimos</th><th>Qué administramos</th></tr><tr><td>IaaS · infraestructura</td><td>Máquinas virtuales, red y discos</td><td>SO de la VM, runtime, aplicación y datos</td></tr><tr><td>PaaS · plataforma</td><td>Entorno administrado para desplegar código</td><td>Aplicación, datos y configuración permitida</td></tr><tr><td>SaaS · software</td><td>Aplicación lista para usar</td><td>Usuarios, datos y opciones del servicio</td></tr></table><div class=\"call\">A mayor nivel de servicio, delegamos más operación y aceptamos más decisiones de la plataforma.</div>",
+    "notes": "Leamos la tabla de izquierda a derecha. En infraestructura contratamos capacidad; en plataforma desplegamos nuestra aplicación; en software usamos una aplicación ya provista. Son modelos de responsabilidad. No son pasos obligatorios de una migración ni niveles de calidad.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · entender la nube",
+    "title": "Aplicar los modelos a nuestro caso",
+    "body": "<div class=\"grid\"><article><h3>IaaS: una VM con Docker</h3><p>Podemos instalar Docker y ejecutar Compose. Elegimos y mantenemos sistema operativo, runtime y almacenamiento.</p></article><article><h3>PaaS: desplegar la API</h3><p>Entregamos código o artefactos a una plataforma; operamos dentro de sus opciones y restricciones.</p></article><article><h3>SaaS: consumir software</h3><p>Usamos, por ejemplo, una aplicación de correo. No desplegamos nuestro backend dentro de ella.</p></article><article><h3>Hoy: contenedores administrados</h3><p>Usaremos Amazon ECS (Elastic Container Service) con Fargate. AWS administra la capacidad de ejecución; definimos imagen, recursos, red y permisos.</p></article></div>",
+    "notes": "Las tarjetas llevan los modelos al problema. Fargate es ejecución administrada de contenedores, sin gestionar las máquinas que la sostienen; no lo vamos a etiquetar como SaaS ni a equiparar todos los servicios administrados con un único modelo. La pregunta útil es qué delegamos y qué debemos configurar.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Primero: leer nuestro Compose real",
+    "body": "<pre>services:\n  api:\n    # hereda build y environment del bloque x-app\n    command: [node, src/app.js]\n    ports: [&quot;127.0.0.1:${API_PORT:-3008}:3000&quot;]\n  mongodb:\n    image: mongo:7.0.21\n    volumes: [mongo-data:/data/db]</pre><div class=\"call\">Extracto de Clase 08: proceso, acceso local y persistencia son decisiones diferentes.</div>",
+    "notes": "En el extracto vemos la API y MongoDB; no es un archivo completo para ejecutar. La API hereda construcción y configuración del bloque común. El puerto se publica solo en loopback; el volumen conserva los datos de MongoDB. RabbitMQ y worker también existen en el Compose real. ¿Qué parte necesitamos resolver fuera del equipo? La capacidad, red y persistencia que ahora provee la máquina local.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Camino 1: ejecutar Compose en una VM",
+    "body": "<div class=\"flow\"><b>Crear VM</b><i>→</i><b>Instalar Docker</b><i>→</i><b>Copiar configuración</b><i>→</i><b>docker compose up</b></div><div class=\"grid\"><article><h3>Qué conservamos</h3><p>Servicios, imágenes y gran parte del esquema de ejecución conocido.</p></article><article><h3>Qué se agrega</h3><p>Parches del SO, acceso remoto, firewall, discos, backups, monitoreo y recuperación.</p></article></div><div class=\"call\">Es un camino válido de IaaS; ejecutar Compose en una VM no crea por sí solo alta disponibilidad.</div>",
+    "notes": "La secuencia propone el traslado más cercano al modelo local. Es importante verlo antes de introducir más servicios: podríamos ejecutar Compose en una VM. A cambio, nos hacemos cargo de esa máquina y de sus fallas. Hoy elegimos otro camino para practicar infraestructura declarativa y ejecución administrada.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Camino 2: ejecutar contenedores administrados",
+    "body": "<div class=\"flow\"><b>Imagen publicada</b><i>→</i><b>Definición de tarea</b><i>→</i><b>Servicio ECS / Fargate</b></div><table><tr><th>Decisión</th><th>VM + Compose</th><th>ECS con Fargate</th></tr><tr><td>Máquinas y runtime</td><td>Los administra el equipo</td><td>Capacidad de ejecución administrada</td></tr><tr><td>Aplicación y configuración</td><td>Las define el equipo</td><td>Las define el equipo</td></tr><tr><td>Red y acceso</td><td>Configurar VM y firewall</td><td>Configurar subredes, grupos y ALB</td></tr><tr><td>Persistencia</td><td>Diseñar discos y backups</td><td>Diseñar servicios o almacenamiento externo</td></tr></table>",
+    "notes": "La tabla compara responsabilidades, no ganadores universales. ECS organiza tareas y servicios; Fargate ejecuta los contenedores sin que administremos instancias EC2. Seguimos eligiendo CPU, memoria, imagen y permisos. No subimos el compose.yaml esperando una traducción automática.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Qué desplegamos hoy y qué queda pendiente",
+    "body": "<div class=\"grid\"><article><h3>Arquitectura que conocemos</h3><p>API + worker + broker + base de datos, con seguridad y herramientas MCP en el recorrido previo.</p></article><article><h3>Recorte ejecutable de hoy</h3><p>Una API nueva y mínima con pedidos ficticios: GET /health, /version, /pedidos y /pedidos/:id.</p></article></div><div class=\"call\">Conservamos el dominio y aprendemos el camino de despliegue. El sistema completo exige más decisiones de datos, identidad y conectividad.</div>",
+    "notes": "Las dos tarjetas hacen explícito el recorte. No estamos desplegando la API de las clases anteriores ni migrando sus datos. La API de hoy no tiene escrituras, Auth0 ni dependencias de broker o base. Después del ejercicio el alumno debería poder explicar qué faltaría para llevar su integración completa.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Traducir Compose: imagen y ejecución",
+    "body": "<table><tr><th>Lo conocido</th><th>Necesidad remota</th><th>Pieza de hoy</th></tr><tr><td>build / Dockerfile</td><td>Construir una imagen transportable</td><td>docker build: linux/amd64</td></tr><tr><td>Imagen en la máquina</td><td>Almacenar y descargar el artefacto</td><td>ECR: Elastic Container Registry</td></tr><tr><td>command / environment</td><td>Definir proceso y configuración</td><td>TaskDefinition de ECS</td></tr><tr><td>Servicio en ejecución</td><td>Mantener la cantidad deseada</td><td>Service + ejecución Fargate</td></tr></table><div class=\"call\">La imagen es el artefacto; la infraestructura define dónde y bajo qué condiciones se ejecuta.</div>",
+    "notes": "Recorramos cada fila desde lo conocido. Construir no es publicar y publicar no es ejecutar. ECR contiene la imagen, no recibe tráfico de los usuarios. La definición de tarea describe el contenedor; el servicio mantiene su cantidad. La imagen actual escucha en 8080, no en el 3000 del proyecto anterior.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Traducir Compose: red, salud y datos",
+    "body": "<table><tr><th>Lo conocido</th><th>Decisión que aparece en AWS</th></tr><tr><td>ports</td><td>Entrada pública por ALB:80 y destino tarea:8080</td></tr><tr><td>Red de servicios</td><td>VPC, subredes y reglas de comunicación</td></tr><tr><td>healthcheck</td><td>Target Group comprueba GET /health</td></tr><tr><td>environment</td><td>Configurar valores; gestionar secretos aparte</td></tr><tr><td>volumes</td><td>Persistencia externa diseñada para los datos</td></tr></table><div class=\"call\">Son correspondencias de necesidades; no equivalencias exactas entre campos y recursos.</div>",
+    "notes": "Las filas separan necesidades que Compose ayuda a expresar localmente. Un security group no es una red Docker y el health check del ALB no es el health check del contenedor. Hoy no hay secretos de aplicación en la API ni volumen de datos: son decisiones simplificadas explícitamente.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Dos caminos distintos: artefacto y solicitudes",
+    "body": "<div class=\"flow\"><b>Dockerfile</b><i>→</i><b>Imagen → ECR</b><i>→</i><b>ECS descarga y ejecuta</b></div><div class=\"flow\"><b>Cliente</b><i>→</i><b>ALB :80</b><i>→</i><b>Tarea API :8080</b></div><div class=\"call\">ALB significa Application Load Balancer. ECR participa al iniciar una tarea. Las solicitudes HTTP viajan del cliente al ALB y de allí a la API.</div>",
+    "notes": "Vemos dos filas: arriba se mueve el artefacto y abajo se atienden solicitudes. Este contraste evita pensar que ECR es parte del camino HTTP. El balanceador dirige solicitudes hacia tareas saludables. CloudFormation creará la estructura que permite ambos caminos.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "La red que habilita ese camino",
+    "body": "<div class=\"grid\"><article><h3>VPC y subredes</h3><p>Usamos la red virtual por defecto y dos subredes públicas en zonas distintas. El script las consulta; no las crea.</p></article><article><h3>Reglas de entrada</h3><p>AlbSecurityGroup permite TCP 80 público. TaskSecurityGroup permite TCP 8080 desde el grupo del ALB.</p></article></div><div class=\"flow\"><b>Internet</b><i>→</i><b>ALB · puerto 80</b><i>→</i><b>API · puerto 8080</b></div><div class=\"call\">Las tareas reciben IP pública para conectividad saliente; su puerto de aplicación solo acepta al ALB.</div>",
+    "notes": "En el diagrama el tráfico entra por el balanceador. Las tarjetas explican el contexto de red y las reglas. Los grupos de seguridad filtran tráfico y las subredes ubican recursos. El laboratorio usa HTTP y datos ficticios durante una sesión breve; un despliegue real necesita diseñar HTTPS e identidad.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Permisos: dos funciones, un rol del lab",
+    "body": "<table><tr><th>Referencia de la plantilla</th><th>Para qué sirve</th></tr><tr><td>ExecutionRoleArn</td><td>ECS descarga la imagen y envía logs</td></tr><tr><td>TaskRoleArn</td><td>Permisos del código para llamar APIs AWS</td></tr></table><div class=\"grid\"><article><h3>Restricción educativa</h3><p>Ambas referencias usan el LabRole existente. No creamos roles IAM propios.</p></article><article><h3>Responsabilidad del equipo</h3><p>La API de hoy no necesita llamar APIs AWS. En producción separaríamos funciones y permisos mínimos.</p></article></div>",
+    "notes": "La tabla muestra dos funciones que pueden compartir un rol en este entorno. El rol de ejecución lo usa la infraestructura de ejecución; el rol de tarea está disponible para la aplicación. Reutilizar LabRole es una restricción del curso, no una recomendación general de permisos. Debemos confirmar que el rol y los servicios estén habilitados.",
+    "theme": ""
+  },
+  {
+    "block": "25–45 min · del entorno local a AWS",
+    "title": "Escalar exige pensar dónde vive el estado",
+    "body": "<div class=\"flow\"><b>ALB</b><i>→</i><b>Tarea A / Tarea B</b><i>→</i><b>Mismos datos de lectura</b></div><div class=\"grid\"><article><h3>Hoy</h3><p>Cada tarea contiene los mismos pedidos ficticios y no modifica datos. /version identifica la instancia que respondió.</p></article><article><h3>Sistema real</h3><p>Los datos y sesiones no deben depender de una única tarea efímera. Base, broker y backups requieren diseño propio.</p></article></div><div class=\"call\">Dos instancias de lectura no prueban persistencia, tolerancia a fallos ni escalado automático.</div>",
+    "notes": "La fila muestra un balanceador frente a dos tareas, no una cadena secuencial entre A y B. En la práctica cambiaremos manualmente DesiredCount. Si guardáramos pedidos nuevos solo en memoria, las tareas podrían discrepar y los reinicios perderían cambios. Por eso separaremos la prueba de reparto de tráfico de las garantías de datos.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "¿Quién crea toda esta infraestructura?",
+    "body": "<div class=\"grid\"><article><h3>Necesidad</h3><p>Crear ALB, reglas, logs y tareas a mano exige coordinar dependencias y repetir decisiones.</p></article><article><h3>Infraestructura como código · IaC</h3><p>Describimos los recursos en archivos versionados: permiten revisar, reproducir y controlar cambios.</p></article></div><div class=\"flow\"><b>Plantilla YAML</b><i>→</i><b>CloudFormation</b><i>→</i><b>Stack de recursos</b></div>",
+    "notes": "Las tarjetas presentan el problema y el concepto antes de la herramienta. IaC es la práctica; CloudFormation es la herramienta AWS usada hoy. Un stack agrupa los recursos de una plantilla. Versionar el archivo no garantiza que todo cambio sea seguro: hay que revisar efectos y comprobar el resultado.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Las herramientas de la actividad",
+    "body": "<table><tr><th>Herramienta</th><th>Trabajo concreto</th></tr><tr><td>Docker</td><td>Construye y prueba la imagen</td></tr><tr><td>AWS CLI</td><td>Invoca servicios con credenciales temporales</td></tr><tr><td>cfn-lint</td><td>Revisa la plantilla localmente</td></tr><tr><td>CloudFormation</td><td>Crea y actualiza los recursos del stack</td></tr><tr><td>ECS + Fargate</td><td>Mantienen y ejecutan las tareas</td></tr></table><div class=\"call\">Los scripts coordinan comandos. La plantilla declara infraestructura. La API atiende solicitudes.</div>",
+    "notes": "La tabla responde qué usaremos para levantar la infraestructura. El script desplegar llama AWS CLI y esta solicita a CloudFormation el despliegue. cfn-lint no crea recursos. ECS y Fargate se encargan de operar las tareas declaradas, no de construir la imagen.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Leer la plantilla: entradas y resultado",
+    "body": "<pre>Parameters:\n  ImageUri: { Type: String }\n  DesiredCount: { Type: Number, Default: 1 }\n# ... Resources: recursos y referencias ...\nOutputs:\n  ApiUrl:\n    Value: !Sub http://${LoadBalancer.DNSName}</pre><div class=\"call\">Entradas reales: imagen, VPC, subredes y cantidad de tareas. Salida: URL del ALB.</div>",
+    "notes": "El fragmento omite bloques y no es una plantilla ejecutable completa. Parameters permite variar valores sin editar todos los recursos. !Sub construye la URL con el DNS del ALB; !Ref y !GetAtt conectan valores y atributos entre recursos. La URL sirve mientras exista este balanceador; no prometemos conservarla al recrear el stack.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Leer la plantilla: ejecución de la API",
+    "body": "<pre>TaskDefinition:\n  Type: AWS::ECS::TaskDefinition\n  Properties:\n    RequiresCompatibilities: [FARGATE]\n    NetworkMode: awsvpc\n    Cpu: &quot;256&quot;\n    Memory: &quot;512&quot;\n    # ContainerDefinitions: imagen, puerto 8080 y logs</pre><div class=\"call\">El Service referencia esta definición y aplica DesiredCount. Leer el archivo completo para ver red y ALB.</div>",
+    "notes": "El bloque relaciona configuración conocida con el contrato de ECS: capacidad, red e imagen. El extracto omite roles y definición del contenedor; están en el archivo completo. La definición por sí sola no mantiene tareas: esa responsabilidad está en Service. No necesitamos memorizar todos los atributos, sino explicar su propósito.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Los nueve recursos: qué depende de qué",
+    "body": "<table><tr><th>Grupo</th><th>Recursos de la plantilla</th><th>Función</th></tr><tr><td>Acceso</td><td>AlbSecurityGroup, TaskSecurityGroup</td><td>Permitir solo los tramos previstos</td></tr><tr><td>Entrada HTTP</td><td>LoadBalancer, Listener, TargetGroup</td><td>Recibir, derivar y verificar salud</td></tr><tr><td>Ejecución</td><td>Cluster, TaskDefinition, Service</td><td>Organizar, describir y mantener tareas</td></tr><tr><td>Operación</td><td>LogGroup</td><td>Recibir logs de la aplicación</td></tr></table><div class=\"call\">VPC, subredes y LabRole ya existen. ECR se crea fuera del stack y se elimina aparte.</div>",
+    "notes": "La tabla agrupa los nueve recursos para preparar la Parte A. El Listener referencia al balanceador y al TargetGroup; Service necesita la definición de tarea y se integra al grupo de destinos. LogGroup recibe los logs. La tabla individual del material adicional permite completar qué ocurriría si faltara cada recurso.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Cambios, estados y límites del entorno",
+    "body": "<div class=\"grid\"><article><h3>Despliegue y actualización</h3><p>CloudFormation calcula un change set. Leer eventos y distinguir CREATE_COMPLETE de UPDATE_COMPLETE.</p></article><article><h3>Fallas</h3><p>Una creación puede quedar en ROLLBACK_COMPLETE; una actualización puede revertirse. Leer la causa antes de reintentar.</p></article><article><h3>Learner Lab</h3><p>Credenciales temporales, servicios permitidos y presupuesto acotado. Confirmar límites y región us-east-1 en el curso.</p></article><article><h3>Plan alternativo</h3><p>Sin AWS: pruebas locales y explicación de C/D. Si falla AWS: guardar el estado real y priorizar la limpieza.</p></article></div>",
+    "notes": "Las tarjetas conectan el ciclo de vida con condiciones reales del laboratorio. Ante ROLLBACK_COMPLETE de creación inicial hay que borrar el stack antes de volver a crearlo. No asumir duración fija de sesión ni permisos universales: confirmar el curso. Los scripts usan la región indicada y las llamadas manuales requieren las variables de preparación.",
+    "theme": ""
+  },
+  {
+    "block": "45–60 min · IaC y demostración",
+    "title": "Demo: de la imagen a una respuesta HTTP",
+    "body": "<pre>./scripts/publicar-imagen.sh 1.0.0\n# Copiar la URI impresa, sin el prefijo ImageUri=\nexport IMAGE_URI=&quot;URI_COMPLETA_DE_LA_IMAGEN&quot;\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot;\n# Con ApiUrl del Output:\ncurl http://DNS_DEL_ALB/health\ncurl http://DNS_DEL_ALB/version</pre><div class=\"call\">Observar construcción/publicación, eventos del stack, destinos healthy y respuesta de la API.</div>",
+    "notes": "El bloque resume los comandos reales de la actividad desde recursos/laboratorio. El docente debe tener un ensayo previo y evidencia de respaldo; el despliegue no está acreditado en esta preparación. Se puede iniciar el despliegue al comienzo de este bloque mientras se explica la plantilla. Sin evidencia AWS previa, mostrar la ejecución local y declarar qué falta, sin simular salidas.",
+    "theme": ""
+  },
+  {
+    "block": "60–105 min · práctica individual",
+    "title": "Actividad A–E: decidir, ejecutar y explicar",
+    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar y desplegar; o explicación sin AWS</td><td>15</td></tr><tr><td>D</td><td>Dos tareas e instancia; o explicación sin AWS</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Consigna detallada en actividad-practica.md.</div>",
+    "notes": "Esta tabla distribuye 45 minutos y conserva las partes A–E. La actividad es individual. Se espera justificar y guardar evidencias, no solo copiar comandos. Si la creación tarda más que el bloque, registrar lo observado, continuar con la explicación y reservar el cierre. El tiempo real requiere ensayo.",
+    "theme": ""
+  },
+  {
+    "block": "60–105 min · práctica individual",
+    "title": "B y D: dos comprobaciones distintas",
+    "body": "<pre># B: desde recursos/laboratorio, imagen preparada\nnpm test\ndocker run --rm -d --name iaew-clase-09-local -p 8080:8080 iaew-api:local\ncurl http://localhost:8080/health\n.venv/bin/cfn-lint plantillas/ecs-fargate-alb.yaml\n\n# D: solo con AWS y la IMAGE_URI guardada\n./scripts/desplegar.sh &quot;$IMAGE_URI&quot; iaew-clase-09 2</pre><div class=\"call\">Esperar dos destinos healthy y consultar /version varias veces. Registrar dos instancias solo si se observaron.</div>",
+    "notes": "Los comandos separan comprobación local y cambio de infraestructura. El script detecta VPC y subredes y pasa DesiredCount=2. No necesitamos rellenar esos parámetros a mano. Aumentar cantidad es escalado manual. Mientras esperamos podemos completar la explicación de qué cambiaría en el sistema real.",
+    "theme": ""
+  },
+  {
+    "block": "105–120 min · comprobar y cerrar",
+    "title": "Qué demuestra cada evidencia",
+    "body": "<table><tr><th>Evidencia</th><th>Conclusión válida</th><th>Límite</th></tr><tr><td>Tests y curl local</td><td>La API responde localmente</td><td>No comprueba AWS</td></tr><tr><td>cfn-lint</td><td>La plantilla pasa reglas estáticas</td><td>No comprueba permisos</td></tr><tr><td>Stack completo</td><td>Terminó la operación de recursos</td><td>No reemplaza probar HTTP</td></tr><tr><td>healthy + HTTP público</td><td>El camino ALB → API funciona</td><td>No acredita seguridad o carga</td></tr><tr><td>Dos valores de instancia</td><td>Atendieron tareas distintas</td><td>No prueba persistencia</td></tr></table>",
+    "notes": "Leamos cada fila relacionando evidencia y conclusión. El objetivo es evitar saltos: lint no equivale a despliegue, ni un health check equivale a seguridad integral. Entregar también lo no ejecutado y por qué. No usar capturas de ejemplo como evidencia propia.",
+    "theme": ""
+  },
+  {
+    "block": "105–120 min · comprobar y cerrar",
+    "title": "Cerrar el ambiente también es operar",
+    "body": "<pre># Ambas rutas: detiene y elimina el contenedor con --rm\ndocker stop iaew-clase-09-local\ndocker ps -a --filter name=iaew-clase-09-local\n\n# Si se crearon recursos AWS, incluso si falló el stack:\n./scripts/limpiar.sh</pre><div class=\"call\">Comprobar stack y ECR ausentes. Si falla el borrado, informar el error y resolverlo con el docente.</div>",
+    "notes": "El primer bloque cierra el entorno local; el segundo aplica solo si se crearon recursos AWS. El repositorio iaew-api debe ser exclusivo de esta práctica porque el script borra sus imágenes. El bloque final verifica el cierre iniciado en E. Sin AWS declarar explícitamente que no se crearon recursos cloud.",
+    "theme": ""
+  },
+  {
+    "block": "105–120 min · comprobar y cerrar",
+    "title": "Qué entregar y qué llevar al TPI",
+    "body": "<div class=\"grid\"><article><h3>Entrega individual</h3><p>Una página de síntesis, tabla y evidencias anexas. Incluir decisiones, resultados, limpieza y límites de ejecución.</p></article><article><h3>TPI grupal</h3><p>Cloud sigue siendo opcional con bono. Documentar qué se desplegó y cómo se conectan las dependencias que quedaron fuera.</p></article></div><div class=\"call\">Para el sistema completo: resolver persistencia, broker/worker, secretos, identidad, HTTPS, observabilidad y recuperación.</div>",
+    "notes": "Las tarjetas distinguen actividad y TPI. La API mínima permite practicar el camino de infraestructura, pero no satisface por sí sola la integración completa. La síntesis explica decisiones y los anexos contienen evidencia. No agregamos requisitos al TPI ni damos por migrados sus datos.",
+    "theme": ""
+  },
+  {
+    "block": "105–120 min · comprobar y cerrar",
+    "title": "Volver a la pregunta inicial",
+    "body": "<div class=\"flow\"><b>Compose local</b><i>→</i><b>Decisiones cloud</b><i>→</i><b>Infraestructura declarada</b><i>→</i><b>Servicio verificable</b></div><div class=\"grid\"><article><h3>Preguntas de salida</h3><p>¿Qué aporta CloudFormation que no resolvía Compose local? ¿Qué debemos seguir administrando con Fargate?</p></article><article><h3>Próximo paso · 02/11</h3><p>Testing de integración y contratos: probar comportamiento, errores y compatibilidad del sistema.</p></article></div><div class=\"call\">Si un agente desplegara por nosotros, ¿quién limitaría permisos, costo y alcance del cambio?</div>",
+    "notes": "La secuencia resume el recorrido y no una conversión automática. Respuestas esperadas: CloudFormation aprovisiona recursos AWS y dependencias; con Fargate conservamos código, imagen, configuración, red y permisos. Un agente que invoca herramientas también necesita controles de infraestructura; una instrucción al modelo no es autorización. Recordar: 09/11 sin clase y Entrega 2 el 16/11.",
+    "theme": "dark"
+  },
+  {
+    "block": "105–120 min · comprobar y cerrar",
+    "title": "Referencias para continuar",
+    "body": "<ul><li><a href=\"https://aws.amazon.com/types-of-cloud-computing/\">AWS: modelos de servicio cloud</a></li><li><a href=\"https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html\">AWS: ECS con Fargate</a></li><li><a href=\"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html\">AWS: CloudFormation</a></li><li>Compose de Clase 08 y plantilla ecs-fargate-alb.yaml de esta actividad.</li></ul><div class=\"call\">Fuentes consultadas el 26/10/2026. Confirmar restricciones del Learner Lab del curso.</div>",
+    "notes": "Esta diapositiva es de consulta, no agrega un bloque de explicación. Las fuentes oficiales respaldan los modelos y las herramientas; los archivos de clase definen los comandos y límites concretos de nuestra práctica.",
+    "theme": ""
+  }
 ];
 const deck=document.querySelector("#deck");let current=0;const presenterChannel="BroadcastChannel"in window?new BroadcastChannel("iaew-clase-09-presenter"):null;
 function render(){deck.innerHTML=slides.map((s,i)=>`<section class="slide ${s.theme||""} ${i===current?"active":""}" aria-label="Diapositiva ${i+1}"><p class="kicker">${s.block}</p><h2>${s.title}</h2><div class="slide-content">${s.body}</div><div class="footer"><span>IAEW 2026 · Clase 09 · Cloud e IaC con AWS Academy</span><span class="slide-no">${i+1} / ${slides.length}</span></div></section>`).join("");document.querySelector("#counter").textContent=`${current+1} / ${slides.length}`;document.querySelector("#progress").style.width=`${(current+1)/slides.length*100}%`;publish()}
