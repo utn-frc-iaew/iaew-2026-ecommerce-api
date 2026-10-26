@@ -30,7 +30,7 @@ El despliegue real en Learner Lab sigue pendiente de ensayo; las pruebas locales
 
 ## Recorrido de la presentación
 
-32 diapositivas: Compose real de Clase 08 → nube e IaaS/PaaS/SaaS → administración de contenedores con ECS/Fargate → imagen, red, roles y estado → IaC con CloudFormation → actividad A–E. La agenda suma 120 minutos.
+34 diapositivas: Compose real de Clase 08 → nube e IaaS/PaaS/SaaS → administración de contenedores con ECS/Fargate → imagen, red, roles y estado → IaC con CloudFormation → actividad A–E. La agenda suma 120 minutos.
 
 ## Qué vas a levantar en AWS
 
