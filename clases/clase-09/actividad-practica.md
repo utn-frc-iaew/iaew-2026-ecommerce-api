@@ -29,7 +29,7 @@ Cliente → ALB:80 → api:8080 ──(localhost:27017, misma tarea)──► mo
 
 La primera etapa **no ejecuta contenedores**. El balanceador ya existe, pero todavía no tiene destinos: una respuesta `503` antes de desplegar la API es esperable. La segunda plantilla importa las salidas de la primera mediante `Fn::ImportValue`.
 
-**Cambio de dirección de la base:** en Compose la API llega a Mongo por el nombre de servicio `mongodb`; en ECS (`awsvpc`) los contenedores de una tarea comparten interfaz de red y se alcanzan por `localhost`. Solo cambia la variable `MONGODB_URI`.
+**Cambio de dirección de la base:** en Compose la API llega a Mongo por el nombre de servicio `mongodb`; en ECS (modo de red `awsvpc`: cada tarea tiene su propia interfaz de red) los contenedores de una tarea comparten interfaz de red y se alcanzan por `localhost`. Solo cambia la variable `MONGODB_URI`.
 
 | Infraestructura creada por vos | Recursos declarados |
 |---|---|
@@ -188,13 +188,13 @@ curl -s http://localhost:8080/pedidos
 
 Tras `down` y `up` el pedido creado **sigue existiendo**. Dejá el entorno corriendo hasta la Parte E, donde se borra junto con su volumen. Si la API tarda en responder, esperá unos segundos y repetí `curl`; si falla, mirá `docker compose logs api mongodb`. Si 8080 está ocupado, usá `API_PORT=8081 docker compose up -d` y reemplazá 8080 por 8081 en todos los `curl` de esta parte; no detengas procesos que no identifiques.
 
-Guardá salida de tests, `compose ps`, respuestas, resultado de la persistencia y del lint. **Todavía no hay nada en AWS.**
+Guardá salida de tests, `compose ps`, respuestas, resultado de la persistencia y del lint. B es solo local: en AWS, a lo sumo, está creándose la base de C.1 si ya la lanzaste.
 
 **Checkpoint B:** la API y su base funcionan en local con Compose y los datos sobreviven a recrear los contenedores; la plantilla pasa revisión estática, que no comprueba permisos ni despliegue cloud.
 
 ## 5. Parte C · Crear la base y después desplegar la API · 15 minutos
 
-**Cómo usar el tiempo:** C tiene dos esperas de CloudFormation (base y aplicación) y una subida de imagen. Lanzá `./scripts/crear-infra.sh` apenas termines B, y mientras corre completá la parte A; durante la espera del stack de aplicación, leé las preguntas de D y de la entrega.
+**Cómo usar el tiempo:** C tiene dos esperas de CloudFormation (base y aplicación) y una subida de imagen. Lanzá `./scripts/crear-infra.sh` (C.1) apenas termines la parte A y hacé la parte B mientras corre; durante la espera del stack de aplicación, leé las preguntas de D y de la entrega.
 
 ### C.1. Creá toda la infraestructura base
 
