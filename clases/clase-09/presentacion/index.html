@@ -21,7 +21,7 @@ p,li,td,th{font-size:clamp(14px,1.5vw,20px);line-height:1.4}.subtitle{font-size:
 article{padding:15px 18px;background:#e6eef3;border:1px solid #cfdee7;border-radius:12px;min-width:0}.dark .call{color:#122b3d}.dark .flow b{color:#122b3d}a{color:#00687f}.dark a{color:#67d7e7}.dark article{background:#16374b;border-color:#375467}article p{margin-bottom:0}
 .flow{display:flex;align-items:stretch;gap:9px;margin:10px 0 16px}.flow b{flex:1;display:grid;place-items:center;background:#dfebf1;border:1px solid #bed2dc;padding:14px 8px;border-radius:10px;text-align:center;font-size:clamp(13px,1.45vw,19px)}.flow i{align-self:center;font-style:normal;color:var(--cyan);font-weight:800}
 .call{margin-top:14px;padding:12px 16px;background:#daf0e9;border-left:5px solid #28a978;border-radius:0 8px 8px 0;font-size:clamp(14px,1.4vw,19px)}.warn{background:#fff1d6;border-left-color:#cc9b3b}
-.tag{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #67d7e7;border-radius:99px;color:#67d7e7;font-weight:700;font-size:14px}
+.cloud-boundary{border:2px solid #007f99;border-radius:12px;padding:14px 18px;background:#edf5f8}.cloud-boundary>h3{color:#00687f}.tag{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #67d7e7;border-radius:99px;color:#67d7e7;font-weight:700;font-size:14px}
 table{width:100%;border-collapse:collapse;margin-bottom:8px}th{text-align:left;background:#d9e8ef}th,td{padding:7px 11px;border-bottom:1px solid #c9d8e2;font-size:clamp(13px,1.3vw,18px)}
 code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{background:#dbe8ee;padding:1px 5px;border-radius:4px;font-size:.92em}
 pre{margin:0 0 8px;padding:12px 16px;background:#0b2234;color:#e7f4fb;border-radius:10px;font-size:clamp(12px,1.25vw,17px);line-height:1.4;overflow:hidden}
@@ -121,9 +121,9 @@ const slides=[
   },
   {
     "block": "25–45 min · del entorno local a AWS",
-    "title": "Qué desplegamos hoy y qué queda pendiente",
-    "body": "<div class=\"grid\"><article><h3>Arquitectura que conocemos</h3><p>API + worker + broker + base de datos, con seguridad y herramientas MCP en el recorrido previo.</p></article><article><h3>Recorte ejecutable de hoy</h3><p>Una API nueva y mínima con pedidos ficticios: GET /health, /version, /pedidos y /pedidos/:id.</p></article></div><div class=\"call\">Conservamos el dominio y aprendemos el camino de despliegue. El sistema completo exige más decisiones de datos, identidad y conectividad.</div>",
-    "notes": "Las dos tarjetas hacen explícito el recorte. No estamos desplegando la API de las clases anteriores ni migrando sus datos. La API de hoy no tiene escrituras, Auth0 ni dependencias de broker o base. Después del ejercicio el alumno debería poder explicar qué faltaría para llevar su integración completa.",
+    "title": "Qué vamos a levantar en AWS",
+    "body": "<p>Desde tu equipo: solicitudes HTTP a una URL pública.</p><div class=\"cloud-boundary\"><h3>AWS · us-east-1 · ambiente de la actividad</h3><div class=\"flow\"><b>ALB público :80</b><i>→</i><b>API Node.js :8080<br>1 tarea Fargate → 2 en D</b></div><div class=\"grid\"><article><h3>Artefacto y operación</h3><p>Imagen en ECR (<code>iaew-api:1.0.0</code>), reglas de red y logs en CloudWatch.</p></article><article><h3>Qué responde la API</h3><p><code>/health</code>, <code>/version</code>, <code>/pedidos</code> y <code>/pedidos/P-1001</code>: JSON con datos fijos.</p></article></div></div><div class=\"call\">Sin base, broker, worker, Auth0 ni MCP. ECR está fuera del stack; la VPC, subredes y LabRole ya existen.</div>",
+    "notes": "En el recuadro vemos el destino de la actividad: una API Node.js ejecutada en una tarea Fargate y accesible por el ALB. El cliente está fuera de AWS: la flecha indica su entrada al balanceador; no es un recurso que creemos. La imagen vive en ECR, fuera del stack, y ECS la descarga para iniciar la tarea. CloudWatch recibe logs. Las cuatro rutas devuelven JSON, no una pantalla web. En D mantenemos dos tareas de la misma API. No desplegamos los componentes de la integración previa ni migramos sus pedidos: estos datos están fijos en el código. La guía única muestra qué comprobar en cada paso.",
     "theme": ""
   },
   {
@@ -198,9 +198,9 @@ const slides=[
   },
   {
     "block": "45–60 min · IaC y demostración",
-    "title": "Los nueve recursos: qué depende de qué",
-    "body": "<table><tr><th>Grupo</th><th>Recursos de la plantilla</th><th>Función</th></tr><tr><td>Acceso</td><td>AlbSecurityGroup, TaskSecurityGroup</td><td>Permitir solo los tramos previstos</td></tr><tr><td>Entrada HTTP</td><td>LoadBalancer, Listener, TargetGroup</td><td>Recibir, derivar y verificar salud</td></tr><tr><td>Ejecución</td><td>Cluster, TaskDefinition, Service</td><td>Organizar, describir y mantener tareas</td></tr><tr><td>Operación</td><td>LogGroup</td><td>Recibir logs de la aplicación</td></tr></table><div class=\"call\">VPC, subredes y LabRole ya existen. ECR se crea fuera del stack y se elimina aparte.</div>",
-    "notes": "La tabla agrupa los nueve recursos para preparar la Parte A. El Listener referencia al balanceador y al TargetGroup; Service necesita la definición de tarea y se integra al grupo de destinos. LogGroup recibe los logs. La tabla individual del material adicional permite completar qué ocurriría si faltara cada recurso.",
+    "title": "Qué crea cada paso de la actividad",
+    "body": "<table><tr><th>Paso</th><th>Resultado en AWS</th></tr><tr><td>Publicar imagen</td><td>ECR <code>iaew-api</code> con imagen <code>1.0.0</code>; fuera del stack.</td></tr><tr><td>Desplegar stack</td><td>2 security groups + ALB + Listener + TargetGroup.</td></tr><tr><td>Mismo stack</td><td>Cluster + TaskDefinition + Service + LogGroup: 9 recursos en total.</td></tr><tr><td>Ejecutar servicio</td><td>ECS mantiene 1 tarea Fargate; en D mantiene 2. Las tareas se crean desde el servicio.</td></tr><tr><td>Reutilizar</td><td>VPC, subredes y LabRole existentes; no se crean ni borran.</td></tr></table><div class=\"call\">CloudFormation levanta la infraestructura declarada; el código de la API se distribuye dentro de la imagen.</div>",
+    "notes": "Leamos la tabla en el orden real. Publicar crea o reutiliza ECR y sube la imagen. Desplegar crea los nueve recursos del stack; aquí los agrupamos para ver su función. El servicio ECS inicia tareas según DesiredCount: no hay otro recurso Task en Resources. VPC, subredes y LabRole se reutilizan. Esto explica también la limpieza: borrar el stack elimina sus recursos, pero ECR requiere borrado separado. La API tiene datos constantes, de modo que desplegar esta infraestructura no ha creado una base de pedidos.",
     "theme": ""
   },
   {
@@ -219,9 +219,9 @@ const slides=[
   },
   {
     "block": "60–105 min · práctica individual",
-    "title": "Actividad A–E: decidir, ejecutar y explicar",
-    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar y desplegar; o explicación sin AWS</td><td>15</td></tr><tr><td>D</td><td>Dos tareas e instancia; o explicación sin AWS</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Consigna detallada en actividad-practica.md.</div>",
-    "notes": "Esta tabla distribuye 45 minutos y conserva las partes A–E. La actividad es individual. Se espera justificar y guardar evidencias, no solo copiar comandos. Si la creación tarda más que el bloque, registrar lo observado, continuar con la explicación y reservar el cierre. El tiempo real requiere ensayo.",
+    "title": "Una actividad, una guía, una entrega",
+    "body": "<table><tr><th>Parte</th><th>Trabajo</th><th>Min</th></tr><tr><td>A</td><td>Tabla de nueve recursos + red y LabRole</td><td>8</td></tr><tr><td>B</td><td>Tests, contenedor local, curl y lint</td><td>7</td></tr><tr><td>C</td><td>Publicar y desplegar; o explicación sin AWS</td><td>15</td></tr><tr><td>D</td><td>Dos tareas e instancia; o explicación sin AWS</td><td>7</td></tr><tr><td>E</td><td>Cerrar entorno y preparar evidencias</td><td>8</td></tr></table><div class=\"call\">Preparación anterior: herramientas, cfn-lint e imagen local. Seguí <code>actividad-practica.md</code>; <code>recursos/laboratorio/</code> contiene sus archivos. No es otra actividad.</div>",
+    "notes": "La tabla A–E es el único recorrido práctico. La actividad y el laboratorio nombraban antes dos entradas del índice, pero son el mismo trabajo. La guía ahora integra preparación, inventario, comandos, resultados esperados y fallas frecuentes. Los recursos son los archivos de esa guía; no hay otro ejercicio ni otra entrega. Mantener 45 minutos con preparación previa y usar el cierre para verificar recursos y evidencia.",
     "theme": ""
   },
   {
@@ -248,7 +248,7 @@ const slides=[
   {
     "block": "105–120 min · comprobar y cerrar",
     "title": "Qué entregar y qué llevar al TPI",
-    "body": "<div class=\"grid\"><article><h3>Entrega individual</h3><p>Una página de síntesis, tabla y evidencias anexas. Incluir decisiones, resultados, limpieza y límites de ejecución.</p></article><article><h3>TPI grupal</h3><p>Cloud sigue siendo opcional con bono. Documentar qué se desplegó y cómo se conectan las dependencias que quedaron fuera.</p></article></div><div class=\"call\">Para el sistema completo: resolver persistencia, broker/worker, secretos, identidad, HTTPS, observabilidad y recuperación.</div>",
+    "body": "<div class=\"grid\"><article><h3>Entrega individual</h3><p>Una sola nota: qué levantaste, tabla, evidencias anexas y cierre. Declarar qué no se ejecutó.</p></article><article><h3>TPI grupal</h3><p>Cloud sigue siendo opcional con bono. Documentar qué se desplegó y cómo se conectan las dependencias que quedaron fuera.</p></article></div><div class=\"call\">Para el sistema completo: resolver persistencia, broker/worker, secretos, identidad, HTTPS, observabilidad y recuperación.</div>",
     "notes": "Las tarjetas distinguen actividad y TPI. La API mínima permite practicar el camino de infraestructura, pero no satisface por sí sola la integración completa. La síntesis explica decisiones y los anexos contienen evidencia. No agregamos requisitos al TPI ni damos por migrados sus datos.",
     "theme": ""
   },

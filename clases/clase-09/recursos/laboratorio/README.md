@@ -1,34 +1,7 @@
-# Laboratorio · Clase 09 · API stateless en AWS Academy
+# Recursos de la actividad práctica · Clase 09
 
-API mínima (`GET /health`, `/version`, `/pedidos`, `/pedidos/:id`) y plantilla CloudFormation para publicarla en ECS Fargate detrás de un ALB. Autocontenido: no depende de Auth0, MongoDB ni RabbitMQ.
+Estos archivos pertenecen a la [única actividad práctica individual de Clase 09](../../actividad-practica.md). No constituyen otro ejercicio ni otra entrega.
 
-| Ruta | Contenido |
-|---|---|
-| `src/app.js`, `test/app.test.js` | API y prueba (`npm test`) |
-| `Dockerfile` | Imagen Node 22, escucha en `8080` |
-| `plantillas/ecs-fargate-alb.yaml` | Stack: security groups, ALB, cluster, task definition y servicio |
-| `scripts/publicar-imagen.sh` | Crea ECR, construye `linux/amd64` y sube la imagen |
-| `scripts/desplegar.sh` | Detecta VPC y subredes por defecto y despliega el stack |
-| `scripts/limpiar.sh` | Elimina stack y repositorio ECR |
+**Empezá por esa guía:** integra preparación del entorno, qué se crea en AWS, mapa de archivos, comandos en orden, resultados esperados, solución de problemas y limpieza. Ejecutá los scripts cuando la guía lo indique, desde esta carpeta.
 
-## Uso rápido
-
-```bash
-npm test
-cfn-lint plantillas/ecs-fargate-alb.yaml
-./scripts/publicar-imagen.sh 1.0.0
-./scripts/desplegar.sh <ImageUri>
-./scripts/limpiar.sh
-```
-
-Requiere credenciales del Learner Lab en la terminal y región `us-east-1`. Las consignas están en `../../actividad-practica.md`.
-
-## Seguridad
-
-- No subir credenciales a Git.
-- El ALB queda abierto a Internet en el puerto 80 durante la práctica: es una API de datos ficticios; eliminar el stack al terminar.
-- Las tareas usan `LabRole` por restricción del Learner Lab; en un entorno real se aplicaría mínimo privilegio.
-
-## Preparación y cierre
-
-Seguir la preparación previa de la actividad: instalar cfn-lint y construir la imagen antes de clase. La ruta local termina deteniendo y eliminando el contenedor; solo ejecutar limpieza AWS si se crearon recursos. La nota admite tabla y evidencias anexas. El escalado usa `./scripts/desplegar.sh "$IMAGE_URI" iaew-clase-09 2`.
+El nombre interno `recursos/laboratorio/` se conserva para que sigan funcionando los comandos y enlaces existentes.
