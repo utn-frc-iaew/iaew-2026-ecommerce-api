@@ -1,4 +1,4 @@
-# Guion · Clase 10 · Artillery
+# Guion · Clase 10 · Demo guiada
 
 ## 1. La URL responde. ¿El negocio funciona?
 
@@ -24,11 +24,9 @@ La secuencia muestra primero al cliente enviando una confirmación con token y c
 
 La lectura HTTP posterior permite observar el efecto sin consultar MongoDB directamente desde Postman. Si el worker está detenido, la API puede responder y sin embargo no se cumple el objetivo extremo a extremo. El polling acotado distingue esas situaciones.
 
-## 5. Qué entregaremos hoy
+## 5. Qué vamos a comprobar en la demo
 
-Las tarjetas definen el producto y el criterio de éxito. Las credenciales y el entorno se preparan antes de clase; los 45 minutos son para probar y completar aserciones. El TPI sigue siendo grupal: cada estudiante aprende la técnica y luego el equipo adapta la evidencia.
-
-Los productos de hoy son individuales. La técnica se transfiere después al TPI grupal. Pedimos poder repetir el escenario con nuevos datos y explicar su resultado; no medimos aprendizaje por el número de peticiones incluidas. El código proporcionado evita dedicar el taller a implementar otra API.
+Hoy hacemos la actividad como demostración durante la clase. No se pide una entrega individual ni un ZIP. El docente prepara y opera el entorno; el curso anticipa respuestas, observa los efectos y ayuda a interpretar fallos. Los recursos permiten repetir el recorrido opcionalmente. La conexión con el TPI sigue vigente y no altera sus entregables grupales.
 
 ## 6. Una prueba necesita un oráculo
 
@@ -78,13 +76,13 @@ La transición necesita responsables y fechas acordadas, además de endpoints. P
 
 El bloque presenta un extracto ilustrativo de la respuesta y las aserciones que lo consumen. Primero interpretamos el cuerpo con pm.response.json; después comparamos pedido.estado con confirmado usando to.eql. La lectura del header Content-Type permite comprobar que la respuesta anuncia JSON. pm.test registra una prueba con nombre; pm.expect expresa su expectativa. to.be.a sirve para un tipo, to.eql para un valor y to.include para contenido.
 
-Esta demostración es análoga al trabajo del alumno sin completar su TODO de replay. Pedimos identificar de dónde viene cada dato antes de escribir la expectativa. Una respuesta 200 no sustituye la comprobación de estado o de contrato. El fixture posterior muestra qué sucede cuando total cambia de número a cadena.
+Este ejemplo prepara las operaciones que completaremos en pantalla durante la demo de replay. Pedimos identificar de dónde viene cada dato antes de escribir la expectativa. Una respuesta 200 no sustituye la comprobación de estado o de contrato. El fixture posterior muestra qué sucede cuando total cambia de número a cadena.
 
 ## 15. Postman y Newman ejecutan la misma colección
 
-La interfaz facilita explorar y escribir las aserciones; el runner permite repetirlas. Mantenemos v2.1 por compatibilidad con Newman y con el calendario del curso. Las credenciales se guardan en un entorno local excluido de Git. No exportamos el entorno privado como parte de la entrega.
+La interfaz facilita explorar y escribir las aserciones; el runner permite repetirlas. Mantenemos v2.1 por compatibilidad con Newman y con el calendario del curso. Las credenciales se guardan en un entorno local excluido de Git. El entorno privado no se publica.
 
-Mostremos la ubicación de Scripts y distingamos guardar en la interfaz de exportar un archivo. Newman no mira la colección abierta: carga el JSON entregado. Al exportar tenemos que conservar variables, no insertar valores de credenciales. La misma colección puede ejecutarse contra otro entorno configurado.
+Mostremos la ubicación de Scripts y distingamos guardar en la interfaz de exportar un archivo. Newman no mira la colección abierta: carga el JSON exportado. Al exportar tenemos que conservar variables, no insertar valores de credenciales. La misma colección puede ejecutarse contra otro entorno configurado.
 
 ## 16. Variables que no se mezclan
 
@@ -110,23 +108,17 @@ Mostrar dónde se ve el nombre de cada aserción. Un error de conexión es un fa
 
 La salida de ejemplo está rotulada como ilustrativa: muestra dónde leer un caso aprobado y uno fallido sin afirmar un incidente real. En la demo real usamos el runner y el informe que acaba de generar. Un proceso con salida uno debe conservarse como fallo aunque otras peticiones hayan aprobado.
 
-## 20. A y B · preparar y completar (20 min)
+## 20. A y B · preparar y construir las pruebas
 
-A presupone laboratorio y herramientas preparados. B concentra el trabajo intelectual en tres conjuntos de aserciones: identidad del evento, conflicto y estructura más stock. La guía indica qué editar y qué observar. El runner impide presentar una colección que todavía conserva marcadores pendientes.
+El entorno ya está instalado y probado antes de clase. En A recorremos precondiciones y datos. En B el docente completa los tres bloques en pantalla y explica cada comparación. Antes de ejecutar pedimos al curso que anticipe el resultado y justifique la expectativa. No se solicita que cada alumno monte el entorno ni resuelva una entrega durante estos minutos.
 
-Antes de dar autonomía mostramos un ejemplo análogo que recorre cuerpo, header y variable. El alumno completa las tres familias de expectativas usando esa referencia. No debe eliminar los asserts para lograr un reporte verde; el criterio es que expresen las condiciones de negocio acordadas y detecten una diferencia.
+## 21. C y D · ejecutar, fallar y explicar
 
-## 21. C y D · comprobar el poder de la prueba
+El docente ejecuta y conserva reportes distintos para el fallo deliberado y la restauración. Pedimos al curso localizar la aserción fallida y explicar por qué el proceso devuelve uno. Después leemos el fixture de compatibilidad y distinguimos su alcance de una prueba contra HTTP real. No se agrega una tarea escrita individual.
 
-La tarjeta C pide una mutación de la expectativa, no del backend. Debe aparecer el caso de stock como fallido y después recuperarse. D utiliza datos de ejemplo sin servicios externos: hay que etiquetar esa evidencia como fixture. Los dos ejercicios enseñan a interpretar qué demuestra cada prueba.
+## 22. E · interpretar la evidencia de la demo
 
-Al cambiar el valor esperado solo comprobamos sensibilidad de la aserción; no estamos causando un defecto de la implementación. Guardamos el reporte del fallo con otro nombre porque la siguiente corrida reemplaza resumen.json. La restauración completa requiere exportar de nuevo, ejecutar y conservar el reporte limpio.
-
-## 22. E · entregar evidencia útil (5 min)
-
-La evidencia debe permitir a otra persona comprender y repetir el ensayo. El resumen final debe corresponder a la colección restaurada; la evidencia del fallo deliberado se guarda con otro nombre. El estudiante explica qué componentes atravesó y cuáles no, en lugar de escribir simplemente que todo funciona.
-
-La plantilla permite registrar cada decisión cuando ocurre, en vez de reconstruir todo en los cinco minutos finales. Revisamos que la colección exportada no contenga credenciales, que el reporte final corresponda a la restauración y que el ZIP incluya también la explicación del fallo deliberado.
+En estos cinco minutos cerramos el recorrido mostrando la evidencia generada por el docente. La clase explica los resultados oralmente y diferencia demostración, fixture y límites. No hay presentación ni entrega individual. La colección y la plantilla son materiales de consulta, mientras los requisitos del TPI grupal permanecen como indica su consigna.
 
 ## 23. Una colección repetida no es carga concurrente
 
@@ -152,8 +144,6 @@ La respuesta esperada es conservar la clave si reintenta la misma operación y c
 
 La presencia de un agente no modifica las reglas del servidor. Puede redactar o ejecutar peticiones, pero tiene que distinguir permiso, identidad de operación e incertidumbre sobre el resultado. Preguntemos qué haría después de un timeout: consultar estado y conservar la clave de un eventual reintento de la misma operación.
 
-## 28. De la prueba individual a la defensa
+## 28. De la demostración a la defensa
 
-En la izquierda vinculamos la técnica al TPI sin imponer nuevas tecnologías. En la derecha las respuestas deben mencionar efectos de negocio, conservación de clave y evento, y ruptura de campos o tipos. Cerramos con el calendario vigente y con una evidencia defendible de alcance explícito.
-
-Pidamos una respuesta breve a cada pregunta de salida apoyada en una evidencia. El valor de la colección está en que otra persona pueda repetirla, interpretar el fallo y reconocer su alcance. Si una dependencia externa no se probó, esa limitación debe figurar en la defensa junto con los resultados observados.
+Cerramos recuperando lo observado en la demostración. Las preguntas se responden oralmente con evidencia: evento y stock para el replay, estado final para el worker y métrica/carga/umbral para rendimiento. La actividad del día no se presenta; la transferencia al TPI respeta los requisitos grupales existentes. No agregamos trabajo para el feriado.

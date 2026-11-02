@@ -1,4 +1,6 @@
-# Evidencia individual · Clase 10
+# Registro opcional de la demo · Clase 10
+
+No se solicita presentar este archivo. Es un apoyo opcional para seguir o repetir la demostración.
 
 ## A · Entorno y matriz
 
@@ -30,10 +32,10 @@
 - Estrategia de migración:
 - Qué acredita el fixture y qué no:
 
-## E · Límites y entrega
+## E · Límites y conclusiones
 
 - Limitaciones o pendientes:
-- Archivos entregados (sin entorno privado ni credenciales):
+- Archivos consultados (sin entorno privado ni credenciales):
 
 ## Demo Artillery observada (sin otra entrega)
 

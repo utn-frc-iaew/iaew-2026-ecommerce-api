@@ -1,14 +1,12 @@
-# Recursos de la actividad
+# Recursos de la demo guiada
 
-Seguí [la actividad](../actividad-practica.md): este directorio no contiene una segunda consigna.
+Seguir [el recorrido de clase](../actividad-practica.md). El docente ejecuta la demostración y el curso discute los resultados. No se solicita entrega individual.
 
-- `coleccion-inicio.json`: Postman Collection v2.1 con setup y tres grupos de aserciones pendientes.
-- `entorno.example.json`: estructura sin credenciales; copiar a `entorno.local.json`.
-- `ejecutar.cjs`: ejecuta la colección del alumno y escribe un resumen sin cuerpos, headers ni credenciales. Rechaza TODO pendientes y variables vacías.
-- `compatibilidad.cjs`: ejemplo de contrato sobre fixtures; no llama a la API.
-- `evidencia.example.md`: plantilla para completar durante A–D y entregar sin credenciales.
-- `package.json` y `package-lock.json`: instalación reproducible de Newman.
+- `coleccion-inicio.json`: base v2.1 con tres bloques para completar en pantalla. Los marcadores TODO_ALUMNO son nombres técnicos conservados del recurso.
+- `entorno.example.json`: estructura sin credenciales; el docente prepara su copia privada.
+- `ejecutar.cjs`: runner Newman con resumen depurado; rechaza los marcadores pendientes.
+- `compatibilidad.cjs`: ejemplo de contrato con fixtures.
+- `evidencia.example.md`: apoyo opcional para registrar observaciones; no se entrega.
+- [carga/](carga/README.md): escenario y guía Artillery.
 
-Desde este directorio: `npm ci`, luego `npm run pruebas` con los archivos privados y las aserciones preparados. La guía explica cada paso y cómo interpretar los resultados. Exportá siempre la colección en formato v2.1 para Newman.
-
-- [carga/](carga/README.md): demo Artillery, proyecto separado y escenario con umbrales. Instalación docente previa; no se requiere para ejecutar Newman.
+Preparación docente: `npm ci`; ejecución sobre la copia exportada: `npm run pruebas -- coleccion-demo.json`. La resolución de respaldo permanece fuera del repositorio público. Los alumnos pueden repetir el recorrido opcionalmente, sin requisito de instalación para asistir a clase.

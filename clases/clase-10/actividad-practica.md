@@ -1,129 +1,95 @@
-# Actividad individual · Probar antes de entregar
+# Demo guiada · Probar antes de entregar el TPI
 
-**Fecha:** 02/11/2026. **Tiempo de práctica:** 45 minutos dentro de la clase de 120 minutos.
+**Fecha:** 02/11/2026. **Modalidad:** demostración durante la clase, sin entrega individual. El docente ejecuta; el curso anticipa resultados, observa y discute. No se solicita presentar colección, informe ni ZIP.
 
-Vas a probar una confirmación completa, su reintento y sus efectos. Entregá una colección que otra persona pueda ejecutar, un reporte y una explicación del alcance. No alcanza con capturas de respuestas HTTP.
+La clase dura 120 minutos. El recorrido central ocupa 45 minutos y la demo Artillery otros 15; preparación e instalación se realizan antes de clase por el docente. Los recursos quedan para consulta y repetición opcional.
 
-## Preparación antes de clase
+## Preparación docente previa
 
-1. Instalá Node.js 20+ y Postman. Verificá `node --version` y `docker compose version`.
-2. Retomá el laboratorio integrado de Clase 07, no el laboratorio Cloud de Clase 09. Desde la raíz del repositorio de actividades:
+Usar el laboratorio integrado de Clase 07: API `http://localhost:3008`, MongoDB, RabbitMQ y worker activos. No usar la API simplificada de Cloud. Preparar token Auth0 real con audience `https://iaew-pedidos-api` y scopes `read:pedidos write:pedidos confirm:pedidos`; API key para alta de productos. No mostrar ni publicar credenciales.
 
-```bash
-cd clases/clase-07/recursos/laboratorio
-```
-
-Seguí su README para configurar Auth0 y levantar API, MongoDB, RabbitMQ y worker. La API se publica en `http://localhost:3008`; el sistema de observabilidad conserva su configuración anterior. No hace falta modificarlo. Verificá `docker compose ps` y `curl http://localhost:3008/health`. El JSON debe contener `status: "ok"`; esto todavía no acredita el flujo de negocio.
-
-3. Obtené un access token real con el flujo `client_credentials` ya trabajado. Audience: `https://iaew-pedidos-api`. Scopes: `read:pedidos write:pedidos confirm:pedidos`. Usá las instrucciones Auth0 de las clases anteriores y tu cliente autorizado. No pegues el client secret en la colección. La API key es el valor configurado como `INTERNAL_API_KEY` del laboratorio: solo se usa para crear productos.
-4. Descargá o copiá la carpeta `recursos` de esta clase. Desde esa carpeta ejecutá:
+Desde `recursos`, preparar dependencias y copias locales:
 
 ```bash
 npm ci
 cp entorno.example.json entorno.local.json
-cp coleccion-inicio.json coleccion-alumno.json
+cp coleccion-inicio.json coleccion-demo.json
 ```
 
-`npm ci` instala exactamente las dependencias del lockfile. Las copias son los archivos que vas a editar; conservá los originales. En `entorno.local.json`, completá `accessToken` y `apiKey` sin imprimirlos en terminal; mantené `baseUrl=http://localhost:3008`. Estos archivos privados están excluidos de Git.
+Completar el entorno privado, importar las copias en Postman y seleccionar el entorno. El docente conserva su resolución de respaldo fuera del repositorio público. La base tiene tres bloques pendientes para desarrollar en pantalla. Node.js 20+ para Newman; Node.js 22.13+ y dependencias separadas para Artillery.
 
-Copiá también `evidencia.example.md` como `evidencia.md` y completala durante A–D; reservá E para revisar y empaquetar los resultados.
+## A · Plantear precondiciones y expectativas (5 min)
 
-## A · Reconstruí el escenario (5 min)
+Mostrar cómo se genera un runId y se capturan productoId, pedidoId y eventId. Producto con stock 10, pedido de una unidad. Preguntar qué resultados espera el curso antes de ejecutar.
 
-Importá `coleccion-alumno.json` y `entorno.local.json` en Postman; seleccioná ese entorno. En el Collection Runner ejecutá la colección completa en orden y elegí 500 ms de demora. Debe fallar en los tres bloques pendientes: eso es intencional en la base inicial. El runner de terminal rechaza esos marcadores antes de enviar tráfico.
+| Caso | Resultado que vamos a observar |
+|---|---|
+| Health | 200, acredita disponibilidad |
+| Crear producto y pedido | 201, IDs nuevos y pedido pendiente |
+| Confirmar | 200, confirmado, replayed false |
+| Repetir misma clave | 200, replayed true y mismo evento |
+| Otra clave en pedido confirmado | 409, IDEMPOTENCY_KEY_MISMATCH |
+| Token inválido | 401, TOKEN_INVALID |
+| Leer producto | Stock 9 y tipos correctos |
+| Pedido sin items | 400, ORDER_ITEMS_REQUIRED |
+| Consultar efecto del worker | notificacionEstado procesada, con límite de consultas |
 
-| Paso | Petición | Resultado esperado |
-|---|---|---|
-| 01 | GET /health | 200 y status ok |
-| 02 | POST /productos con x-api-key | 201, producto nuevo con stock 10 |
-| 03 | POST /pedidos con Bearer | 201, pendiente y total 100 |
-| 04 | POST /pedidos/:id/confirmar | 200, confirmado, replayed false |
-| 05 | Mismo pedido y misma Idempotency-Key | 200, replayed true, mismo eventId |
-| 06 | Mismo pedido y otra clave | 409, IDEMPOTENCY_KEY_MISMATCH |
-| 07 | GET /pedidos con token malformado | 401, TOKEN_INVALID |
-| 08 | GET /productos | Producto con stock 9 y tipos correctos |
-| 09 | POST /pedidos con items vacío | 400, ORDER_ITEMS_REQUIRED |
-| 10 | GET /pedidos, hasta 10 consultas | notificacionEstado procesada |
+## B · Construir las aserciones en pantalla (15 min)
 
-No edites IDs a mano. El paso 01 crea un `runId` nuevo y los pasos 02–04 guardan IDs obtenidos de respuestas. La colección crea datos nuevos en cada corrida; no toca pedidos de otros alumnos.
+En Scripts → Post-response, el docente reemplaza los tres bloques `TODO_ALUMNO_...` de la base: son identificadores técnicos del recurso, no una tarea individual.
 
-## B · Completá tres grupos de aserciones (15 min)
+- Replay: comparar replayed, eventId y header Idempotency-Replayed.
+- Conflicto: comprobar código de aplicación y retryable false, además del 409.
+- Contrato y stock: localizar el producto propio, comprobar existencia, tipos y stock 9.
 
-Editá **Scripts → Post-response** en estas peticiones, reemplazando el bloque que contiene `TODO_ALUMNO_...`. Usá el ejemplo explicado en la presentación:
+Explicar `.to.eql`, `.to.be.a`, variables y lectura de headers usando el ejemplo de la presentación. Pedir al curso que justifique cada expectativa. Conservar setup, captura de datos y polling. Exportar como v2.1 a `coleccion-demo.json`; no exportar credenciales.
 
-```javascript
-pm.test("Contrato del campo", () => {
-  pm.expect(pm.response.json().campo).to.be.a("number");
-});
-```
-
-1. **05 Repetir misma clave:** comprobar `idempotencia.replayed === true`; `evento.eventId` igual al guardado en `pm.collectionVariables.get("eventId")`; header `Idempotency-Replayed` igual a la cadena `"true"`.
-2. **06 Otra clave mismo pedido:** comprobar `code === "IDEMPOTENCY_KEY_MISMATCH"` y `retryable === false`. Ya existe una aserción HTTP 409: conservala.
-3. **08 Contrato y stock:** buscar el producto de esta corrida por `_id` en el array; comprobar que existe, `nombre` es string, `precio` es number y `stock === 9`. Buscar un objeto puede hacerse con `pm.response.json().find(x => x._id === pm.collectionVariables.get("productoId"))`.
-
-Conservá las aserciones existentes, la captura de variables y el polling del worker. Eliminá los tres marcadores TODO y exportá la colección editada como **v2.1**, reemplazando `coleccion-alumno.json`. No exportes el entorno con credenciales.
-
-## C · Ejecutá y provocá un fallo controlado (10 min)
-
-Desde `recursos`:
+## C · Ejecutar, provocar un fallo y restaurar (10 min)
 
 ```bash
-npm run pruebas
+npm run pruebas -- coleccion-demo.json
 ```
 
-El runner ejecuta todas las peticiones con 500 ms de demora y produce `evidencias/resumen.json`. Código de salida 0 significa que no hubo fallos en ese escenario. Repetí la corrida: debe crear datos distintos y volver a pasar.
+Mostrar dos corridas con datos nuevos. El runner guarda `evidencias/resumen.json`, sin cuerpos, headers ni credenciales. Salida 0: sin fallos del escenario; salida 1: error o aserción incumplida.
 
-Si editás desde Postman, después de cada modificación y de la restauración exportá otra vez en formato v2.1, reemplazando `coleccion-alumno.json`: Newman lee ese archivo, no la colección abierta. También podés editar directamente ese JSON con un editor.
+Cambiar solo stock esperado 9→8, volver a exportar v2.1 y ejecutar. Identificar el fallo y guardar su reporte con otro nombre. Restaurar 9, exportar y volver a ejecutar. Este cambio prueba sensibilidad de la aserción; no es una regresión del backend. Preguntar qué pasaría si se edita Postman pero no se vuelve a exportar.
 
-Ahora cambiá **solo en la aserción de stock** el valor esperado de 9 a 8, guardá y ejecutá otra vez. Debe fallar esa aserción y el proceso debe terminar con código 1. En zsh/bash podés consultar `echo $?` inmediatamente después. Guardá ese reporte con otro nombre antes de restaurar el 9 y ejecutar la corrida final. No alteres el stock real ni la implementación.
-
-Esta mutación comprueba que tu prueba detecta una diferencia; no es evidencia de una regresión real de la API. Si el proceso termina 0 con el valor incorrecto, revisá que exportaste la colección editada y no eliminaste la aserción.
-
-## D · Evaluá una evolución de contrato (10 min)
+## D · Interpretar compatibilidad (10 min)
 
 ```bash
 node compatibilidad.cjs
 ```
 
-Este archivo no envía HTTP: prueba fixtures que representan respuestas. Leé el código. Agregar `moneda` permite conservar el consumidor que tolera campos adicionales; cambiar `total` a string viola su expectativa numérica. El ejemplo termina 0 cuando detecta correctamente esa ruptura.
+Leer el ejemplo: campo adicional aceptado por este consumidor; cambio de total numérico a string detectado. Es un fixture, no una petición real. Discutir un cambio compatible, una ruptura y una estrategia de migración en un dominio del TPI, sin exigir producción escrita individual.
 
-En `evidencia.md`, proponé un cambio compatible para tu TPI, uno incompatible y una estrategia para migrar consumidores si el segundo fuera necesario. No hace falta implementar una nueva versión de API hoy.
+## E · Revisar la evidencia (5 min)
 
-## E · Entregá (5 min)
+El docente muestra reporte final, fallo deliberado y matriz observada. El curso explica qué se probó y qué queda fuera: concurrencia de confirmaciones, atomicidad multi-documento, outbox, AWS y configuración real de Auth0 si no se usó. La plantilla de evidencia es solo un apoyo opcional; no se entrega.
 
-Entregá un ZIP con:
+## Demo Artillery · ¿Cumplimos el tiempo objetivo? (15 min)
 
-- `coleccion-alumno.json`, sin TODO ni credenciales incrustadas.
-- Reporte final `resumen.json` y reporte del fallo deliberado con otro nombre.
-- `evidencia.md`: versión/commit de la API usada, entorno probado, matriz de resultados, fallo deliberado y restauración, decisión de compatibilidad y límites.
+Seguir [el escenario y la guía](recursos/carga/README.md). El docente ejecuta desde `recursos/carga`:
 
-No incluyas `entorno.local.json`, tokens, API keys, client secrets ni `node_modules`. La colección usa variables; quien la repita debe configurar sus propias credenciales.
+```bash
+npm run carga
+```
 
-## Si algo falla
+Objetivo didáctico previo: `http.total.p95 < 300 ms` y todas las respuestas 200. Son 40 s de generación: base a 1 llegada/s, rampa 1→5 y sostenida a 5. Cada llegada realiza GET /productos. Llegadas/s no equivale a usuarios concurrentes. El tiempo total no es TTFB ni renderizado de interfaz.
 
-| Síntoma | Qué comprobar |
-|---|---|
-| ECONNREFUSED | Docker, API activa y puerto 3008; no usar el 8080 de Cloud |
-| 401 en pasos con token válido | Vigencia, issuer, audience y Bearer; renovar el token |
-| 403 | Scopes asignados al cliente y presentes en el token |
-| 401 al crear producto | x-api-key y configuración INTERNAL_API_KEY |
-| 409 inesperado | Orden de ejecución, runId y uso de la misma clave para el replay |
-| 503 al confirmar | La operación puede haber confirmado sin publicar; revisar logs y estado antes de reintentar |
-| Worker no llega a procesada | Worker, broker, cola y logs; el límite del polling evita esperar para siempre |
-| Runner rechaza TODO | Exportar los scripts completos y eliminar sus marcadores |
+Leer objetivo, carga, p95, códigos y dictamen con el curso. Si pasa, cumple en esta corrida y entorno; si falla, conservar el reporte e investigar. El resultado agregado no garantiza cada fase por separado ni capacidad máxima.
 
-Si tu entorno no funciona, trabajá las aserciones con el docente y registrá la ejecución pendiente. Leer o usar un fixture no acredita que tu sistema funcionó.
+## Si falla el entorno durante la demo
 
-## Demo compartida · Carga y tiempos de respuesta (15 min, después de A–E)
+- Sin conexión: comprobar Docker, API y puerto 3008.
+- 401: comprobar token vigente/issuer/audience o API key según la ruta.
+- 403: comprobar scopes.
+- 503 al confirmar: revisar estado y logs antes de reintentar; puede haber confirmación persistida sin publicación.
+- Worker sin efecto: revisar worker/broker/cola; el polling termina con fallo en vez de esperar indefinidamente.
 
-Observá la ejecución docente y anotá objetivo, carga, p95, códigos y dictamen. Usamos [Artillery, escenario y guía](recursos/carga/README.md) sobre `GET /productos`. Objetivo didáctico previo: **p95 < 300 ms y todas las respuestas 200**. No es un umbral universal.
+Usar la evidencia docente previamente comprobada como respaldo, nombrándola como tal. Un fixture o una captura anterior no demuestra que el entorno actual funcionó.
 
-El docente prepara Node.js 22.13+ y las dependencias antes de clase. Desde `recursos/carga`, ejecuta `npm run carga`. Son 40 segundos de generación: base a 1 llegada/s, rampa 1→5 y sostenida a 5. Llegadas/s no equivale a usuarios simultáneos. La repetición local por alumnos es opcional; no agrega otra entrega ni requiere instalar Artillery dentro de los 45 minutos individuales.
+## Relación con el TPI y cierre
 
-Si pasa, cumple el objetivo en esa corrida. Si falla, registrar y diagnosticar; no aumentar el umbral para presentar éxito. El reporte agregado no acredita cada fase por separado. Artillery se muestra como herramienta; la consigna TPI no cambia automáticamente.
+La actividad del día es una demo y no se presenta. El TPI mantiene sus entregables grupales y fecha 16/11; su consigna menciona carga con JMeter o Postman. Mostrar Artillery no modifica automáticamente esa consigna. El 09/11 no se asigna actividad.
 
-## Vínculo con el TPI
-
-Cada grupo adapta esta técnica a su dominio y agrega evidencia ejecutable al README para la Entrega 2 del 16/11. La prueba de carga con reporte ya exigida por la consigna se diseña con JMeter o Postman; las iteraciones secuenciales de Newman no la sustituyen. Como extensión opcional, probar 403 con un token válido sin scope o investigar carreras concurrentes; no cambiar permisos ni realizar carga sobre sistemas ajenos.
-
-Al terminar, conservá los datos solo si los necesitás como evidencia. En el laboratorio descartable de Clase 07 podés ejecutar `docker compose down` para detener sus servicios; `docker compose down -v` también borra sus volúmenes y solo corresponde si querés eliminar esos datos.
+Al terminar, el docente detiene el entorno descartable con `docker compose down`. `down -v` borra los volúmenes: usarlo solo después de conservar la evidencia necesaria.

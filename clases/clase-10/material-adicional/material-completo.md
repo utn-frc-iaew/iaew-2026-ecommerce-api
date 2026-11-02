@@ -45,7 +45,7 @@ pm.test("Respuesta JSON", () => pm.expect(tipo).to.include("application/json"));
 
 `.to.eql(valor)` compara igualdad; `.to.be.a("number")` verifica tipo; `.to.include(texto)` comprueba contenido. `pm.collectionVariables.set("nombre", valor)` conserva un dato para otra petición y `get("nombre")` lo recupera. Las respuestas reales completas están en la ejecución; los extractos de las diapositivas son ilustrativos y no resultados medidos.
 
-Si editás en Postman, exportá otra vez la colección v2.1 después de cada modificación o restauración. Newman ejecuta el JSON en disco. Completar la plantilla `recursos/evidencia.example.md` durante la práctica permite reservar los últimos cinco minutos para revisar y empaquetar.
+Si editás en Postman, exportá otra vez la colección v2.1 después de cada modificación o restauración. Newman ejecuta el JSON en disco. La plantilla `recursos/evidencia.example.md` sirve de apoyo opcional para registrar lo observado; no se solicita entregarla.
 
 ## 5. Compatibilidad y versionado
 
@@ -75,7 +75,7 @@ Un 503 de publicación es especialmente relevante: el backend didáctico puede h
 
 El alta de productos usa `x-api-key`, tomada de `INTERNAL_API_KEY`. Los pedidos usan Bearer con token de Auth0 y audience `https://iaew-pedidos-api`. Consultar requiere `read:pedidos`, crear `write:pedidos` y confirmar `confirm:pedidos`.
 
-Un token malformado produce 401: falla la autenticación. Un token válido sin permiso puede producir 403: la identidad se reconoce, pero no está autorizada. La actividad comprueba 401 con una petición específica; probar 403 necesita otro token autorizado con un conjunto menor de scopes y queda opcional. Las credenciales no se incluyen en el ZIP ni en Git.
+Un token malformado produce 401: falla la autenticación. Un token válido sin permiso puede producir 403: la identidad se reconoce, pero no está autorizada. La actividad comprueba 401 con una petición específica; probar 403 necesita otro token autorizado con un conjunto menor de scopes y queda opcional. Las credenciales no se incluyen en materiales públicos ni en Git.
 
 ## 8. Asincronía y observación acotada
 
@@ -123,7 +123,7 @@ La demo usa Artillery, pero el texto vigente del TPI sigue mencionando JMeter o 
 
 Un agente que consume la API debe respetar el mismo contrato: permisos, clave estable, errores y consulta de estado ante incertidumbre. La IA puede ayudar a redactar pruebas, pero el equipo debe justificar precondiciones y oráculos. Una prueba débil generada automáticamente produce una falsa sensación de cobertura.
 
-Para el 16/11 el equipo adapta las pruebas a su dominio y explica en el README cómo ejecutarlas, qué versión se usó, qué demuestran y qué queda pendiente. La actividad de clase es individual; no reemplaza todos los requisitos del TPI ni asigna actividad para el 09/11.
+Para el 16/11 el equipo adapta las pruebas a su dominio y explica en el README cómo ejecutarlas, qué versión se usó, qué demuestran y qué queda pendiente. La actividad de clase es una demo guiada sin entrega individual; no reemplaza todos los requisitos del TPI ni asigna actividad para el 09/11.
 
 ## Fuentes técnicas
 
@@ -134,3 +134,5 @@ Para el 16/11 el equipo adapta las pruebas a su dominio y explica en el README c
 Fuentes de la demo: [Artillery: fases](https://www.artillery.io/docs/reference/test-script), [umbrales ensure](https://www.artillery.io/docs/reference/extensions/ensure), [run y reporte](https://www.artillery.io/docs/reference/cli/run).
 
 **Métrica elegida:** `http.total.p95`, habilitada con `http.extendedMetrics: true`, mide hasta recibir la respuesta completa en el generador. `http.response_time.p95` mide TTFB (primer byte) y no se usa para este umbral. Ninguna de las dos mide el renderizado de una pantalla en el navegador.
+
+Modalidad vigente: demostración docente con discusión del curso, sin presentación de actividad individual. Los requisitos grupales del TPI no cambian.
