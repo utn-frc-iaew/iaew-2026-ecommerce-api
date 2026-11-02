@@ -1,0 +1,16 @@
+{
+  "name": "iaew-clase10-carga",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "carga": "artillery run --output reporte-carga.json carga.yaml"
+  },
+  "dependencies": {
+    "@smithy/config-resolver": "4.7.2",
+    "@smithy/node-config-provider": "4.6.2",
+    "artillery": "2.0.27"
+  }
+}

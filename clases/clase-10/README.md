@@ -4,7 +4,7 @@ Lunes **2 de noviembre de 2026** · 120 minutos · actividad individual.
 
 Una URL saludable no demuestra que una confirmación respete permisos, stock e idempotencia. Hoy retomamos el circuito integrado de Clase 07 para construir evidencia ejecutable. La API simplificada de Cloud de Clase 09 no contiene esas reglas.
 
-1. [Presentación HTML](presentacion/index.html): 25 diapositivas, flechas para navegar, `P` para notas del orador.
+1. [Presentación HTML](presentacion/index.html): 28 diapositivas, flechas para navegar, `P` para notas del orador.
 2. [Material para estudiar](material-adicional/material-completo.md).
 3. [Actividad única paso a paso](actividad-practica.md).
 4. [Recursos: colección inicial, entorno y runner](recursos/README.md).
@@ -22,3 +22,7 @@ Colección resuelta, reporte sin secretos y `evidencia.md`. La prueba de carga d
 ## Alcance verificado
 
 Colección resuelta comprobada localmente con API, MongoDB, RabbitMQ, worker y emisor JWT de prueba. Auth0 real y AWS no fueron verificados en este ensayo.
+
+## Demo de rendimiento
+
+[Artillery: escenario y ejecución](recursos/carga/README.md), demo docente de 15 minutos. Objetivo previo: p95 < 300 ms y todas las respuestas 200. Preparar Node.js 22.13+ y dependencias antes de clase. No cambia la consigna TPI ni agrega otra entrega individual.

@@ -1,0 +1,28 @@
+# Objetivo didáctico acordado ANTES de medir; no es un SLA del TPI.
+config:
+  target: "http://localhost:3008"
+  phases:
+    - name: "Línea base"
+      duration: 10
+      arrivalRate: 1
+    - name: "Rampa"
+      duration: 20
+      arrivalRate: 1
+      rampTo: 5
+    - name: "Sostenida"
+      duration: 10
+      arrivalRate: 5
+  plugins:
+    ensure:
+      thresholds:
+        - http.total.p95: 300
+      conditions:
+        - expression: "http.codes.200 == http.requests"
+  http:
+    timeout: 5
+    extendedMetrics: true
+scenarios:
+  - name: "Consultar productos"
+    flow:
+      - get:
+          url: "/productos"

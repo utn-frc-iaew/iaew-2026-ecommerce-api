@@ -6,6 +6,9 @@ Seguí [la actividad](../actividad-practica.md): este directorio no contiene una
 - `entorno.example.json`: estructura sin credenciales; copiar a `entorno.local.json`.
 - `ejecutar.cjs`: ejecuta la colección del alumno y escribe un resumen sin cuerpos, headers ni credenciales. Rechaza TODO pendientes y variables vacías.
 - `compatibilidad.cjs`: ejemplo de contrato sobre fixtures; no llama a la API.
+- `evidencia.example.md`: plantilla para completar durante A–D y entregar sin credenciales.
 - `package.json` y `package-lock.json`: instalación reproducible de Newman.
 
 Desde este directorio: `npm ci`, luego `npm run pruebas` con los archivos privados y las aserciones preparados. La guía explica cada paso y cómo interpretar los resultados. Exportá siempre la colección en formato v2.1 para Newman.
+
+- [carga/](carga/README.md): demo Artillery, proyecto separado y escenario con umbrales. Instalación docente previa; no se requiere para ejecutar Newman.
