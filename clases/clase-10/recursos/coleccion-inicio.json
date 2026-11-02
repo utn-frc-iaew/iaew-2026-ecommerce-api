@@ -1,0 +1,356 @@
+{
+  "info": {
+    "name": "IAEW C10 · Pruebas de integración",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecutar colección completa en orden. Base común: laboratorio Clase 07. Tres TODO para resolver en la versión inicial."
+  },
+  "item": [
+    {
+      "name": "01 Disponibilidad",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/health"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"runId\", pm.variables.replaceIn(\"{{$guid}}\"));",
+              "pm.collectionVariables.set(\"poll\", 0);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Servicio disponible\", () => pm.expect(pm.response.json().status).to.eql(\"ok\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Crear producto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nombre\": \"Producto C10 {{runId}}\", \"categoria\": \"pruebas\", \"precio\": 100, \"stock\": 10}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "const b=pm.response.json();",
+              "pm.test(\"Producto identificado\", () => pm.expect(b._id).to.be.a(\"string\"));",
+              "pm.collectionVariables.set(\"productoId\", b._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Crear pedido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"cliente\": {\"nombre\": \"Alumno C10\", \"email\": \"pruebas@example.com\"}, \"items\": [{\"productoId\": \"{{productoId}}\", \"cantidad\": 1}]}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "const b=pm.response.json();",
+              "pm.test(\"Pedido pendiente y total numérico\", () => { pm.expect(b.estado).to.eql(\"pendiente\"); pm.expect(b.total).to.eql(100); });",
+              "pm.collectionVariables.set(\"pedidoId\", b._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Confirmar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c10-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos/{{pedidoId}}/confirmar",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const b=pm.response.json();",
+              "pm.test(\"Confirmación y primer intento\", () => { pm.expect(b.pedido.estado).to.eql(\"confirmado\"); pm.expect(b.idempotencia.replayed).to.eql(false); });",
+              "pm.collectionVariables.set(\"eventId\", b.evento.eventId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Repetir misma clave",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c10-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos/{{pedidoId}}/confirmar",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const b=pm.response.json();",
+              "// TODO_ALUMNO_REPLAY",
+              "pm.test(\"Completar REPLAY\", () => { throw new Error(\"Aserciones pendientes\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Otra clave mismo pedido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "otra-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos/{{pedidoId}}/confirmar",
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+              "// TODO_ALUMNO_CONFLICTO",
+              "pm.test(\"Completar CONFLICTO\", () => { throw new Error(\"Aserciones pendientes\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Token inválido",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer no-es-un-jwt"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "pm.test(\"Fallo de autenticación\", () => pm.expect(pm.response.json().code).to.eql(\"TOKEN_INVALID\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Contrato y stock",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/productos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const b=pm.response.json();",
+              "const producto=b.find(x => x._id===pm.collectionVariables.get(\"productoId\"));",
+              "// TODO_ALUMNO_CONTRATO",
+              "pm.test(\"Completar CONTRATO\", () => { throw new Error(\"Aserciones pendientes\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Pedido inválido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"items\": []}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Error de entrada\", () => pm.expect(pm.response.json().code).to.eql(\"ORDER_ITEMS_REQUIRED\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Esperar worker",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}"
+          }
+        ],
+        "url": "{{baseUrl}}/pedidos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const pedido=pm.response.json().find(x => x._id===pm.collectionVariables.get(\"pedidoId\"));",
+              "const n=Number(pm.collectionVariables.get(\"poll\"))+1;",
+              "pm.collectionVariables.set(\"poll\", n);",
+              "if (pedido?.notificacionEstado!==\"procesada\" && n<10) {",
+              "  pm.execution.setNextRequest(\"10 Esperar worker\");",
+              "} else {",
+              "  pm.test(\"Worker procesó el pedido antes del límite\", () => pm.expect(pedido?.notificacionEstado).to.eql(\"procesada\"));",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

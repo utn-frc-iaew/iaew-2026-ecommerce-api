@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Clase 10 de IAEW 2026: Testing de integración y contratos.">
+<title>Clase 10 · Testing de integración y contratos · IAEW 2026</title>
+<style>
+:root{color-scheme:dark;--navy:#081826;--panel:#0e293c;--cyan:#007f99;--paper:#f5f8fa}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--navy);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#122b3d}
+.deck{height:100%;display:grid;place-items:center;padding:16px}
+.slide{display:none;position:relative;width:min(100%,calc((100vh - 70px)*16/9));aspect-ratio:16/9;background:var(--paper);border-radius:14px;padding:4.2% 6.4% 5%;overflow:hidden}
+.slide.active{display:flex;flex-direction:column;justify-content:center}
+.slide:before{content:"";position:absolute;inset:0 auto 0 0;width:12px;background:var(--cyan)}
+.slide.dark{background:var(--panel);color:#f8fbfd}.slide.dark:before{background:#35b779}
+.kicker{margin:0 0 .7rem;color:var(--cyan);font-size:clamp(12px,1.3vw,17px);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.dark .kicker{color:#67d7e7}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(34px,5.2vw,68px);line-height:1.03;margin-bottom:1rem}h2{font-size:clamp(28px,3.8vw,50px);line-height:1.06;margin-bottom:1.1rem}h3{font-size:clamp(16px,1.7vw,22px);margin-bottom:.4rem}
+p,li,td,th{font-size:clamp(14px,1.5vw,20px);line-height:1.4}.subtitle{font-size:clamp(20px,2.3vw,30px);max-width:980px;color:#d9eef8}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+article{padding:15px 18px;background:#e6eef3;border:1px solid #cfdee7;border-radius:12px;min-width:0}.dark .call{color:#122b3d}.dark .flow b{color:#122b3d}a{color:#00687f}.dark a{color:#67d7e7}.dark article{background:#16374b;border-color:#375467}article p{margin-bottom:0}
+.flow{display:flex;align-items:stretch;gap:9px;margin:10px 0 16px}.flow b{flex:1;display:grid;place-items:center;background:#dfebf1;border:1px solid #bed2dc;padding:14px 8px;border-radius:10px;text-align:center;font-size:clamp(13px,1.45vw,19px)}.flow i{align-self:center;font-style:normal;color:var(--cyan);font-weight:800}
+.call{margin-top:14px;padding:12px 16px;background:#daf0e9;border-left:5px solid #28a978;border-radius:0 8px 8px 0;font-size:clamp(14px,1.4vw,19px)}.warn{background:#fff1d6;border-left-color:#cc9b3b}
+.cloud-boundary{border:2px solid #007f99;border-radius:12px;padding:14px 18px;background:#edf5f8}.cloud-boundary>h3{color:#00687f}.tag{display:inline-block;margin-top:18px;padding:6px 14px;border:1px solid #67d7e7;border-radius:99px;color:#67d7e7;font-weight:700;font-size:14px}
+table{width:100%;border-collapse:collapse;margin-bottom:8px}th{text-align:left;background:#d9e8ef}th,td{padding:7px 11px;border-bottom:1px solid #c9d8e2;font-size:clamp(13px,1.3vw,18px)}
+code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{background:#dbe8ee;padding:1px 5px;border-radius:4px;font-size:.92em}
+pre{margin:0 0 8px;padding:12px 16px;background:#0b2234;color:#e7f4fb;border-radius:10px;font-size:clamp(12px,1.25vw,17px);line-height:1.4;overflow:hidden}
+ul{margin:0;padding-left:1.2em}
+.footer{position:absolute;left:6.4%;right:6.4%;bottom:16px;display:flex;gap:12px;font-size:12px;color:#627484}.dark .footer{color:#abc5d7}.footer .slide-no{margin-left:auto}
+.nav{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;color:#cfe3ee;font-size:13px}
+button{border:1px solid #446076;background:#143247;color:#fff;border-radius:6px;padding:6px 11px;cursor:pointer}button:hover{background:#20506b}button:focus-visible{outline:3px solid #67d7e7;outline-offset:2px}
+.progress{position:fixed;top:0;left:0;height:4px;background:#35b779;transition:width .2s}
+@media print{@page{size:1280px 720px;margin:0}html,body{height:auto}.deck{display:block;padding:0}.slide,.slide.active{display:flex;position:relative;width:1280px;height:720px;break-after:page;border-radius:0}.nav,.progress{display:none}}
+
+.deck{padding:2.2rem;overflow:hidden}.slide{width:1280px;height:720px;flex-shrink:0;aspect-ratio:auto;padding:4.4rem 5rem 4rem;transform:scale(var(--scale,1))}
+h1{font-size:64px}h2{font-size:50px}h3{font-size:23px}p,li{font-size:22px}td,th{font-size:20px}pre{font-size:20px}.kicker{font-size:18px}.call{font-size:21px}.subtitle{font-size:32px}.flow b{font-size:21px}.footer{bottom:20px}
+@media print{.slide{transform:none}}
+</style>
+</head>
+<body>
+<main class="deck" id="deck" aria-label="Presentación Clase 10"></main>
+<div class="progress" id="progress"></div>
+<nav class="nav" aria-label="Controles de presentación">
+<button id="prev" aria-label="Diapositiva anterior">←</button><span id="counter" aria-live="polite"></span>
+<button id="next" aria-label="Diapositiva siguiente">→</button><button id="presenter">Vista del orador</button><button id="fullscreen">Pantalla completa</button>
+</nav>
+<script>
+const slides=[
+  {
+    "block": "0–10 min · continuidad y problema",
+    "title": "La URL responde.<br>¿El negocio funciona?",
+    "body": "<p class=\"subtitle\">Testing de integración, contratos y compatibilidad</p><div class=\"tag\">Integración de Aplicaciones en Entorno Web · Clase 10 · 02/11/2026</div>",
+    "notes": "El título separa dos preguntas. La clase pasada trabajamos sobre una URL accesible y una infraestructura reproducible. Hoy necesitamos demostrar que una operación respeta el contrato y deja los efectos esperados. Una pantalla verde de infraestructura no responde esa segunda pregunta.",
+    "theme": "dark"
+  },
+  {
+    "block": "0–10 min · continuidad y problema",
+    "title": "Qué evidencia recuperamos",
+    "body": "<div class=\"grid\"><article><h3>Clase 10: Cloud</h3><p>Compose → imagen → ECR → ECS/Fargate → ALB.</p></article><article><h3>Pregunta al curso</h3><p>¿Qué comprobaste realmente: health, respuesta HTTP, persistencia o escalado?</p></article></div><div class=\"call\">Recuperamos resultados observados. Un ensayo previsto no equivale a un despliegue ejecutado.</div>",
+    "notes": "La tarjeta izquierda reconstruye la secuencia de Cloud. La derecha pide evidencia concreta a los estudiantes. Si alguien no terminó AWS, usamos su respuesta local y registramos ese alcance. Un destino healthy solo muestra que pasó un chequeo de salud; no demuestra confirmación, permisos ni entrega del evento.",
+    "theme": ""
+  },
+  {
+    "block": "0–10 min · continuidad y problema",
+    "title": "Un pedido se confirma dos veces",
+    "body": "<div class=\"grid\"><article><h3>Situación</h3><p>El cliente recibe un timeout y reintenta. La API sigue saludable.</p></article><article><h3>Riesgo</h3><p>Podemos descontar stock o generar una notificación dos veces.</p></article></div><div class=\"call\">¿Qué prueba mostraría que el reintento conserva el resultado de negocio?</div>",
+    "notes": "En la primera tarjeta el timeout produce incertidumbre: no sabemos si el servidor procesó el primer intento. La segunda muestra el daño posible. La respuesta esperada es reenviar la misma operación con la misma clave y observar respuesta, evento y stock. Esa hipótesis se convertirá en una prueba reproducible.",
+    "theme": ""
+  },
+  {
+    "block": "0–10 min · continuidad y problema",
+    "title": "Volvemos al circuito integrado",
+    "body": "<div class=\"flow\"><b>Postman / Newman</b><i>→</i><b>API</b><i>→</i><b>MongoDB</b></div><div class=\"flow\"><b>API confirma</b><i>→</i><b>RabbitMQ</b><i>→</i><b>Worker</b><i>→</i><b>MongoDB</b></div><div class=\"call\">Usamos el laboratorio de Clase 07. La API simplificada de Cloud no incluye Auth0 ni este flujo.</div>",
+    "notes": "Las dos filas muestran HTTP y el efecto diferido. Newman envía las mismas peticiones de una colección Postman desde la terminal. El broker transporta el evento y el worker actualiza la notificación. Retomamos un recurso conocido porque contiene las reglas que queremos probar; no suponemos que la API de Cloud ya las tenía.",
+    "theme": ""
+  },
+  {
+    "block": "0–10 min · continuidad y problema",
+    "title": "Qué entregaremos hoy",
+    "body": "<div class=\"grid\"><article><h3>Artefacto individual</h3><p>Colección con aserciones, reporte sin secretos y explicación de una incompatibilidad.</p></article><article><h3>Resultado verificable</h3><p>Confirmación, replay, conflicto, token inválido, stock y worker.</p></article></div><div class=\"call\">120 min: apertura 10 · matriz 15 · contratos 15 · demo 15 · práctica 45 · carga 10 · cierre 10.</div>",
+    "notes": "Las tarjetas definen el producto y el criterio de éxito. Las credenciales y el entorno se preparan antes de clase; los 45 minutos son para probar y completar aserciones. El TPI sigue siendo grupal: cada estudiante aprende la técnica y luego el equipo adapta la evidencia.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · diseñar pruebas",
+    "title": "Una prueba necesita un oráculo",
+    "body": "<div class=\"grid\"><article><h3>Preparar → ejecutar</h3><p>Crear datos propios y enviar la operación bajo condiciones conocidas.</p></article><article><h3>Observar → comparar</h3><p>Comparar el resultado real con un resultado esperado explícito.</p></article></div><div class=\"call\">Un oráculo es el criterio que decide si la prueba pasó. “No dio error” es insuficiente.</div>",
+    "notes": "Las tarjetas separan preparación y evaluación. Un oráculo no es otra herramienta: es la regla verificable. Para confirmar un pedido, podemos exigir estado confirmado, código 200, evento identificado y un único descuento. Antes de escribir JavaScript necesitamos acordar esas expectativas.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · diseñar pruebas",
+    "title": "Cada nivel responde otra pregunta",
+    "body": "<table><tr><th>Prueba</th><th>Ejemplo</th><th>Límite</th></tr><tr><td>Unitaria</td><td>Calcular un total</td><td>No prueba DB o red</td></tr><tr><td>Integración</td><td>API ↔ MongoDB</td><td>No asegura el worker</td></tr><tr><td>Contrato</td><td>Tipos, códigos y estructura</td><td>No garantiza todo el negocio</td></tr><tr><td>Extremo a extremo</td><td>Confirmación → evento → worker</td><td>Solo escenarios ejecutados</td></tr></table>",
+    "notes": "Leamos cada fila por su pregunta. Una integración puede validar dos componentes reales; una prueba de extremo a extremo atraviesa un flujo completo definido. La misma colección incluye verificaciones de contrato y de integración. No prometemos cobertura total porque una corrida fue verde.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · diseñar pruebas",
+    "title": "La matriz antes del código",
+    "body": "<table><tr><th>Caso</th><th>Precondición</th><th>Resultado</th></tr><tr><td>Confirmar</td><td>Pendiente, stock, token</td><td>200 + confirmado</td></tr><tr><td>Repetir</td><td>Mismo pedido y clave</td><td>200 + replay</td></tr><tr><td>Conflicto</td><td>Otra clave, ya confirmado</td><td>409 + código estable</td></tr><tr><td>Token inválido</td><td>Bearer malformado</td><td>401</td></tr><tr><td>Efecto diferido</td><td>Evento publicado y worker activo</td><td>Notificación procesada</td></tr></table>",
+    "notes": "La columna central evita probar un conflicto sin haber confirmado antes. El código 409 por sí solo no explica qué ocurrió: verificaremos el código de aplicación. Un token inválido debe producir 401; la falta de scope sería otro caso, 403, que queda como extensión con un segundo token real.",
+    "theme": ""
+  },
+  {
+    "block": "10–25 min · diseñar pruebas",
+    "title": "Datos aislados y orden explícito",
+    "body": "<pre>runId = identificador único por corrida\nproductoId ← POST /productos\npedidoId   ← POST /pedidos\nclave      = &quot;c10-&quot; + runId\neventId    ← POST /pedidos/:id/confirmar</pre><div class=\"call\">Crear datos nuevos en cada corrida evita depender del estado dejado por otro alumno.</div>",
+    "notes": "Las flechas indican variables que se obtienen de respuestas reales. No copiamos IDs a mano. La clave pertenece a una operación y se conserva en sus reintentos. La colección es un escenario ordenado: ejecutar solo confirmar, sin preparar sus datos, no constituye el mismo ensayo.",
+    "theme": ""
+  },
+  {
+    "block": "25–40 min · contrato y compatibilidad",
+    "title": "El consumidor depende de más que la URL",
+    "body": "<div class=\"grid\"><article><h3>Contrato observable</h3><p>Método, ruta, permisos, cuerpo, tipos, códigos, errores y significado de los campos.</p></article><article><h3>Ejemplo</h3><p>total: 100 es un número; total: \"100\" cambia el tipo que recibe el consumidor.</p></article></div><div class=\"call\">OpenAPI describe el contrato. Las aserciones comprueban el comportamiento observado.</div>",
+    "notes": "En la izquierda enumeramos decisiones que el consumidor necesita conocer. En la derecha el valor parece igual para una persona, pero puede cambiar sumas y validaciones. Tener documentación no demuestra que la implementación la cumpla. Hoy escribimos verificaciones pequeñas sobre los campos consumidos.",
+    "theme": ""
+  },
+  {
+    "block": "25–40 min · contrato y compatibilidad",
+    "title": "Tres evoluciones, tres decisiones",
+    "body": "<table><tr><th>Cambio</th><th>Evaluación</th></tr><tr><td>Agregar moneda opcional</td><td>Usualmente compatible si el consumidor tolera campos extra</td></tr><tr><td>total: number → string</td><td>Rompe al consumidor que requiere un número</td></tr><tr><td>Eliminar estado o renombrarlo</td><td>Rompe al consumidor que lo utiliza</td></tr></table><div class=\"call\">Agregar un valor a un enum también puede romper consumidores exhaustivos.</div>",
+    "notes": "La compatibilidad depende del contrato y del consumidor. No afirmamos que todo campo nuevo sea seguro: un cliente que rechaza propiedades adicionales podría fallar. Un enum nuevo puede romper un switch exhaustivo. Justificamos la decisión con el consumidor que realmente tenemos.",
+    "theme": ""
+  },
+  {
+    "block": "25–40 min · contrato y compatibilidad",
+    "title": "Versionar implica mantener una transición",
+    "body": "<div class=\"grid\"><article><h3>Compatible</h3><p>Conservar campos y significado; añadir capacidad documentada y probada.</p></article><article><h3>Ruptura necesaria</h3><p>Nueva versión, período de convivencia, migración y retiro comunicado.</p></article></div><div class=\"call\">Cambiar /v1 por /v2 sin estrategia de migración no resuelve la compatibilidad.</div>",
+    "notes": "Las dos tarjetas muestran rutas posibles. Una versión identifica un contrato distinto; no corrige por sí misma a los clientes existentes. En este ejercicio no implementamos una API v2: detectamos una ruptura y escribimos qué transición haríamos. Así evitamos sumar desarrollo ajeno al objetivo de pruebas.",
+    "theme": ""
+  },
+  {
+    "block": "25–40 min · contrato y compatibilidad",
+    "title": "El contrato se vuelve una aserción",
+    "body": "<pre>pm.test(&quot;El total sigue siendo numérico&quot;, () =&gt; {\n  pm.expect(pm.response.json().total).to.be.a(&quot;number&quot;);\n});</pre><div class=\"call\">Una prueba útil debe fallar ante la regresión que dice detectar.</div>",
+    "notes": "El bloque registra una prueba con nombre y compara el tipo real. pm es la API del entorno de scripts de Postman. pm.test organiza el caso y pm.expect expresa la expectativa. Después ejecutaremos un ejemplo con fixtures que agrega un campo y cambia un tipo; el alcance de ese ejemplo es el contrato, no la red.",
+    "theme": ""
+  },
+  {
+    "block": "40–55 min · demo guiada",
+    "title": "Postman y Newman ejecutan la misma colección",
+    "body": "<div class=\"grid\"><article><h3>Postman</h3><p>Importar colección v2.1 y entorno. Editar Scripts → Post-response.</p></article><article><h3>Newman</h3><p>Ejecutar desde terminal con dependencias y producir un resultado repetible.</p></article></div><div class=\"call\">El token Bearer se obtiene antes. Newman no ejecuta el asistente OAuth de la interfaz.</div>",
+    "notes": "La interfaz facilita explorar y escribir las aserciones; el runner permite repetirlas. Mantenemos v2.1 por compatibilidad con Newman y con el calendario del curso. Las credenciales se guardan en un entorno local excluido de Git. No exportamos el entorno privado como parte de la entrega.",
+    "theme": ""
+  },
+  {
+    "block": "40–55 min · demo guiada",
+    "title": "Variables que no se mezclan",
+    "body": "<table><tr><th>Variable</th><th>Origen y uso</th></tr><tr><td>baseUrl</td><td>http://localhost:3008 · laboratorio Clase 07</td></tr><tr><td>accessToken</td><td>Auth0 · read/write/confirm:pedidos</td></tr><tr><td>apiKey</td><td>INTERNAL_API_KEY · alta de productos</td></tr><tr><td>productoId / pedidoId</td><td>Respuestas de esta corrida</td></tr></table><div class=\"call\">La API key de productos no reemplaza al access token de pedidos.</div>",
+    "notes": "Cada fila tiene una responsabilidad distinta. El token requiere los scopes read:pedidos, write:pedidos y confirm:pedidos, con audience https://iaew-pedidos-api. La tabla usa una abreviación visual de los scopes; la guía los da literales. Pedir al curso que identifique qué credencial viaja en cada petición.",
+    "theme": ""
+  },
+  {
+    "block": "40–55 min · demo guiada",
+    "title": "Reintentar no debe repetir el efecto",
+    "body": "<pre>POST /pedidos/:id/confirmar\nIdempotency-Key: c10-&lt;runId&gt;\n\nPrimer intento: 200, replayed=false\nMisma clave:    200, replayed=true, mismo eventId\nOtra clave:    409, IDEMPOTENCY_KEY_MISMATCH</pre><div class=\"call\">Comprobar también stock: 10 → 9 → 9. El estado HTTP solo no alcanza.</div>",
+    "notes": "El bloque presenta tres caminos sobre el mismo pedido. La clave no es un token de autenticación; identifica la operación. La aserción sobre el evento y la lectura de stock permiten detectar parte de los efectos duplicados. Esta prueba es secuencial y no acredita atomicidad frente a dos confirmaciones concurrentes.",
+    "theme": ""
+  },
+  {
+    "block": "40–55 min · demo guiada",
+    "title": "El worker termina después de la respuesta",
+    "body": "<pre>GET /pedidos\nBuscar pedidoId de esta corrida\n¿notificacionEstado === &quot;procesada&quot;?\n  sí → aserción exitosa\n  no → repetir, hasta 10 consultas</pre><div class=\"call\">La colección espera 500 ms entre requests. No usa una espera infinita ni exige efecto inmediato.</div>",
+    "notes": "El bloque describe polling: consultar hasta que una condición sea observable o se alcance un límite. Si el worker está detenido, la confirmación puede responder 200 y esta aserción debe fallar. Tener broker disponible no equivale a tener el efecto procesado. La ventana es didáctica, no un SLA de producción.",
+    "theme": ""
+  },
+  {
+    "block": "40–55 min · demo guiada",
+    "title": "Demo: ejecutar y leer el fallo",
+    "body": "<pre>cd recursos\nnpm ci\n# Completar entorno.local.json y coleccion-alumno.json\nnpm run pruebas\n# Código de salida 0: sin fallos en este escenario\n# Código de salida 1: revisar caso y precondiciones</pre><div class=\"call\">El runner escribe evidencias/resumen.json sin headers, cuerpos ni credenciales.</div>",
+    "notes": "Mostrar dónde se ve el nombre de cada aserción. Un error de conexión es un fallo de entorno; un 409 inesperado exige revisar datos y claves; una aserción de tipo fallida puede revelar una ruptura. El reporte es acotado para evitar exportar tokens. No usar opciones que oculten el código de salida.",
+    "theme": ""
+  },
+  {
+    "block": "55–100 min · práctica individual",
+    "title": "A y B · preparar y completar (20 min)",
+    "body": "<div class=\"grid\"><article><h3>A · 5 minutos</h3><p>Copiar base y entorno. Confirmar URL, credenciales y matriz de resultados.</p></article><article><h3>B · 15 minutos</h3><p>Completar TODO_REPLAY, TODO_CONFLICTO y TODO_CONTRATO; conservar setup y polling.</p></article></div><div class=\"call\">Primera corrida: los TODO deben fallar. No se evalúa por cantidad de requests.</div>",
+    "notes": "A presupone laboratorio y herramientas preparados. B concentra el trabajo intelectual en tres conjuntos de aserciones: identidad del evento, conflicto y estructura más stock. La guía indica qué editar y qué observar. El runner impide presentar una colección que todavía conserva marcadores pendientes.",
+    "theme": ""
+  },
+  {
+    "block": "55–100 min · práctica individual",
+    "title": "C y D · comprobar el poder de la prueba",
+    "body": "<div class=\"grid\"><article><h3>C · 10 minutos</h3><p>Ejecutar dos corridas limpias. Cambiar stock esperado 9 → 8 y comprobar salida 1; restaurar 9.</p></article><article><h3>D · 10 minutos</h3><p>Ejecutar compatibilidad.cjs y explicar por qué cambiar un tipo rompe al consumidor.</p></article></div><div class=\"call\">Un fallo deliberado acredita sensibilidad de la aserción, no una regresión real de la API.</div>",
+    "notes": "La tarjeta C pide una mutación de la expectativa, no del backend. Debe aparecer el caso de stock como fallido y después recuperarse. D utiliza datos de ejemplo sin servicios externos: hay que etiquetar esa evidencia como fixture. Los dos ejercicios enseñan a interpretar qué demuestra cada prueba.",
+    "theme": ""
+  },
+  {
+    "block": "55–100 min · práctica individual",
+    "title": "E · entregar evidencia útil (5 min)",
+    "body": "<div class=\"grid\"><article><h3>Archivos</h3><p>Colección resuelta, resumen sin secretos y evidencia.md con matriz y límites.</p></article><article><h3>Explicación</h3><p>Qué probaste, qué falló de forma deliberada, qué restauraste y qué sigue sin comprobar.</p></article></div><div class=\"call\">No entregar entorno.local.json, access tokens, apiKey ni salida de obtención de credenciales.</div>",
+    "notes": "La evidencia debe permitir a otra persona comprender y repetir el ensayo. El resumen final debe corresponder a la colección restaurada; la evidencia del fallo deliberado se guarda con otro nombre. El estudiante explica qué componentes atravesó y cuáles no, en lugar de escribir simplemente que todo funciona.",
+    "theme": ""
+  },
+  {
+    "block": "100–110 min · carga y alcance",
+    "title": "Una colección repetida no es carga concurrente",
+    "body": "<div class=\"grid\"><article><h3>Newman funcional</h3><p>Un escenario en orden; muchas iteraciones siguen siendo secuenciales.</p></article><article><h3>Carga controlada</h3><p>Usuarios concurrentes, rampa, duración, datos, límites y métricas del sistema.</p></article></div><div class=\"call\">TPI: prueba de carga con JMeter o Postman y reporte, según la consigna vigente.</div>",
+    "notes": "Las tarjetas distinguen repetición de concurrencia. Para el TPI el equipo define una hipótesis y elige una herramienta admitida. El objetivo no es hacer caer el servicio, sino medir comportamiento con una carga declarada. No presentamos Newman como generador de usuarios simultáneos.",
+    "theme": ""
+  },
+  {
+    "block": "100–110 min · carga y alcance",
+    "title": "Un reporte necesita contexto",
+    "body": "<table><tr><th>Registrar</th><th>Ejemplo de diseño, no resultado medido</th></tr><tr><td>Carga</td><td>1 → 5 usuarios, rampa 30 s, duración 60 s</td></tr><tr><td>Operación</td><td>GET /productos, datos estables</td></tr><tr><td>Métricas</td><td>p95, requests/s, errores inesperados</td></tr><tr><td>Criterio</td><td>Umbral acordado antes; comparar con línea base</td></tr></table><div class=\"call\">p95: el 95 % de las duraciones observadas queda por debajo o igual a ese valor.</div>",
+    "notes": "La tabla es un guion que el grupo debe adaptar, no un benchmark ejecutado. Throughput es la cantidad de operaciones por tiempo. El error rate requiere definir qué cuenta como error: un 401 esperado en una prueba funcional no representa una caída del servicio. El promedio puede ocultar una cola lenta; por eso miramos percentiles.",
+    "theme": ""
+  },
+  {
+    "block": "110–120 min · cierre y TPI",
+    "title": "¿Y si confirma un agente de IA?",
+    "body": "<div class=\"grid\"><article><h3>Mismo contrato</h3><p>El agente necesita permisos, errores distinguibles y una clave estable por operación.</p></article><article><h3>Misma evidencia</h3><p>Cambiar el cliente no elimina la prueba de stock, evento y efecto del worker.</p></article></div><div class=\"call\">¿Qué debería hacer ante timeout: generar otra clave o conservar la operación?</div>",
+    "notes": "La respuesta esperada es conservar la clave si reintenta la misma operación y consultar el estado ante incertidumbre. No convertimos esta pregunta en otro laboratorio MCP. Conectamos con Clase 08: un agente también consume contratos y puede amplificar reintentos incorrectos.",
+    "theme": ""
+  },
+  {
+    "block": "110–120 min · cierre y TPI",
+    "title": "De la prueba individual a la defensa",
+    "body": "<div class=\"grid\"><article><h3>TPI grupal · 16/11</h3><p>Adaptar matriz y colección al dominio. Adjuntar pruebas, carga y límites en el README.</p></article><article><h3>Salida individual</h3><p>¿Por qué 200 no basta? ¿Qué distingue replay de conflicto? ¿Qué cambio de contrato detectás?</p></article></div><div class=\"call\">Próxima clase según planificación: simulacro y Entrega 2. El 09/11 no se asigna actividad.</div>",
+    "notes": "En la izquierda vinculamos la técnica al TPI sin imponer nuevas tecnologías. En la derecha las respuestas deben mencionar efectos de negocio, conservación de clave y evento, y ruptura de campos o tipos. Cerramos con el calendario vigente y con una evidencia defendible de alcance explícito.",
+    "theme": "dark"
+  }
+];
+const deck=document.querySelector("#deck");let current=0;const presenterChannel="BroadcastChannel"in window?new BroadcastChannel("iaew-clase-10-presenter"):null;
+function render(){deck.innerHTML=slides.map((s,i)=>`<section class="slide ${s.theme||""} ${i===current?"active":""}" aria-label="Diapositiva ${i+1}"><p class="kicker">${s.block}</p><h2>${s.title}</h2><div class="slide-content">${s.body}</div><div class="footer"><span>IAEW 2026 · Clase 10 · Testing de integración y contratos</span><span class="slide-no">${i+1} / ${slides.length}</span></div></section>`).join("");document.querySelector("#counter").textContent=`${current+1} / ${slides.length}`;document.querySelector("#progress").style.width=`${(current+1)/slides.length*100}%`;publish()}
+function publish(){const s=slides[current],message={source:"deck",type:"state",current,total:slides.length,kicker:s.block,title:s.title.replace(/<br\s*\/?>/gi," "),notes:s.notes,nextTitle:slides[current+1]?.title.replace(/<br\s*\/?>/gi," ")||"Fin",sentAt:Date.now()};if(presenterChannel)presenterChannel.postMessage(message);try{localStorage.setItem("iaew-clase-10-presenter-state",JSON.stringify(message))}catch{}}
+function go(n){current=Math.max(0,Math.min(slides.length-1,n));render()}
+document.querySelector("#prev").onclick=()=>go(current-1);document.querySelector("#next").onclick=()=>go(current+1);document.querySelector("#presenter").onclick=()=>window.open("presenter.html","iaew-clase-10-presenter","width=1100,height=820");document.querySelector("#fullscreen").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+addEventListener("keydown",e=>{if(["ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();go(current+1)}if(["ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();go(current-1)}if(e.key.toLowerCase()==="p")window.open("presenter.html","iaew-clase-10-presenter","width=1100,height=820");if(e.key.toLowerCase()==="f")document.querySelector("#fullscreen").click()});
+addEventListener("storage",e=>{if(e.key==="iaew-clase-10-presenter-message"&&e.newValue){const msg=JSON.parse(e.newValue);if(msg.type==="navigate")go(msg.index)}});if(presenterChannel)presenterChannel.onmessage=e=>{if(e.data?.source==="presenter"&&e.data.type==="navigate")go(e.data.index);if(e.data?.source==="presenter"&&e.data.type==="state-request")publish()}
+function resizeDeck(){document.documentElement.style.setProperty('--scale',Math.min((innerWidth-70)/1280,(innerHeight-80)/720))}addEventListener('resize',resizeDeck);resizeDeck();
+render();
+</script></body></html>

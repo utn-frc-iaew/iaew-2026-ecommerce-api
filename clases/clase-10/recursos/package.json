@@ -1,0 +1,14 @@
+{
+  "name": "iaew-clase-10-pruebas",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "pruebas": "node ejecutar.cjs"
+  },
+  "dependencies": {
+    "newman": "6.2.1"
+  }
+}

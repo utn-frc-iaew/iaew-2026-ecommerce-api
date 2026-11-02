@@ -26,7 +26,7 @@ El caso conductor es una mini plataforma de e-commerce. Cada clase agrega una ca
 | Clase 07 | Observabilidad de integraciones | [Disponible](clases/clase-07/) |
 | Clase 08 | IA aplicada a integraciones y MCP | [Disponible](clases/clase-08/) |
 | Clase 09 | Cloud e IaC con AWS Academy | [Disponible](clases/clase-09/) |
-| Clase 10 | Testing de integración y contratos | Pendiente |
+| Clase 10 | Testing de integración y contratos | [Disponible](clases/clase-10/) |
 | Clase 11 | Simulacro de demo y defensa técnica | Pendiente |
 
 ## Trabajo Práctico Integrador
