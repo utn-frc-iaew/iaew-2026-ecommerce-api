@@ -4,7 +4,7 @@ Lunes **2 de noviembre de 2026** · 120 minutos · demo guiada, sin entrega indi
 
 Una URL saludable no demuestra que una confirmación respete permisos, stock e idempotencia. Hoy retomamos el circuito integrado de Clase 07 para construir evidencia ejecutable. La API simplificada de Cloud de Clase 09 no contiene esas reglas.
 
-1. [Presentación HTML](presentacion/index.html): 28 diapositivas, flechas para navegar, `P` para notas del orador.
+1. [Presentación HTML](presentacion/index.html): 26 diapositivas, flechas para navegar, `P` para notas del orador.
 2. [Material para estudiar](material-adicional/material-completo.md).
 3. [Actividad única paso a paso](actividad-practica.md).
 4. [Recursos: colección inicial, entorno y runner](recursos/README.md).
